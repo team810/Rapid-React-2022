@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -14,8 +18,41 @@ package frc.robot;
  */
 public final class Constants 
 {
+
+    //USB
+
+    public final static int LEFT_JOYSTICK = 0;
+    public final static int RIGHT_JOYSTICK = 0;
+    
+
+    //CAN - DRIVETRAIN
     public final static int FRONTL = 0;
-    public final static int FRONTR = 0;
-    public final static int BACKL = 0;
-    public final static int BACKR = 0;
+    public final static int FRONTR = 1;
+    public final static int BACKL = 2;
+    public final static int BACKR = 3;
+
+    //CAN - SHOOTER
+    public final static int SHOOTER = 4;
+    public final static int ACTIVE = 5;
+    public final static int HOOD = 6;
+
+
+    //CAN - INTAKE
+    public final static int INTAKE = 7;
+    
+    
+    //LIMELIGHT
+    public static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    
+    
+    public static final NetworkTableEntry tx = table.getEntry("tx");
+    public static final NetworkTableEntry ty = table.getEntry("ty");
+    public static final NetworkTableEntry ta = table.getEntry("ta");
+    public static final NetworkTableEntry tv = table.getEntry("tv");
+    public static final NetworkTableEntry ledMode = table.getEntry("ledMode");
+    public static final NetworkTableEntry camMode = table.getEntry("camMode");
+    public static final NetworkTableEntry pipeline = table.getEntry("pipeline");
+    public static final NetworkTableEntry stream = table.getEntry("stream");
+
+
 }
