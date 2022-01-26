@@ -16,11 +16,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.Shoot;
-import frc.robot.Commands.ToggleIntake;
 import frc.robot.Commands.ToggleSolenoid;
-import frc.robot.Commands.SetIntake;
 
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -37,7 +34,6 @@ public class RobotContainer
   
 
   // The robot's subsystems and commands are defined here...
-  private Drivetrain m_drivetrain = new Drivetrain();
   private Shooter m_shooter = new Shooter();
   private Limelight m_limelight = new Limelight();
   private Intake m_intake = new Intake();
@@ -55,9 +51,6 @@ public class RobotContainer
     // Configure the button bindings
     configureButtonBindings();
 
-    m_drivetrain.setDefaultCommand(
-      new RunCommand(()-> m_drivetrain.tankDrive(left.getRawAxis(0), right.getRawAxis(1)), m_drivetrain)
-    );
   }
 
   /**
@@ -76,11 +69,9 @@ public class RobotContainer
     toggleIntake = new JoystickButton(right, 1);
     toggleIntake.whileHeld(
       new StartEndCommand(
-        () -> m_intake.toggleIntake(true, .7), 
-        () -> m_intake.toggleIntake(true, .7), 
-        m_intake);
-
-
+        () -> m_intake.setIntake(true, 1), 
+        () -> m_intake.setIntake(false, 0), 
+        m_intake));
   }
 
   /**

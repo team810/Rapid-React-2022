@@ -22,23 +22,23 @@ public final class Constants
     //USB
 
     public final static int LEFT_JOYSTICK = 0;
-    public final static int RIGHT_JOYSTICK = 0;
+    public final static int RIGHT_JOYSTICK = 1;
     
 
     //CAN - DRIVETRAIN
-    public final static int FRONTL = 0;
+    public final static int FRONTL = 8;
     public final static int FRONTR = 1;
     public final static int BACKL = 2;
     public final static int BACKR = 3;
 
     //CAN - SHOOTER
-    public final static int SHOOTER = 4;
+    public final static int SHOOTER = 7;
     public final static int ACTIVE = 5;
     public final static int HOOD = 6;
 
 
     //CAN - INTAKE
-    public final static int INTAKE = 7;
+    public final static int INTAKE = 4;
     
     
     //LIMELIGHT
