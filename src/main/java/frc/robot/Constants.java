@@ -15,7 +15,7 @@ package frc.robot;
 public final class Constants 
 {
     public final static int FRONTL = 0;
-    public final static int FRONTR = 0;
-    public final static int BACKL = 0;
-    public final static int BACKR = 0;
+    public final static int FRONTR = 1;
+    public final static int BACKL = 2;
+    public final static int BACKR = 3;
 }
