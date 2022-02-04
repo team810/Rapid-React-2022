@@ -18,4 +18,6 @@ public final class Constants
     public final static int FRONTR = 1;
     public final static int BACKL = 2;
     public final static int BACKR = 3;
+
+    public final static int INTAKE_MOTOR = 4;
 }
