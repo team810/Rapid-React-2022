@@ -16,16 +16,15 @@ import frc.robot.Constants;
 public class Intake extends SubsystemBase 
 {
   private double speed;
-  private boolean bool1, bool2;
+  private boolean bool1;
   public CANSparkMax intake;
-  public Solenoid intakeSolLeft, intakeSolRight;
+  public Solenoid intakeSol;
 
   /** Creates a new Intake. */
   public Intake() 
   {
     intake = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
-    intakeSolLeft = new Solenoid(PneumaticsModuleType.REVPH, 9);
-    intakeSolRight = new Solenoid(PneumaticsModuleType.REVPH, 8);
+    intakeSol = new Solenoid(PneumaticsModuleType.REVPH, 9);
   }
 
   @Override
@@ -34,7 +33,6 @@ public class Intake extends SubsystemBase
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Intake Speed", this.speed);
     SmartDashboard.putBoolean("Left Solenoid on?", this.bool1);
-    SmartDashboard.putBoolean("Left Solenoid on?", this.bool2);
 
   }
   public void set(double speed)
@@ -44,10 +42,6 @@ public class Intake extends SubsystemBase
   }
   public void setLeftSolenoid(boolean bool)
   {
-    intakeSolLeft.set(bool);
-    intakeSolRight.set(bool);
-
-    this.bool1 = bool;
-    this.bool2 = bool;
-  }
+    intakeSol.set(bool);
+    this.bool1 = bool;  }
 }

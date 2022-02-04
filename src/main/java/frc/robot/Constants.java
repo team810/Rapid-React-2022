@@ -20,4 +20,6 @@ public final class Constants
     public final static int BACKR = 3;
 
     public final static int INTAKE_MOTOR = 4;
+
+    public final static int SHOOTER_MOTOR = 5;
 }
