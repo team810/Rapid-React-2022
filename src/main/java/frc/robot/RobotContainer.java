@@ -53,7 +53,7 @@ public class RobotContainer
     runIntake.toggleWhenPressed(new StartEndCommand(()-> m_intake.set(1),()-> m_intake.set(0), m_intake));
 
     toggleIntakeSolenoid = new JoystickButton(left, 2);
-    toggleIntakeSolenoid.toggleWhenPressed(new StartEndCommand(()-> m_intake.setLeftSolenoid(true),()-> m_intake.setLeftSolenoid(false), m_intake));
+    toggleIntakeSolenoid.toggleWhenPressed(new StartEndCommand(()-> m_intake.setSolenoid(true),()-> m_intake.setSolenoid(false), m_intake));
   }
 
   /**

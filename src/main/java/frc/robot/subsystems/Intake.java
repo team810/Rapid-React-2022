@@ -33,14 +33,13 @@ public class Intake extends SubsystemBase
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Intake Speed", this.speed);
     SmartDashboard.putBoolean("Left Solenoid on?", this.bool1);
-
   }
   public void set(double speed)
   {
     intake.set(speed);
     this.speed = speed;
   }
-  public void setLeftSolenoid(boolean bool)
+  public void setSolenoid(boolean bool)
   {
     intakeSol.set(bool);
     this.bool1 = bool;  }
