@@ -32,9 +32,9 @@ public class Shooter extends SubsystemBase
     SmartDashboard.putNumber("Velocity Top", top.getEncoder().getVelocity());
     SmartDashboard.putNumber("Velocity Bottom", top.getEncoder().getVelocity());
   }
-  public void run(double speed)
+  public void run(double topS, double bottomS)
   {
-    top.set(speed);
-    bottom.set(speed);
+    top.set(-topS);
+    bottom.set(bottomS);
   }
 }

@@ -52,7 +52,7 @@ public class RobotContainer
   private void configureButtonBindings() 
   {
     runShooter  = new JoystickButton(left, 1);
-    runShooter.toggleWhenPressed(new StartEndCommand(()-> m_shooter.run(.5), ()-> m_shooter.run(0), m_shooter));
+    runShooter.toggleWhenPressed(new StartEndCommand(()-> m_shooter.run(.5, .75), ()-> m_shooter.run(0, 0), m_shooter));
 
     // runIntake = new JoystickButton(left, 1);
     // runIntake.toggleWhenPressed(new StartEndCommand(()-> m_intake.set(1),()-> m_intake.set(0), m_intake));
