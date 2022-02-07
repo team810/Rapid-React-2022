@@ -21,5 +21,6 @@ public final class Constants
 
     public final static int INTAKE_MOTOR = 4;
 
-    public final static int SHOOTER_MOTOR = 5;
+    public final static int SHOOTER_TOP = 6;
+    public final static int SHOOTER_BOTTOM = 2;
 }

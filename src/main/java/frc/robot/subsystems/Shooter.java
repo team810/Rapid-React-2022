@@ -5,29 +5,36 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase 
 {
-  public CANSparkMax motor1, motor2;
+  public CANSparkMax top, bottom;
   /** Creates a new Shooter. */
   public Shooter() 
   {
-    motor1 = new CANSparkMax(Constants.SHOOTER_MOTOR, MotorType.kBrushless);
-    motor2 = new CANSparkMax(Constants.SHOOTER_MOTOR, MotorType.kBrushless);
+    top = new CANSparkMax(Constants.SHOOTER_TOP, MotorType.kBrushless);
+    bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
+
+    top.setIdleMode(IdleMode.kCoast);
+    bottom.setIdleMode(IdleMode.kCoast);
   }
 
   @Override
   public void periodic() 
   {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Velocity Top", top.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Velocity Bottom", top.getEncoder().getVelocity());
   }
-  public void set(double speed)
+  public void run(double speed)
   {
-    motor1.set(speed);
-    motor2.set(speed);
+    top.set(speed);
+    bottom.set(speed);
   }
 }
