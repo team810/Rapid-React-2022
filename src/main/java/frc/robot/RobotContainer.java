@@ -15,9 +15,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Commands.Shoot;
-import frc.robot.Commands.ToggleSolenoid;
-
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -28,8 +26,7 @@ import frc.robot.subsystems.Shooter;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer 
-{
+public class RobotContainer{
 
   
 
@@ -37,6 +34,7 @@ public class RobotContainer
   private Shooter m_shooter = new Shooter();
   private Limelight m_limelight = new Limelight();
   private Intake m_intake = new Intake();
+  private Drivetrain m_drive = new Drivetrain();
 
 
 
@@ -46,10 +44,14 @@ public class RobotContainer
   public JoystickButton shoot, toggleIntake;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() 
-  {
+  public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    m_drive.setDefaultCommand(
+      new RunCommand(
+        ()-> m_drive.tankDrive(-left.getRawAxis(1), right.getRawAxis(1)), m_drive)
+    ); 
 
   }
 
@@ -59,8 +61,7 @@ public class RobotContainer
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() 
-  {
+  private void configureButtonBindings() {
 
     // shoot = new JoystickButton(left, 1);
     // shoot.whileHeld(new ParallelCommandGroup(new InstantCommand(()->m_limelight.ledMode.setNumber(3)), new InstantCommand(Shoot(m_shooter)), new InstantCommand(()->m_lime.pipeline.setNumber(1)));
@@ -72,6 +73,9 @@ public class RobotContainer
         () -> m_intake.setIntake(true, 1), 
         () -> m_intake.setIntake(false, 0), 
         m_intake));
+
+    shoot = new JoystickButton(left, 1);
+    shoot.whileHeld(new InstantCommand(() -> m_shooter.runShooter(), m_shooter));
   }
 
   /**
@@ -79,8 +83,7 @@ public class RobotContainer
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() 
-  {
+  public Command getAutonomousCommand(){
     // An ExampleCommand will run in autonomous
     return null;
   }

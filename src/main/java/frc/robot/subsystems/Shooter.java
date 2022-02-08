@@ -19,7 +19,6 @@ public class Shooter extends SubsystemBase {
 
     shooter = new CANSparkMax(Constants.SHOOTER, MotorType.kBrushless);
     active = new CANSparkMax(Constants.ACTIVE, MotorType.kBrushless);
-    hood = new CANSparkMax(Constants.HOOD, MotorType.kBrushless);
 
 
   }
