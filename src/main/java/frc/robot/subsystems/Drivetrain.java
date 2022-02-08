@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -15,16 +13,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Drivetrain extends SubsystemBase 
-{
-  public DoubleSupplier leftSpeed, rightSpeed;
+public class Drivetrain extends SubsystemBase {
   public CANSparkMax frontL, frontR, backL, backR;
   public MotorControllerGroup left, right;
   public DifferentialDrive drive;
 
   /** Creates a new Drivetrain. */
-  public Drivetrain() 
-  {
+  public Drivetrain() {
     frontL = new CANSparkMax(Constants.FRONTL, MotorType.kBrushless);
     frontR = new CANSparkMax(Constants.FRONTR, MotorType.kBrushless);
     backL = new CANSparkMax(Constants.BACKL, MotorType.kBrushless);
@@ -44,17 +39,31 @@ public class Drivetrain extends SubsystemBase
   }
 
   @Override
-  public void periodic() 
-  {
+  public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Velocity", frontL.getEncoder().getVelocity());
+    SmartDashboard.putNumber("P", frontL.getPIDController().getP());
+    SmartDashboard.putNumber("I", frontL.getPIDController().getD());
+    SmartDashboard.putNumber("D", frontL.getPIDController().getI());
+
+    SmartDashboard.putNumber("Velocity FL", frontL.getEncoder().getVelocity());
     SmartDashboard.putNumber("Position FL", frontL.getEncoder().getPosition());
-    SmartDashboard.putNumber("Position FR", frontL.getEncoder().getPosition());
-    SmartDashboard.putNumber("Position BL", frontL.getEncoder().getPosition());
-    SmartDashboard.putNumber("Position BR", frontL.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp FL", frontL.getMotorTemperature());
+
+    SmartDashboard.putNumber("Velocity FR", frontR.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position FR", frontR.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp FR", frontR.getMotorTemperature());
+
+    SmartDashboard.putNumber("Velocity BL", backL.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position BL", backL.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp BL", backL.getMotorTemperature());
+
+    SmartDashboard.putNumber("Velocity BR", backR.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position BR", backR.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature());    
   }
-  public void tankDrive(double leftSpeed, double rightSpeed)
-  {
-    drive.tankDrive(leftSpeed, rightSpeed);
+
+  public void tankDrive(double leftSpeed, double rightSpeed) {
+    //The numbers come in from the Y-axis of the controller as - 
+    drive.tankDrive(-leftSpeed, -rightSpeed);
   }
 }
