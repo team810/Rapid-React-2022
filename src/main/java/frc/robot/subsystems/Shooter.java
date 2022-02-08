@@ -29,8 +29,8 @@ public class Shooter extends SubsystemBase
   public void periodic() 
   {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Velocity Top", top.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Velocity Bottom", top.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Velocity Top(RPM)", top.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Velocity Bottom(RPM)", top.getEncoder().getVelocity());
   }
   public void run(double topS, double bottomS)
   {
