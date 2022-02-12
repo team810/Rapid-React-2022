@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.I2C.Port;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -38,6 +39,9 @@ public final class Constants{
 
     //CAN - INTAKE
     public final static int INTAKE = 4;
+
+    //CAN Feeder
+    public final static int FEEDER = 4;
     
     
     //LIMELIGHT
@@ -52,6 +56,8 @@ public final class Constants{
     public static final NetworkTableEntry camMode = table.getEntry("camMode");
     public static final NetworkTableEntry pipeline = table.getEntry("pipeline");
     public static final NetworkTableEntry stream = table.getEntry("stream");
+
+
 
 
 }

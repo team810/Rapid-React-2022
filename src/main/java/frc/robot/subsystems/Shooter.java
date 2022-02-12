@@ -32,4 +32,12 @@ public class Shooter extends SubsystemBase {
      shooter.set(1);
      active.set(.7);
   }
+
+  public CANSparkMax getShooter(){
+    return shooter;
+  }
+
+  public CANSparkMax getActive(){
+    return active;
+  }
 }

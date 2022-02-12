@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -35,13 +36,14 @@ public class RobotContainer{
   private Limelight m_limelight = new Limelight();
   private Intake m_intake = new Intake();
   private Drivetrain m_drive = new Drivetrain();
+  private Indexer m_feeder = new Indexer();
 
 
 
   public Joystick left = new Joystick(0);
   public Joystick right = new Joystick(1);
 
-  public JoystickButton shoot, toggleIntake;
+  public JoystickButton shoot, toggleIntake, runFeeder;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -70,12 +72,15 @@ public class RobotContainer{
     toggleIntake = new JoystickButton(right, 1);
     toggleIntake.whileHeld(
       new StartEndCommand(
-        () -> m_intake.setIntake(true, 1), 
+        () -> m_intake.setIntake(true, .7), 
         () -> m_intake.setIntake(false, 0), 
         m_intake));
 
     shoot = new JoystickButton(left, 1);
     shoot.whileHeld(new InstantCommand(() -> m_shooter.runShooter(), m_shooter));
+
+    runFeeder = new JoystickButton(left, 2);
+    runFeeder.whileHeld(new InstantCommand(() -> m_feeder.runFeeder(), m_feeder));
   }
 
   /**

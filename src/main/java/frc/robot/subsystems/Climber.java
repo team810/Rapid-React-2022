@@ -4,29 +4,17 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
-public class Indexer extends SubsystemBase {
+public class Climber extends SubsystemBase {
 
-  CANSparkMax feederMotor;
+  
 
-  /** Creates a new Indexer. */
-  public Indexer() {
-
-    feederMotor = new CANSparkMax(Constants.FEEDER, MotorType.kBrushless);
-
-  }
+  /** Creates a new Climber. */
+  public Climber() {}
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
-
-  public void runFeeder(){
-    feederMotor.set(.7);
   }
 }

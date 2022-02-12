@@ -38,7 +38,7 @@ public class Drivetrain extends SubsystemBase {
 
 
     //If you remove this, it doesnt work. We dont know why
-    frontL.follow(ExternalFollower.kFollowerDisabled, 0);
+    backR.follow(frontR);
     backL.follow(frontL);
 
     diffDrive = new DifferentialDrive(frontL, frontR);
