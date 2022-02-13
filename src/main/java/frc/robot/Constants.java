@@ -25,6 +25,8 @@ public final class Constants {
 
     public static final int TRIGGER_BUTTON = 1;
     public static final int MIDDLE_BUTTON = 2;
+    public static final int LEFT_BUTTON = 3;
+    public static final int RIGHT_BUTTON = 4;
 
     public final static int FRONTL = 0;
     public final static int FRONTR = 1;
@@ -38,4 +40,6 @@ public final class Constants {
     public static final int SHOOTER_BOTTOM = 6;
 
     public static final int FEEDER_MOTOR = 7;
+
+    public static final int CLIMBER_MOTOR = 8;
 }

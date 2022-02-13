@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
+
   private CANSparkMax top, bottom;
 
   private double distance; // inches, convert to whatever you need in the run command or shuffleboard
@@ -85,7 +86,7 @@ public class Shooter extends SubsystemBase {
      * (tan(angle of lens to goal + angle of lens from bottom of camera))
      */
     // Collect data and run linear regression for motor power to distance linear
-    // relationshup to implement to shoot command
+    // relationship to implement to shoot command
     this.distance = (this.goalHeight - this.limelightHeight)
         / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
   }

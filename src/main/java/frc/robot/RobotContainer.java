@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -31,11 +32,12 @@ public class RobotContainer {
   private Feeder m_feeder = new Feeder();
   private Intake m_intake = new Intake();
   private Shooter m_shooter = new Shooter();
+  private Climber m_climber = new Climber();
 
   private Joystick LEFT = new Joystick(Constants.LEFT_JOYSTICK);
   private Joystick RIGHT = new Joystick(Constants.RIGHT_JOYSTICK);
 
-  private JoystickButton runIntake, runShooter, runFeeder;
+  private JoystickButton runIntake, runShooter, runFeeder, raiseClimber, lowerClimber;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -66,6 +68,12 @@ public class RobotContainer {
 
     runFeeder = new JoystickButton(LEFT, Constants.MIDDLE_BUTTON);
     runFeeder.toggleWhenPressed(new StartEndCommand(()-> m_feeder.runFeeder(.5), ()-> m_feeder.runFeeder(0), m_feeder));
+
+    raiseClimber = new JoystickButton(RIGHT, Constants.LEFT_BUTTON);
+    raiseClimber.whileHeld(new StartEndCommand(() -> m_climber.set(0.5), () -> m_climber.set(0), m_climber));
+
+    lowerClimber = new JoystickButton(RIGHT, Constants.RIGHT_BUTTON);
+    lowerClimber.whileHeld(new StartEndCommand(() -> m_climber.set(-0.5), () -> m_climber.set(0), m_climber));
   }
 
   /**
