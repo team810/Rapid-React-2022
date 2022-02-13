@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
      * (tan(angle of lens to goal + angle of lens from bottom of camera))
      */
     // Collect data and run linear regression for motor power to distance linear
-    // relationshup to implement to shoot command
+    // relationship to implement to shoot command
     this.distance = (this.goalHeight - this.limelightHeight)
         / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
   }
