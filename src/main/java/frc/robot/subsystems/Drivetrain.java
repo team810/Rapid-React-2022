@@ -32,8 +32,6 @@ public class Drivetrain extends SubsystemBase {
     frontR.restoreFactoryDefaults();
     backL.restoreFactoryDefaults();
     backR.restoreFactoryDefaults();
-<<<<<<< HEAD
-=======
     frontR.restoreFactoryDefaults();
     frontL.restoreFactoryDefaults();
 
@@ -46,7 +44,6 @@ public class Drivetrain extends SubsystemBase {
     diffDrive = new DifferentialDrive(frontL, frontR);
 
     diffDrive.setSafetyEnabled(false);
->>>>>>> 9c2affeccdc1908331b9d1f9beb40e8862768d05
 
     left.setInverted(true);
 
