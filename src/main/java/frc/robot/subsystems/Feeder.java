@@ -13,9 +13,9 @@ import frc.robot.Constants;
 
 public class Feeder extends SubsystemBase {
   private CANSparkMax feederMotor;
+
   /** Creates a new Feeder. */
-  public Feeder() 
-  {
+  public Feeder() {
     this.feederMotor = new CANSparkMax(Constants.FEEDER_MOTOR, MotorType.kBrushless);
     resetMotors();
   }
@@ -26,18 +26,15 @@ public class Feeder extends SubsystemBase {
     shuffleInit();
   }
 
-  public void runFeeder(double speed)
-  {
+  public void runFeeder(double speed) {
     this.feederMotor.set(speed);
   }
 
-  private void resetMotors()
-  {
+  private void resetMotors() {
     this.feederMotor.restoreFactoryDefaults();
   }
 
-  private void shuffleInit()
-  {
+  private void shuffleInit() {
     SmartDashboard.putNumber("Feeder Velcoity (RPM)", this.feederMotor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Feeder Position", this.feederMotor.getEncoder().getPosition());
   }

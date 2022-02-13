@@ -23,16 +23,16 @@ public class Drivetrain extends SubsystemBase {
     this.frontL = new CANSparkMax(Constants.FRONTL, MotorType.kBrushless);
     this.frontR = new CANSparkMax(Constants.FRONTR, MotorType.kBrushless);
     this.backL = new CANSparkMax(Constants.BACKL, MotorType.kBrushless);
-    this. backR = new CANSparkMax(Constants.BACKR, MotorType.kBrushless);
+    this.backR = new CANSparkMax(Constants.BACKR, MotorType.kBrushless);
 
     resetMotors();
 
-    this. left = new MotorControllerGroup(frontL, backL);
-    this. right = new MotorControllerGroup(frontR, backR);
+    this.left = new MotorControllerGroup(frontL, backL);
+    this.right = new MotorControllerGroup(frontR, backR);
 
     this.left.setInverted(true);
 
-    this. drive = new DifferentialDrive(left, right);
+    this.drive = new DifferentialDrive(left, right);
   }
 
   @Override
@@ -42,20 +42,19 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
-    //The numbers come in from the Y-axis of the controller as -, reversed them to positive before passing
-    this. drive.tankDrive(-leftSpeed, -rightSpeed);
+    // The numbers come in from the Y-axis of the controller as -, reversed them to
+    // positive before passing
+    this.drive.tankDrive(-leftSpeed, -rightSpeed);
   }
 
-  private void resetMotors()
-  {
+  private void resetMotors() {
     this.frontL.restoreFactoryDefaults();
     this.frontR.restoreFactoryDefaults();
     this.backL.restoreFactoryDefaults();
     this.backR.restoreFactoryDefaults();
   }
 
-  private void shuffleInit()
-  {
+  private void shuffleInit() {
     SmartDashboard.putNumber("P", frontL.getPIDController().getP());
     SmartDashboard.putNumber("I", frontL.getPIDController().getD());
     SmartDashboard.putNumber("D", frontL.getPIDController().getI());
@@ -74,6 +73,6 @@ public class Drivetrain extends SubsystemBase {
 
     SmartDashboard.putNumber("Velocity BR", backR.getEncoder().getVelocity());
     SmartDashboard.putNumber("Position BR", backR.getEncoder().getPosition());
-    SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature()); 
+    SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature());
   }
 }

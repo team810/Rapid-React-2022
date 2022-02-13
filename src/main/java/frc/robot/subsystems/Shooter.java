@@ -18,14 +18,15 @@ import frc.robot.Constants;
 public class Shooter extends SubsystemBase {
   private CANSparkMax top, bottom;
 
-  private double distance; //inches, convert to whatever you need in the run command or shuffleboard command
+  private double distance; // inches, convert to whatever you need in the run command or shuffleboard
+                           // command
 
-  private int goalHeight = 96; //inches
-  private int limelightHeight = 48; //inches
-  private int limelightAngle = 45; //degrees
-  
+  private int goalHeight = 96; // inches
+  private int limelightHeight = 48; // inches
+  private int limelightAngle = 45; // degrees
+
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-    
+
   private NetworkTableEntry tx = table.getEntry("tx");
   private NetworkTableEntry ty = table.getEntry("ty");
   private NetworkTableEntry ta = table.getEntry("ta");
@@ -46,24 +47,22 @@ public class Shooter extends SubsystemBase {
   }
 
   public void runShooter(double topSpeed, double bottomSpeed) {
-    this. top.set(-topSpeed);
-    this. bottom.set(bottomSpeed);
+    this.top.set(-topSpeed);
+    this.bottom.set(bottomSpeed);
   }
 
-  private void resetMotors()
-  {
+  private void resetMotors() {
     this.top.restoreFactoryDefaults();
-    this.bottom.restoreFactoryDefaults(); 
+    this.bottom.restoreFactoryDefaults();
     /*
      * this decreases the time between shots
      * by leaving the motors at a higher speed when not in use
      */
-    this. top.setIdleMode(IdleMode.kCoast);
-    this. bottom.setIdleMode(IdleMode.kCoast);
+    this.top.setIdleMode(IdleMode.kCoast);
+    this.bottom.setIdleMode(IdleMode.kCoast);
   }
 
-  private void shuffleInit()
-  {
+  private void shuffleInit() {
     SmartDashboard.putNumber("Velocity Top(RPM)", top.getEncoder().getVelocity());
     SmartDashboard.putNumber("Velocity Bottom(RPM)", top.getEncoder().getVelocity());
 
@@ -78,14 +77,16 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Distance to target", this.distance);
   }
 
-  private void updateD()
-  {
+  private void updateD() {
     /*
-    * d = (h2-h1) / tan(a1+a2)
-    * d = (hieght of the limelight from ground minus the heigth of the field goal inches) over
-    *     (tan(angle of lens to goal + angle of lens from bottom of camera))
-    */
-    //Collect data and run linear regression for motor power to distance linear relationshup to implement to shoot command
-    this.distance = (this.goalHeight-this.limelightHeight) / Math.tan( Math.toRadians( this.limelightAngle + ty.getDouble(0)) );
+     * d = (h2-h1) / tan(a1+a2)
+     * d = (hieght of the limelight from ground minus the heigth of the field goal
+     * inches) over
+     * (tan(angle of lens to goal + angle of lens from bottom of camera))
+     */
+    // Collect data and run linear regression for motor power to distance linear
+    // relationshup to implement to shoot command
+    this.distance = (this.goalHeight - this.limelightHeight)
+        / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
   }
 }

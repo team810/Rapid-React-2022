@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Intake. */
   public Intake() {
-    this. intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
+    this.intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
     this.intakeSol = new Solenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID);
     resetMotors();
   }
@@ -32,16 +32,16 @@ public class Intake extends SubsystemBase {
   }
 
   public void runIntake(double speed, boolean bool) {
-    this. intakeMotor.set(speed);
-    this. intakeSol.set(bool);
+    this.intakeMotor.set(speed);
+    this.intakeSol.set(bool);
     this.bool = bool;
   }
-  private void resetMotors()
-  {
-    this. intakeMotor.restoreFactoryDefaults();
+
+  private void resetMotors() {
+    this.intakeMotor.restoreFactoryDefaults();
   }
-  private void shuffleInit()
-  {
+
+  private void shuffleInit() {
     SmartDashboard.putNumber("Intake Velcocity (RPM)", intakeMotor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Intake Position", intakeMotor.getEncoder().getPosition());
 
