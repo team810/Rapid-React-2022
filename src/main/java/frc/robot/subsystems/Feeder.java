@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,10 +14,12 @@ import frc.robot.Constants;
 
 public class Feeder extends SubsystemBase {
   private CANSparkMax feederMotor;
+  private double speed;
 
   /** Creates a new Feeder. */
   public Feeder() {
     this.feederMotor = new CANSparkMax(Constants.FEEDER_MOTOR, MotorType.kBrushless);
+
     resetMotors();
   }
 
@@ -28,14 +31,20 @@ public class Feeder extends SubsystemBase {
 
   public void runFeeder(double speed) {
     this.feederMotor.set(speed);
+    
+    this.speed = speed;
   }
 
   private void resetMotors() {
     this.feederMotor.restoreFactoryDefaults();
+
+    this.feederMotor.setIdleMode(IdleMode.kCoast);
   }
 
   private void shuffleInit() {
     SmartDashboard.putNumber("Feeder Velocity (RPM)", this.feederMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Feeder Velocity (%)", this.speed);
+
     SmartDashboard.putNumber("Feeder Position", this.feederMotor.getEncoder().getPosition());
   }
 }

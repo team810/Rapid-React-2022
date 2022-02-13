@@ -18,10 +18,10 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax frontL, frontR, backL, backR;
   private MotorControllerGroup left, right;
   private DifferentialDrive drive;
+  private double leftSpeed, rightSpeed;
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
-    
     this.frontL = new CANSparkMax(Constants.FRONTL, MotorType.kBrushless);
     this.frontR = new CANSparkMax(Constants.FRONTR, MotorType.kBrushless);
     this.backL = new CANSparkMax(Constants.BACKL, MotorType.kBrushless);
@@ -35,11 +35,6 @@ public class Drivetrain extends SubsystemBase {
     this.left.setInverted(true);
 
     this.drive = new DifferentialDrive(left, right);
-
-    this.frontL.setIdleMode(IdleMode.kBrake);
-    this.frontR.setIdleMode(IdleMode.kBrake);
-    this.backL.setIdleMode(IdleMode.kBrake);
-    this.backR.setIdleMode(IdleMode.kBrake);
   }
 
   @Override
@@ -52,6 +47,9 @@ public class Drivetrain extends SubsystemBase {
     // The numbers come in from the Y-axis of the controller as -, reversed them to
     // positive before passing
     this.drive.tankDrive(-leftSpeed, -rightSpeed);
+
+    this.leftSpeed = -leftSpeed;
+    this.rightSpeed = -rightSpeed;
   }
 
   private void resetMotors() {
@@ -59,12 +57,20 @@ public class Drivetrain extends SubsystemBase {
     this.frontR.restoreFactoryDefaults();
     this.backL.restoreFactoryDefaults();
     this.backR.restoreFactoryDefaults();
+
+    this.frontL.setIdleMode(IdleMode.kBrake);
+    this.frontR.setIdleMode(IdleMode.kBrake);
+    this.backL.setIdleMode(IdleMode.kBrake);
+    this.backR.setIdleMode(IdleMode.kBrake);
   }
 
   private void shuffleInit() {
     SmartDashboard.putNumber("P", frontL.getPIDController().getP());
     SmartDashboard.putNumber("I", frontL.getPIDController().getD());
     SmartDashboard.putNumber("D", frontL.getPIDController().getI());
+
+    SmartDashboard.putNumber("Drivetrain Velcoity Left (%)", this.leftSpeed);
+    SmartDashboard.putNumber("Drivetrain Velocity Right (%)", this.rightSpeed);
 
     SmartDashboard.putNumber("Velocity FL", frontL.getEncoder().getVelocity());
     SmartDashboard.putNumber("Position FL", frontL.getEncoder().getPosition());

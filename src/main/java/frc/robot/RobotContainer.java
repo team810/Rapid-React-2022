@@ -70,10 +70,10 @@ public class RobotContainer {
     runFeeder.toggleWhenPressed(new StartEndCommand(()-> m_feeder.runFeeder(.5), ()-> m_feeder.runFeeder(0), m_feeder));
 
     raiseClimber = new JoystickButton(RIGHT, Constants.LEFT_BUTTON);
-    raiseClimber.whileHeld(new StartEndCommand(() -> m_climber.set(0.5), () -> m_climber.set(0), m_climber));
+    raiseClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(0.5), () -> m_climber.runClimber(0), m_climber));
 
     lowerClimber = new JoystickButton(RIGHT, Constants.RIGHT_BUTTON);
-    lowerClimber.whileHeld(new StartEndCommand(() -> m_climber.set(-0.5), () -> m_climber.set(0), m_climber));
+    lowerClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(-0.5), () -> m_climber.runClimber(0), m_climber));
   }
 
   /**

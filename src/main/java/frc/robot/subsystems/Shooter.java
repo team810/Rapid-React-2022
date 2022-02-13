@@ -18,6 +18,8 @@ import frc.robot.Constants;
 public class Shooter extends SubsystemBase {
   private CANSparkMax top, bottom;
 
+  private double topSpeed, bottomSpeed;
+
   private double distance; // inches, convert to whatever you need in the run command or shuffleboard
                            // command
 
@@ -49,6 +51,9 @@ public class Shooter extends SubsystemBase {
   public void runShooter(double topSpeed, double bottomSpeed) {
     this.top.set(-topSpeed);
     this.bottom.set(bottomSpeed);
+
+    this.topSpeed = topSpeed;
+    this.bottomSpeed = bottomSpeed;
   }
 
   private void resetMotors() {
@@ -63,8 +68,11 @@ public class Shooter extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    SmartDashboard.putNumber("Velocity Top(RPM)", top.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Velocity Bottom(RPM)", top.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Velocity Top(RPM)", this.top.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Velocity Top(%)", this.topSpeed);
+
+    SmartDashboard.putNumber("Velocity Bottom(RPM)", this.bottom.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Velocity Bottom(%)", this.bottomSpeed);
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);

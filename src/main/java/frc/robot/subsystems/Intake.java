@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -17,11 +18,13 @@ public class Intake extends SubsystemBase {
   private CANSparkMax intakeMotor;
   private Solenoid intakeSol;
   private boolean bool;
+  private double speed;
 
   /** Creates a new Intake. */
   public Intake() {
     this.intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
     this.intakeSol = new Solenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID);
+    
     resetMotors();
   }
 
@@ -34,16 +37,22 @@ public class Intake extends SubsystemBase {
   public void runIntake(double speed, boolean bool) {
     this.intakeMotor.set(speed);
     this.intakeSol.set(bool);
+
     this.bool = bool;
+    this.speed = speed;
   }
 
   private void resetMotors() {
     this.intakeMotor.restoreFactoryDefaults();
+
+    this.intakeMotor.setIdleMode(IdleMode.kCoast);
   }
 
   private void shuffleInit() {
-    SmartDashboard.putNumber("Intake Velcocity (RPM)", intakeMotor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Intake Position", intakeMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Intake Velcocity (%)", this.speed);
+
+    SmartDashboard.putNumber("Intake Position", this.intakeMotor.getEncoder().getPosition());
 
     SmartDashboard.putBoolean("Solenoid on?", this.bool);
   }
