@@ -16,37 +16,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
-  public CANSparkMax top, bottom;
-  public double distance;
-  
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-    
-  NetworkTableEntry tx = table.getEntry("tx");
-  NetworkTableEntry ty = table.getEntry("ty");
-  NetworkTableEntry ta = table.getEntry("ta");
+  private CANSparkMax top, bottom;
 
-  //rip turret
-  // float Kp, minCommand, headingError, steeringAdjust;
+  private double distance; // inches, convert to whatever you need in the run command or shuffleboard
+                           // command
+
+  private int goalHeight = 96; // inches
+  private int limelightHeight = 48; // inches
+  private int limelightAngle = 45; // degrees
+
+  private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+
+  private NetworkTableEntry tx = table.getEntry("tx");
+  private NetworkTableEntry ty = table.getEntry("ty");
+  private NetworkTableEntry ta = table.getEntry("ta");
 
   /** Creates a new Shooter. */
   public Shooter() {
-    top = new CANSparkMax(Constants.SHOOTER_TOP, MotorType.kBrushless);
-    bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
+    this.top = new CANSparkMax(Constants.SHOOTER_TOP, MotorType.kBrushless);
+    this.bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
 
-    /*
-    * d = (h2-h1) / tan(a1+a2)
-    * d = (hieght of the limelight from ground minus the heigth of the field goal inches) over
-    *     (tan(angle of lens to goal + angle of lens from bottom of camera))
-    */
-    //Or manually find the distances yourself to set this relatively
-
-    /*
-     * this decreases the time between shots
-     * by leaving the motors at a higher speed when not in use
-     * 
-     */
-    top.setIdleMode(IdleMode.kCoast);
-    bottom.setIdleMode(IdleMode.kCoast);
+    resetMotors();
   }
 
   @Override
@@ -56,13 +46,23 @@ public class Shooter extends SubsystemBase {
     shuffleInit();
   }
 
-  public void run(double topS, double bottomS) {
-    top.set(-topS);
-    bottom.set(bottomS);
+  public void runShooter(double topSpeed, double bottomSpeed) {
+    this.top.set(-topSpeed);
+    this.bottom.set(bottomSpeed);
   }
 
-  private void shuffleInit()
-  {
+  private void resetMotors() {
+    this.top.restoreFactoryDefaults();
+    this.bottom.restoreFactoryDefaults();
+    /*
+     * this decreases the time between shots
+     * by leaving the motors at a higher speed when not in use
+     */
+    this.top.setIdleMode(IdleMode.kCoast);
+    this.bottom.setIdleMode(IdleMode.kCoast);
+  }
+
+  private void shuffleInit() {
     SmartDashboard.putNumber("Velocity Top(RPM)", top.getEncoder().getVelocity());
     SmartDashboard.putNumber("Velocity Bottom(RPM)", top.getEncoder().getVelocity());
 
@@ -77,20 +77,16 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Distance to target", this.distance);
   }
 
-  private void updateD()
-  {
-    this.distance = (96-48) / Math.tan( Math.toRadians( 45 + ty.getDouble(0)) );
-  }
-<<<<<<< HEAD
-}
-=======
-
-  public CANSparkMax getShooter(){
-    return shooter;
-  }
-
-  public CANSparkMax getActive(){
-    return active;
+  private void updateD() {
+    /*
+     * d = (h2-h1) / tan(a1+a2)
+     * d = (hieght of the limelight from ground minus the heigth of the field goal
+     * inches) over
+     * (tan(angle of lens to goal + angle of lens from bottom of camera))
+     */
+    // Collect data and run linear regression for motor power to distance linear
+    // relationshup to implement to shoot command
+    this.distance = (this.goalHeight - this.limelightHeight)
+        / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
   }
 }
->>>>>>> 9c2affeccdc1908331b9d1f9beb40e8862768d05
