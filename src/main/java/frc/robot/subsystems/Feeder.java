@@ -35,7 +35,7 @@ public class Feeder extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    SmartDashboard.putNumber("Feeder Velcoity (RPM)", this.feederMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Feeder Velocity (RPM)", this.feederMotor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Feeder Position", this.feederMotor.getEncoder().getPosition());
   }
 }
