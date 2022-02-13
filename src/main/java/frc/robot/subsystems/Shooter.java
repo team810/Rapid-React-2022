@@ -25,20 +25,14 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
 
-  //rip turret
-  // float Kp, minCommand, headingError, steeringAdjust;
+  //Heights for vision (inches)
+  private int goalHeight = 96;
+  private int limelightHeight = 48;
 
   /** Creates a new Shooter. */
   public Shooter() {
     top = new CANSparkMax(Constants.SHOOTER_TOP, MotorType.kBrushless);
     bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
-
-    /*
-    * d = (h2-h1) / tan(a1+a2)
-    * d = (hieght of the limelight from ground minus the heigth of the field goal inches) over
-    *     (tan(angle of lens to goal + angle of lens from bottom of camera))
-    */
-    //Or manually find the distances yourself to set this relatively
 
     /*
      * this decreases the time between shots
@@ -56,9 +50,9 @@ public class Shooter extends SubsystemBase {
     shuffleInit();
   }
 
-  public void run(double topS, double bottomS) {
-    top.set(-topS);
-    bottom.set(bottomS);
+  public void runShooter(double topSpeed, double bottomSpeed) {
+    top.set(-topSpeed);
+    bottom.set(bottomSpeed);
   }
 
   private void shuffleInit()
@@ -79,18 +73,12 @@ public class Shooter extends SubsystemBase {
 
   private void updateD()
   {
-    this.distance = (96-48) / Math.tan( Math.toRadians( 45 + ty.getDouble(0)) );
-  }
-<<<<<<< HEAD
-}
-=======
-
-  public CANSparkMax getShooter(){
-    return shooter;
-  }
-
-  public CANSparkMax getActive(){
-    return active;
+    /*
+    * d = (h2-h1) / tan(a1+a2)
+    * d = (hieght of the limelight from ground minus the heigth of the field goal inches) over
+    *     (tan(angle of lens to goal + angle of lens from bottom of camera))
+    */
+    //Or manually find the distances yourself to set this relatively
+    this.distance = (this.goalHeight-this.limelightHeight) / Math.tan( Math.toRadians( 45 + ty.getDouble(0)) );
   }
 }
->>>>>>> 9c2affeccdc1908331b9d1f9beb40e8862768d05

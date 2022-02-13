@@ -32,18 +32,6 @@ public class Drivetrain extends SubsystemBase {
     frontR.restoreFactoryDefaults();
     backL.restoreFactoryDefaults();
     backR.restoreFactoryDefaults();
-    frontR.restoreFactoryDefaults();
-    frontL.restoreFactoryDefaults();
-
-
-
-    //If you remove this, it doesnt work. We dont know why
-    backR.follow(frontR);
-    backL.follow(frontL);
-
-    diffDrive = new DifferentialDrive(frontL, frontR);
-
-    diffDrive.setSafetyEnabled(false);
 
     left.setInverted(true);
 

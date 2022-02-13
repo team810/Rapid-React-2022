@@ -7,26 +7,26 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Indexer extends SubsystemBase {
-
+public class Feeder extends SubsystemBase {
   CANSparkMax feederMotor;
-
-  /** Creates a new Indexer. */
-  public Indexer() {
-
-    feederMotor = new CANSparkMax(Constants.FEEDER, MotorType.kBrushless);
-
+  /** Creates a new Feeder. */
+  public Feeder() 
+  {
+    feederMotor = new CANSparkMax(Constants.FEEDER_MOTOR, MotorType.kBrushless);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Feeder Velcoity (RPM)", feederMotor.getEncoder().getVelocity());
   }
 
-  public void runFeeder(){
-    feederMotor.set(.7);
+  public void runFeeder(double speed)
+  {
+    feederMotor.set(speed);
   }
 }
