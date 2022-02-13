@@ -4,77 +4,92 @@
 
 package frc.robot.subsystems;
 
-
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ExternalFollower;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-
 public class Drivetrain extends SubsystemBase {
-
-  public CANSparkMax frontL, frontR, backL, backR;
-
-  public DifferentialDrive diffDrive;
-
-  private double resetR = 0;
-  private double resetL = 0;
+  private CANSparkMax frontL, frontR, backL, backR;
+  private MotorControllerGroup left, right;
+  private DifferentialDrive drive;
+  private double leftSpeed, rightSpeed;
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
-    frontL = new CANSparkMax(Constants.FRONTL, MotorType.kBrushless);
-    backL = new CANSparkMax(Constants.BACKL, MotorType.kBrushless);
-    frontR = new CANSparkMax(Constants.FRONTR, MotorType.kBrushless);
-    backL = new CANSparkMax(Constants.BACKL, MotorType.kBrushless);
+    this.frontL = new CANSparkMax(Constants.FRONTL, MotorType.kBrushless);
+    this.frontR = new CANSparkMax(Constants.FRONTR, MotorType.kBrushless);
+    this.backL = new CANSparkMax(Constants.BACKL, MotorType.kBrushless);
+    this.backR = new CANSparkMax(Constants.BACKR, MotorType.kBrushless);
 
-    backL.restoreFactoryDefaults();
-    backR.restoreFactoryDefaults();
-    frontR.restoreFactoryDefaults();
-    frontL.restoreFactoryDefaults();
+    resetMotors();
 
+    this.left = new MotorControllerGroup(frontL, backL);
+    this.right = new MotorControllerGroup(frontR, backR);
 
+    this.left.setInverted(true);
 
-    //If you remove this, it doesnt work. We dont know why
-    backR.follow(frontR);
-    backL.follow(frontL);
-
-    diffDrive = new DifferentialDrive(frontL, frontR);
-
-    diffDrive.setSafetyEnabled(false);
-
-
+    this.drive = new DifferentialDrive(left, right);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    shuffleInit();
   }
 
-  public void tankDrive(double leftSpeed, double rightSpeed){
-    if(Math.abs(leftSpeed) < .1){
-      leftSpeed = 0;
-    }
-    if(Math.abs(rightSpeed) < .1){
-      rightSpeed = 0;
-    }
-    //System.out.println(leftSpeed + " : " + rightSpeed);
-    diffDrive.tankDrive(leftSpeed, rightSpeed);
+  public void tankDrive(double leftSpeed, double rightSpeed) {
+    // The numbers come in from the Y-axis of the controller as -, reversed them to
+    // positive before passing
+    this.drive.tankDrive(-leftSpeed, -rightSpeed);
+
+    this.leftSpeed = -leftSpeed;
+    this.rightSpeed = -rightSpeed;
   }
 
-  public void resetEncoders(){
-    resetL = frontL.getEncoder().getPosition();
-    resetR = frontR.getEncoder().getPosition();
+  public void arcadeDrive(double speed, double rot){
+    this.drive.arcadeDrive(speed, rot);
   }
 
-  public double getRightEncoderPos(){
-    return frontR.getEncoder().getPosition() - resetR;
-  }
-  public double getLeftEncoderPos(){
-    return frontL.getEncoder().getPosition() - resetL;
+  private void resetMotors() {
+    this.frontL.restoreFactoryDefaults();
+    this.frontR.restoreFactoryDefaults();
+    this.backL.restoreFactoryDefaults();
+    this.backR.restoreFactoryDefaults();
+
+    this.frontL.setIdleMode(IdleMode.kBrake);
+    this.frontR.setIdleMode(IdleMode.kBrake);
+    this.backL.setIdleMode(IdleMode.kBrake);
+    this.backR.setIdleMode(IdleMode.kBrake);
   }
 
+  private void shuffleInit() {
+    SmartDashboard.putNumber("P", frontL.getPIDController().getP());
+    SmartDashboard.putNumber("I", frontL.getPIDController().getD());
+    SmartDashboard.putNumber("D", frontL.getPIDController().getI());
 
+    SmartDashboard.putNumber("Drivetrain Velcoity Left (%)", this.leftSpeed);
+    SmartDashboard.putNumber("Drivetrain Velocity Right (%)", this.rightSpeed);
+
+    SmartDashboard.putNumber("Velocity FL", frontL.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position FL", frontL.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp FL", frontL.getMotorTemperature());
+
+    SmartDashboard.putNumber("Velocity FR", frontR.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position FR", frontR.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp FR", frontR.getMotorTemperature());
+
+    SmartDashboard.putNumber("Velocity BL", backL.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position BL", backL.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp BL", backL.getMotorTemperature());
+
+    SmartDashboard.putNumber("Velocity BR", backR.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position BR", backR.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature());
+  }
 }

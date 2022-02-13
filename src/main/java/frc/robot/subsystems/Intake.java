@@ -11,6 +11,8 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.hal.simulation.DriverStationDataJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -20,8 +22,12 @@ import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
 
-  public CANSparkMax intake;
-  public Solenoid intakeSolLeft, intakeSolRight;
+  private CANSparkMax intakeMotor;
+  private Solenoid intakeSolLeft, intakeSolRight;
+
+  private double speed;
+
+  Lightstrips m_lights;
 
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
 
@@ -29,7 +35,7 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Intake. */
   public Intake() {
-    intake = new CANSparkMax(Constants.INTAKE, MotorType.kBrushless);
+    intakeMotor = new CANSparkMax(Constants.INTAKE, MotorType.kBrushless);
     intakeSolLeft = new Solenoid(PneumaticsModuleType.REVPH, 9);
     intakeSolRight = new Solenoid(PneumaticsModuleType.REVPH, 8);
 
@@ -37,45 +43,56 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     ejectBall();
-
-
   }
+
 
   public void setIntake(boolean value, double speed) {
     intakeSolLeft.set(value);
     intakeSolRight.set(value);
-    intake.setIdleMode(IdleMode.kBrake);
-    intake.set(speed);
+    intakeMotor.setIdleMode(IdleMode.kBrake);
+    intakeMotor.set(speed);
   }
 
   public boolean getCorrectBall() {
 
     Color detectedColor = m_colorSensor.getColor();
 
-    if (DriverStation.getAlliance() == DriverStation.getAlliance().Red) {
+    DriverStation.getAlliance();
+	if (DriverStation.getAlliance() == Alliance.Red) {
       if (detectedColor.red > .5) {
         return true;
       } else {
         return false;
       }
-    } else if (DriverStation.getAlliance() == DriverStation.getAlliance().Blue) {
-      if (detectedColor.blue > .5) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-
+    } else {
+		DriverStation.getAlliance();
+		if (DriverStation.getAlliance() == Alliance.Blue) {
+		  if (detectedColor.blue > .5) {
+		    return true;
+		  } else {
+		    return false;
+		  }
+		}
+	}
     return false;
-
   }
 
   public void ejectBall(){
     if(!getCorrectBall()){
+      m_lights.changeLEDColor("R");
       setIntake(false, -.7);
     }
   }
 
-}
+ private void shuffleInit() {
+    SmartDashboard.putNumber("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Intake Velcocity (%)", this.speed);
+
+    //SmartDashboard.putNumber("Intake Position", this.intakeMotor.getEncoder().getPosition());
+
+    SmartDashboard.putBoolean("Solenoid State", intakeSolLeft.get());
+  }
+} 
+  
+

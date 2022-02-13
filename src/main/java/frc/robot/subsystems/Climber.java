@@ -4,17 +4,53 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
-
-  
-
   /** Creates a new Climber. */
-  public Climber() {}
+  private CANSparkMax climberMotor;
+  private double speed;
+
+  public Climber() {
+    this.climberMotor = new CANSparkMax(Constants.CLIMB, MotorType.kBrushless);
+
+    motorReset();
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    shuffleInit();
+  }
+
+  public void runClimber(double speed) {
+    if(DriverStation.getMatchTime() < 45){
+
+    
+    this.climberMotor.set(speed);
+    
+    this.speed = speed;
+  
+    }
+  }
+
+  private void motorReset() {
+    this.climberMotor.restoreFactoryDefaults();
+
+    this.climberMotor.setIdleMode(IdleMode.kBrake);
+  }
+
+  public void shuffleInit() {
+    SmartDashboard.putNumber("Climber Velocity (RPM)", this.climberMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Climber Velocity (%)", this.speed);
+
+    SmartDashboard.putNumber("Climber Position", this.climberMotor.getEncoder().getPosition());
   }
 }

@@ -4,25 +4,29 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.SerialPort;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
-public class LedStrips extends SubsystemBase {
+public class Feeder extends SubsystemBase {
 
-  SerialPort arduino = new SerialPort(9600, SerialPort.Port.kUSB);
+  CANSparkMax feederMotor;
 
+  /** Creates a new Indexer. */
+  public Feeder() {
 
-  
-  /** Creates a new LedStrips. */
-  public LedStrips() {}
+    feederMotor = new CANSparkMax(Constants.FEEDER, MotorType.kBrushless);
+
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
 
-  public String changeColor(String color){
-    arduino.writeString(color);
-    return arduino.readString();
+  public void runFeeder(){
+    feederMotor.set(.7);
   }
 }

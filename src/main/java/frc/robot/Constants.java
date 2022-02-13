@@ -7,7 +7,7 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.I2C.Port;
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -32,16 +32,19 @@ public final class Constants{
     public final static int BACKR = 3;
 
     //CAN - SHOOTER
-    public final static int SHOOTER = 7;
-    public final static int ACTIVE = 5;
+    public final static int SHOOTER_TOP = 7;
+    public final static int SHOOTER_BOTTOM = 5;
     public final static int HOOD = 6;
-
 
     //CAN - INTAKE
     public final static int INTAKE = 4;
 
-    //CAN Feeder
-    public final static int FEEDER = 4;
+    //CAN FEEDER
+    public final static int FEEDER = 9;
+
+    //CAN CLIMBER
+    public final static int CLIMB = 10;
+
     
     
     //LIMELIGHT
