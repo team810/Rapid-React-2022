@@ -81,4 +81,16 @@ public class Shooter extends SubsystemBase {
   {
     this.distance = (96-48) / Math.tan( Math.toRadians( 45 + ty.getDouble(0)) );
   }
+<<<<<<< HEAD
 }
+=======
+
+  public CANSparkMax getShooter(){
+    return shooter;
+  }
+
+  public CANSparkMax getActive(){
+    return active;
+  }
+}
+>>>>>>> 9c2affeccdc1908331b9d1f9beb40e8862768d05
