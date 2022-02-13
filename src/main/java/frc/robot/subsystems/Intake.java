@@ -14,28 +14,37 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-  public CANSparkMax intake;
-  public Solenoid intakeSol;
+  private CANSparkMax intakeMotor;
+  private Solenoid intakeSol;
   private boolean bool;
 
   /** Creates a new Intake. */
   public Intake() {
-    intake = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
-    intakeSol = new Solenoid(PneumaticsModuleType.REVPH, 9);
+    this. intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
+    this.intakeSol = new Solenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID);
+    resetMotors();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Intake Velcocity (RPM)", intake.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Intake Position", intake.getEncoder().getPosition());
-
-    SmartDashboard.putBoolean("Solenoid on?", this.bool);
+    shuffleInit();
   }
 
   public void runIntake(double speed, boolean bool) {
-    intake.set(speed);
-    intakeSol.set(bool);
+    this. intakeMotor.set(speed);
+    this. intakeSol.set(bool);
     this.bool = bool;
+  }
+  private void resetMotors()
+  {
+    this. intakeMotor.restoreFactoryDefaults();
+  }
+  private void shuffleInit()
+  {
+    SmartDashboard.putNumber("Intake Velcocity (RPM)", intakeMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Intake Position", intakeMotor.getEncoder().getPosition());
+
+    SmartDashboard.putBoolean("Solenoid on?", this.bool);
   }
 }

@@ -17,12 +17,22 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final int LEFT_JOYSTICK = 1;
+    public static final int RIGHT_JOYSTICK = 2;
+
+    public static final int XAXIS = 0;
+    public static final int YAXIS = 1;
+
+    public static final int TRIGGER_BUTTON = 1;
+    public static final int MIDDLE_BUTTON = 2;
+
     public final static int FRONTL = 0;
     public final static int FRONTR = 1;
     public final static int BACKL = 2;
     public final static int BACKR = 3;
 
     public static final int INTAKE_MOTOR = 4;
+    public static final int INTAKE_SOLENOID = 0;
 
     public static final int SHOOTER_TOP = 5;
     public static final int SHOOTER_BOTTOM = 6;

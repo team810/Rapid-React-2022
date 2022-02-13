@@ -14,33 +14,48 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Drivetrain extends SubsystemBase {
-  public CANSparkMax frontL, frontR, backL, backR;
-  public MotorControllerGroup left, right;
-  public DifferentialDrive drive;
+  private CANSparkMax frontL, frontR, backL, backR;
+  private MotorControllerGroup left, right;
+  private DifferentialDrive drive;
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
-    frontL = new CANSparkMax(Constants.FRONTL, MotorType.kBrushless);
-    frontR = new CANSparkMax(Constants.FRONTR, MotorType.kBrushless);
-    backL = new CANSparkMax(Constants.BACKL, MotorType.kBrushless);
-    backR = new CANSparkMax(Constants.BACKR, MotorType.kBrushless);
+    this.frontL = new CANSparkMax(Constants.FRONTL, MotorType.kBrushless);
+    this.frontR = new CANSparkMax(Constants.FRONTR, MotorType.kBrushless);
+    this.backL = new CANSparkMax(Constants.BACKL, MotorType.kBrushless);
+    this. backR = new CANSparkMax(Constants.BACKR, MotorType.kBrushless);
 
-    left = new MotorControllerGroup(frontL, backL);
-    right = new MotorControllerGroup(frontR, backR);
+    resetMotors();
 
-    frontL.restoreFactoryDefaults();
-    frontR.restoreFactoryDefaults();
-    backL.restoreFactoryDefaults();
-    backR.restoreFactoryDefaults();
+    this. left = new MotorControllerGroup(frontL, backL);
+    this. right = new MotorControllerGroup(frontR, backR);
 
-    left.setInverted(true);
+    this.left.setInverted(true);
 
-    drive = new DifferentialDrive(left, right);
+    this. drive = new DifferentialDrive(left, right);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    shuffleInit();
+  }
+
+  public void tankDrive(double leftSpeed, double rightSpeed) {
+    //The numbers come in from the Y-axis of the controller as -, reversed them to positive before passing
+    this. drive.tankDrive(-leftSpeed, -rightSpeed);
+  }
+
+  private void resetMotors()
+  {
+    this.frontL.restoreFactoryDefaults();
+    this.frontR.restoreFactoryDefaults();
+    this.backL.restoreFactoryDefaults();
+    this.backR.restoreFactoryDefaults();
+  }
+
+  private void shuffleInit()
+  {
     SmartDashboard.putNumber("P", frontL.getPIDController().getP());
     SmartDashboard.putNumber("I", frontL.getPIDController().getD());
     SmartDashboard.putNumber("D", frontL.getPIDController().getI());
@@ -59,11 +74,6 @@ public class Drivetrain extends SubsystemBase {
 
     SmartDashboard.putNumber("Velocity BR", backR.getEncoder().getVelocity());
     SmartDashboard.putNumber("Position BR", backR.getEncoder().getPosition());
-    SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature());    
-  }
-
-  public void tankDrive(double leftSpeed, double rightSpeed) {
-    //The numbers come in from the Y-axis of the controller as - 
-    drive.tankDrive(-leftSpeed, -rightSpeed);
+    SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature()); 
   }
 }
