@@ -5,12 +5,16 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,12 +23,22 @@ public class Shooter extends SubsystemBase {
   private Lightstrips LEDS;
   private CANSparkMax top, bottom;
 
+  ShuffleboardTab tab;
+
   String color;
 
   private double topSpeed, bottomSpeed;
 
   private double distance; // inches, convert to whatever you need in the run command or shuffleboard
                            // command
+
+  private double setPointTop, kPTop, kITop, kDTop, kFFTop;
+  private double setPointBottom, kPBottom, kIBottom, kDBottom, kIzBottom, kFFBottom;
+  private double kIz, kMinOutput, kMaxOutput; 
+
+  NetworkTableEntry speedTop, speedBottom; 
+
+  SparkMaxPIDController top_pidcontroller, bottom_pidcontroller; 
 
   private int goalHeight = 96; // inches
   private int limelightHeight = 48; // inches
@@ -45,6 +59,7 @@ public class Shooter extends SubsystemBase {
     this.bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
 
     resetMotors();
+    PIDinit();
   }
 
   @Override
@@ -72,6 +87,32 @@ public class Shooter extends SubsystemBase {
 
     this.topSpeed = topSpeed;
     this.bottomSpeed = bottomSpeed;
+  }
+
+  public void runTop()
+  {
+    top_pidcontroller.setP(kPTop);
+    top_pidcontroller.setI(kITop);
+    top_pidcontroller.setD(kDTop);
+    top_pidcontroller.setFF(kFFTop);
+    top_pidcontroller.setIZone(kIz);
+    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+
+    top_pidcontroller.setReference(setPointTop, ControlType.kVelocity);
+    speedTop.setDouble(top.getEncoder().getVelocity());
+  }
+
+  public void runBottom()
+  {
+    bottom_pidcontroller.setP(kPBottom);
+    bottom_pidcontroller.setI(kIBottom);
+    bottom_pidcontroller.setD(kDBottom);
+    bottom_pidcontroller.setFF(kFFBottom);
+    bottom_pidcontroller.setIZone(kIz);
+    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+
+    bottom_pidcontroller.setReference(setPointBottom, ControlType.kVelocity);
+    speedBottom.setDouble(top.getEncoder().getVelocity());
   }
 
   private void resetMotors() {
@@ -102,6 +143,34 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Limelight Area", ta.getDouble(0));
 
     SmartDashboard.putNumber("Distance to target", this.distance);
+  }
+
+  private void PIDinit()
+  {
+
+    tab = Shuffleboard.getTab("Shooter System");
+    //top
+    setPointTop = tab.add("Set Speed (Top)", 5000).getEntry().getDouble(5000);
+    speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
+    kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry().getDouble(0);
+    kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry().getDouble(0);
+    kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry().getDouble(0);
+    kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry().getDouble(0);
+
+    //bottom
+    setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry().getDouble(5000);
+    speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
+    kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry().getDouble(0);
+    kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry().getDouble(0);
+    kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry().getDouble(0);
+    kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry().getDouble(0);
+
+    top_pidcontroller = top.getPIDController();
+    bottom_pidcontroller = bottom.getPIDController();
+
+    kIz = 100;
+    kMinOutput = -1;
+    kMaxOutput = 1;
   }
 
   private void updateD() {

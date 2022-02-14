@@ -42,4 +42,18 @@ public final class Constants {
     public static final int FEEDER_MOTOR = 7;
 
     public static final int CLIMBER_MOTOR = 8;
+
+    //shooter PID values
+
+    //top 
+    public static final double kPTop = 0;
+    public static final double kITop = 0;
+    public static final double kDTop = 0;
+    public static final double kFTop = 0; 
+
+    //bottom
+    public static final double kPBottom = 0;
+    public static final double kIBottom = 0;
+    public static final double kDBottom = 0;
+    public static final double kFBottom = 0; 
 }
