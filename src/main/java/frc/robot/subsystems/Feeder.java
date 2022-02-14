@@ -8,16 +8,19 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+// import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Feeder extends SubsystemBase {
   private CANSparkMax feederMotor;
+  // Ultrasonic colorSensor;
   private double speed;
 
   /** Creates a new Feeder. */
   public Feeder() {
+    // this.colorSensor = new Ultrasonic(1, 2);
     this.feederMotor = new CANSparkMax(Constants.FEEDER_MOTOR, MotorType.kBrushless);
 
     resetMotors();
@@ -35,10 +38,19 @@ public class Feeder extends SubsystemBase {
     this.speed = speed;
   }
 
+  // public void toggleIndexer(Boolean state)
+  // {
+  //   if(state == true)
+  //   {
+  //   }
+  // }
+
   private void resetMotors() {
     this.feederMotor.restoreFactoryDefaults();
 
     this.feederMotor.setIdleMode(IdleMode.kCoast);
+    
+    // Ultrasonic.setAutomaticMode(true);
   }
 
   private void shuffleInit() {
