@@ -33,7 +33,7 @@ public class Shooter extends SubsystemBase {
                            // command
 
   private double setPointTop, kPTop, kITop, kDTop, kFFTop;
-  private double setPointBottom, kPBottom, kIBottom, kDBottom, kIzBottom, kFFBottom;
+  private double setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
   private double kIz, kMinOutput, kMaxOutput; 
 
   NetworkTableEntry speedTop, speedBottom; 
@@ -88,6 +88,7 @@ public class Shooter extends SubsystemBase {
     this.topSpeed = topSpeed;
     this.bottomSpeed = bottomSpeed;
   }
+
 
   public void runTop()
   {
@@ -148,29 +149,29 @@ public class Shooter extends SubsystemBase {
   private void PIDinit()
   {
 
-    tab = Shuffleboard.getTab("Shooter System");
+    this.tab = Shuffleboard.getTab("Shooter System");
     //top
-    setPointTop = tab.add("Set Speed (Top)", 5000).getEntry().getDouble(5000);
-    speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
-    kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry().getDouble(0);
-    kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry().getDouble(0);
-    kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry().getDouble(0);
-    kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry().getDouble(0);
+    this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry().getDouble(5000);
+    this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
+    this.kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry().getDouble(0);
+    this.kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry().getDouble(0);
+    this.kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry().getDouble(0);
+    this.kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry().getDouble(0);
 
     //bottom
-    setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry().getDouble(5000);
-    speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
-    kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry().getDouble(0);
-    kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry().getDouble(0);
-    kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry().getDouble(0);
-    kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry().getDouble(0);
+    this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry().getDouble(5000);
+    this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
+    this.kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry().getDouble(0);
+    this.kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry().getDouble(0);
+    this.kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry().getDouble(0);
+    this.kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry().getDouble(0);
 
-    top_pidcontroller = top.getPIDController();
-    bottom_pidcontroller = bottom.getPIDController();
+    this.top_pidcontroller = top.getPIDController();
+    this.bottom_pidcontroller = bottom.getPIDController();
 
-    kIz = 100;
-    kMinOutput = -1;
-    kMaxOutput = 1;
+    this.kIz = 100;
+    this.kMinOutput = -1;
+    this.kMaxOutput = 1;
   }
 
   private void updateD() {
