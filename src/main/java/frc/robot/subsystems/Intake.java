@@ -10,6 +10,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,6 +21,8 @@ public class Intake extends SubsystemBase {
   private Solenoid intakeSol;
   private boolean bool;
   private double speed;
+
+  ShuffleboardTab tab = Shuffleboard.getTab("Intake System");
 
   /** Creates a new Intake. */
   public Intake() {
@@ -49,11 +53,9 @@ public class Intake extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    SmartDashboard.putNumber("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Intake Velcocity (%)", this.speed);
-
-    SmartDashboard.putNumber("Intake Position", this.intakeMotor.getEncoder().getPosition());
-
-    SmartDashboard.putBoolean("Solenoid on?", this.bool);
+    tab.add("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity());
+    tab.add("Intake Velcocity (%)", this.speed);
+    tab.add("Intake Position", this.intakeMotor.getEncoder().getPosition());
+    tab.addBoolean("Solenoid on?", () -> this.bool);
   }
 }
