@@ -33,7 +33,7 @@ public class RobotContainer {
   // private Feeder m_feeder = new Feeder();
   // private Intake m_intake = new Intake();
   private Shooter m_shooter = new Shooter();
-  // private Climber m_climber = new Climber();
+  private Climber m_climber = new Climber();
 
   private Joystick LEFT = new Joystick(Constants.LEFT_JOYSTICK);
   private Joystick RIGHT = new Joystick(Constants.RIGHT_JOYSTICK);
@@ -63,11 +63,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    // raiseClimber = new JoystickButton(RIGHT, Constants.LEFT_BUTTON);
-    // raiseClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(0.5), () -> m_climber.runClimber(0), m_climber));
+    raiseClimber = new JoystickButton(RIGHT, Constants.LEFT_BUTTON);
+    raiseClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(0.5), () -> m_climber.runClimber(0), m_climber));
 
-    // lowerClimber = new JoystickButton(RIGHT, Constants.RIGHT_BUTTON);
-    // lowerClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(-0.5), () -> m_climber.runClimber(0), m_climber));
+    lowerClimber = new JoystickButton(RIGHT, Constants.RIGHT_BUTTON);
+    lowerClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(-0.5), () -> m_climber.runClimber(0), m_climber));
     
     // runIntake = new JoystickButton(RIGHT, Constants.TRIGGER_BUTTON);
     // runIntake.whileHeld(new StartEndCommand(() -> m_intake.runIntake(.5, true), () -> m_intake.runIntake(0, false), m_intake));
