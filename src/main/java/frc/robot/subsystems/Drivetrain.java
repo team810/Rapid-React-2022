@@ -10,6 +10,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -18,7 +20,9 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax frontL, frontR, backL, backR;
   private MotorControllerGroup left, right;
   private DifferentialDrive drive;
-  private double leftSpeed, rightSpeed;
+  private double leftSpeed, rightSpeed; 
+
+  ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain System");
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -65,27 +69,25 @@ public class Drivetrain extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    SmartDashboard.putNumber("P", frontL.getPIDController().getP());
-    SmartDashboard.putNumber("I", frontL.getPIDController().getD());
-    SmartDashboard.putNumber("D", frontL.getPIDController().getI());
+    
+    tab.add("Drivetrain Velocity Left (%)", this.leftSpeed);
+    tab.add("Drivetrain Velocity Right (%)", this.rightSpeed);
 
-    SmartDashboard.putNumber("Drivetrain Velcoity Left (%)", this.leftSpeed);
-    SmartDashboard.putNumber("Drivetrain Velocity Right (%)", this.rightSpeed);
+    tab.add("Velocity FL", frontL.getEncoder().getVelocity());
+    tab.add("Position FL", frontL.getEncoder().getPosition());
+    tab.add("Temp FL", frontL.getMotorTemperature());
 
-    SmartDashboard.putNumber("Velocity FL", frontL.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Position FL", frontL.getEncoder().getPosition());
-    SmartDashboard.putNumber("Temp FL", frontL.getMotorTemperature());
+    tab.add("Velocity FR", frontR.getEncoder().getVelocity());
+    tab.add("Position FR", frontR.getEncoder().getPosition());
+    tab.add("Temp FR", frontR.getMotorTemperature());
 
-    SmartDashboard.putNumber("Velocity FR", frontR.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Position FR", frontR.getEncoder().getPosition());
-    SmartDashboard.putNumber("Temp FR", frontR.getMotorTemperature());
+    tab.add("Velocity BL", backL.getEncoder().getVelocity());
+    tab.add("Position BL", backL.getEncoder().getPosition());
+    tab.add("Temp BL", backL.getMotorTemperature());
 
-    SmartDashboard.putNumber("Velocity BL", backL.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Position BL", backL.getEncoder().getPosition());
-    SmartDashboard.putNumber("Temp BL", backL.getMotorTemperature());
-
-    SmartDashboard.putNumber("Velocity BR", backR.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Position BR", backR.getEncoder().getPosition());
-    SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature());
+    tab.add("Velocity BR", backR.getEncoder().getVelocity());
+    tab.add("Position BR", backR.getEncoder().getPosition());
+    tab.add("Temp BR", backR.getMotorTemperature());
+    
   }
 }

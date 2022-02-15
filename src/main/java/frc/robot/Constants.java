@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -43,8 +47,25 @@ public final class Constants {
 
     public static final int CLIMBER_MOTOR = 0;
 
-    //shooter PID values
+    //CAN Feeder
+    public final static int FEEDER = 4;
 
+
+    //LIMELIGHT
+    public static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+
+
+    public static final NetworkTableEntry tx = table.getEntry("tx");
+    public static final NetworkTableEntry ty = table.getEntry("ty");
+    public static final NetworkTableEntry ta = table.getEntry("ta");
+    public static final NetworkTableEntry tv = table.getEntry("tv");
+    public static final NetworkTableEntry ledMode = table.getEntry("ledMode");
+    public static final NetworkTableEntry camMode = table.getEntry("camMode");
+    public static final NetworkTableEntry pipeline = table.getEntry("pipeline");
+    public static final NetworkTableEntry stream = table.getEntry("stream");
+
+    
+    //SHOOTER PID VALUE
     //top 
     public static final double kPTop = 0;
     public static final double kITop = 0;
