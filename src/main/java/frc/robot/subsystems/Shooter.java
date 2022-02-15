@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
-  private Lightstrips LEDS;
   private CANSparkMax top, bottom;
 
   ShuffleboardTab tab;
@@ -33,7 +32,7 @@ public class Shooter extends SubsystemBase {
                            // command
 
   private double setPointTop, kPTop, kITop, kDTop, kFFTop;
-  private double setPointBottom, kPBottom, kIBottom, kDBottom, kIzBottom, kFFBottom;
+  private double setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
   private double kIz, kMinOutput, kMaxOutput; 
 
   NetworkTableEntry speedTop, speedBottom; 
@@ -53,8 +52,6 @@ public class Shooter extends SubsystemBase {
 
   /** Creates a new Shooter. */
   public Shooter() {
-    LEDS = new Lightstrips();
-
     this.top = new CANSparkMax(Constants.SHOOTER_TOP, MotorType.kBrushless);
     this.bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
 
@@ -79,9 +76,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public void runShooter(double topSpeed, double bottomSpeed) {
-    // Red for not valid target, Green for valid target
-    this.LEDS.changeLEDColor(this.color = tv.getBoolean(true) ? "Green" : "Red");
-    
     this.top.set(-topSpeed);
     this.bottom.set(bottomSpeed);
 

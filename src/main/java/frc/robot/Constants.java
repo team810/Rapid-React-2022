@@ -28,20 +28,20 @@ public final class Constants {
     public static final int LEFT_BUTTON = 3;
     public static final int RIGHT_BUTTON = 4;
 
-    public final static int FRONTL = 0;
-    public final static int FRONTR = 1;
-    public final static int BACKL = 2;
-    public final static int BACKR = 3;
+    public final static int FRONTL = 4;
+    public final static int FRONTR = 5;
+    public final static int BACKL = 3;
+    public final static int BACKR = 6;
 
     public static final int INTAKE_MOTOR = 4;
     public static final int INTAKE_SOLENOID = 0;
 
-    public static final int SHOOTER_TOP = 5;
-    public static final int SHOOTER_BOTTOM = 6;
+    public static final int SHOOTER_TOP = 2;
+    public static final int SHOOTER_BOTTOM = 1;
 
-    public static final int FEEDER_MOTOR = 7;
+    public static final int FEEDER_MOTOR = 0;
 
-    public static final int CLIMBER_MOTOR = 8;
+    public static final int CLIMBER_MOTOR = 0;
 
     //shooter PID values
 
