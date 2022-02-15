@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -21,6 +22,16 @@ public class Climber extends SubsystemBase {
   private Solenoid solenoid;
 
   ShuffleboardTab tab = Shuffleboard.getTab("Climber System");
+
+  private NetworkTableEntry ClimberVRPM =     
+  tab.add("Climber Velocity (RPM)", this.climberMotor.getEncoder().getVelocity())
+  .getEntry();
+  private NetworkTableEntry ClimberVP =     
+  tab.add("Climber Velocity (%)", this.speed)
+  .getEntry();
+  private NetworkTableEntry ClimberPos =     
+  tab.add("Climber Position", this.climberMotor.getEncoder().getPosition())
+  .getEntry();
 
   public Climber() {
     this.climberMotor = new CANSparkMax(Constants.CLIMBER_MOTOR, MotorType.kBrushless);
@@ -51,8 +62,8 @@ public class Climber extends SubsystemBase {
   }
 
   public void shuffleInit() {
-    tab.add("Climber Velocity (RPM)", this.climberMotor.getEncoder().getVelocity());
-    tab.add("Climber Velocity (%)", this.speed);
-    tab.add("Climber Position", this.climberMotor.getEncoder().getPosition());
+    this.ClimberVRPM.setDouble(this.climberMotor.getEncoder().getVelocity());
+    this.ClimberVP.setDouble(this.speed);
+    this.ClimberPos.setDouble(this.climberMotor.getEncoder().getPosition());
   }
 }

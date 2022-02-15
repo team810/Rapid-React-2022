@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,6 +20,16 @@ public class Feeder extends SubsystemBase {
   private double speed;
 
   ShuffleboardTab tab = Shuffleboard.getTab("Feeder System");
+
+  private NetworkTableEntry FeederVRPM =     
+  tab.add("Feeder Velocity (RPM)", this.feederMotor.getEncoder().getVelocity())
+  .getEntry();
+  private NetworkTableEntry FeederVP =     
+  tab.add("Feeder Velocity (%)", this.speed)
+  .getEntry();
+  private NetworkTableEntry FeederPos =     
+  tab.add("Feeder Position", this.feederMotor.getEncoder().getPosition())
+  .getEntry();
 
   /** Creates a new Feeder. */
   public Feeder() {
@@ -48,8 +59,8 @@ public class Feeder extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    tab.add("Feeder Velocity (RPM)", this.feederMotor.getEncoder().getVelocity());
-    tab.add("Feeder Velocity (%)", this.speed);
-    tab.add("Feeder Position", this.feederMotor.getEncoder().getPosition());
+    this.FeederVRPM.setDouble(this.feederMotor.getEncoder().getVelocity());
+    this.FeederVP.setDouble(this.speed);
+    this.FeederPos.setDouble(this.feederMotor.getEncoder().getPosition());
   }
 }

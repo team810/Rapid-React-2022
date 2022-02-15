@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -22,6 +23,21 @@ public class Intake extends SubsystemBase {
   private double speed;
 
   ShuffleboardTab tab = Shuffleboard.getTab("Intake System");
+
+  
+  private NetworkTableEntry IntakeVRPM =     
+  tab.add("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity())
+  .getEntry();
+  private NetworkTableEntry IntakeVP =     
+  tab.add("Intake Velcocity (%)", this.speed)
+  .getEntry();
+  private NetworkTableEntry IntakePos =     
+  tab.add("Intake Position", this.intakeMotor.getEncoder().getPosition())
+  .getEntry();
+  private NetworkTableEntry IntakeSol = 
+  tab.add("Solenoid on?", (this.bool))
+  .getEntry();
+
 
   /** Creates a new Intake. */
   public Intake() {
@@ -52,9 +68,9 @@ public class Intake extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    tab.add("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity());
-    tab.add("Intake Velcocity (%)", this.speed);
-    tab.add("Intake Position", this.intakeMotor.getEncoder().getPosition());
-    tab.addBoolean("Solenoid on?", () -> this.bool);
+    this.IntakeVRPM.setDouble(this.intakeMotor.getEncoder().getVelocity());
+    this.IntakeVP.setDouble(this.speed);
+    this.IntakePos.setDouble(this.intakeMotor.getEncoder().getPosition());
+    this.IntakeSol.setBoolean(this.bool);
   }
 }

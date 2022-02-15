@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -22,6 +23,53 @@ public class Drivetrain extends SubsystemBase {
   private double leftSpeed, rightSpeed; 
 
   ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain System");
+
+  private NetworkTableEntry VelocityLP =     
+  tab.add("Drivetrain Velocity Left (%)", this.leftSpeed)
+  .getEntry();
+  private NetworkTableEntry VelocityRP =     
+  tab.add("Drivetrain Velocity Right (%)", this.rightSpeed)
+  .getEntry();
+
+  private NetworkTableEntry VelocityFL =     
+  tab.add("Velocity FL", frontL.getEncoder().getVelocity())
+  .getEntry();
+  private NetworkTableEntry PositionFL =     
+  tab.add("Position FL", frontL.getEncoder().getPosition())
+  .getEntry();
+  private NetworkTableEntry TempFL =     
+  tab.add("Temp FL", frontL.getMotorTemperature())
+  .getEntry();
+
+  private NetworkTableEntry VelocityFR =     
+  tab.add("Velocity FR", frontR.getEncoder().getVelocity())
+  .getEntry();
+  private NetworkTableEntry PositionFR =     
+  tab.add("Position FR", frontR.getEncoder().getPosition())
+  .getEntry();
+  private NetworkTableEntry TempFR =     
+  tab.add("Temp FR", frontR.getMotorTemperature())
+  .getEntry();
+
+  private NetworkTableEntry VelocityBL =     
+  tab.add("Velocity FR", backL.getEncoder().getVelocity())
+  .getEntry();
+  private NetworkTableEntry PositionBL =     
+  tab.add("Position BL", backL.getEncoder().getPosition())
+  .getEntry();
+  private NetworkTableEntry TempBL =     
+  tab.add("Temp BL", backL.getMotorTemperature())
+  .getEntry();
+
+  private NetworkTableEntry VelocityBR =     
+  tab.add("Velocity BR", backR.getEncoder().getVelocity())
+  .getEntry();
+  private NetworkTableEntry PositionBR =     
+  tab.add("Position BR", backR.getEncoder().getPosition())
+  .getEntry();
+  private NetworkTableEntry TempBR =     
+  tab.add("Temp BR", backR.getMotorTemperature())
+  .getEntry();
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -68,25 +116,23 @@ public class Drivetrain extends SubsystemBase {
   }
 
   private void shuffleInit() {
+    VelocityLP.setDouble(this.leftSpeed);
+    VelocityRP.setDouble(this.rightSpeed);
+
+    VelocityFL.setDouble(frontL.getEncoder().getVelocity());
+    PositionFL.setDouble(frontL.getEncoder().getPosition());
+    TempFL.setDouble(frontL.getMotorTemperature());
     
-    tab.add("Drivetrain Velocity Left (%)", this.leftSpeed);
-    tab.add("Drivetrain Velocity Right (%)", this.rightSpeed);
-
-    tab.add("Velocity FL", frontL.getEncoder().getVelocity());
-    tab.add("Position FL", frontL.getEncoder().getPosition());
-    tab.add("Temp FL", frontL.getMotorTemperature());
-
-    tab.add("Velocity FR", frontR.getEncoder().getVelocity());
-    tab.add("Position FR", frontR.getEncoder().getPosition());
-    tab.add("Temp FR", frontR.getMotorTemperature());
-
-    tab.add("Velocity BL", backL.getEncoder().getVelocity());
-    tab.add("Position BL", backL.getEncoder().getPosition());
-    tab.add("Temp BL", backL.getMotorTemperature());
-
-    tab.add("Velocity BR", backR.getEncoder().getVelocity());
-    tab.add("Position BR", backR.getEncoder().getPosition());
-    tab.add("Temp BR", backR.getMotorTemperature());
+    VelocityFR.setDouble(frontR.getEncoder().getVelocity());
+    PositionFR.setDouble(frontR.getEncoder().getPosition());
+    TempFR.setDouble(frontR.getMotorTemperature());
     
+    VelocityBL.setDouble(backL.getEncoder().getVelocity());
+    PositionBL.setDouble(backL.getEncoder().getPosition());
+    TempBL.setDouble(backL.getMotorTemperature());
+    
+    VelocityBR.setDouble(backR.getEncoder().getVelocity());
+    PositionBR.setDouble(backR.getEncoder().getPosition());
+    TempBR.setDouble(backR.getMotorTemperature());
   }
 }
