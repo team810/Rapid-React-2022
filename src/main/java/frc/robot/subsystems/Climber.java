@@ -8,9 +8,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -18,11 +19,14 @@ public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   private CANSparkMax climberMotor;
   private double speed;
+  private Solenoid leftHook, rightHook; 
 
   ShuffleboardTab tab = Shuffleboard.getTab("Climber System");
 
   public Climber() {
     this.climberMotor = new CANSparkMax(Constants.CLIMBER_MOTOR, MotorType.kBrushless);
+    this.leftHook = new Solenoid(PneumaticsModuleType.REVPH, Constants.HOOKL);
+    this.rightHook = new Solenoid(PneumaticsModuleType.REVPH, Constants.HOOKR);
 
     motorReset();
   }
@@ -35,8 +39,19 @@ public class Climber extends SubsystemBase {
 
   public void runClimber(double speed) {
     this.climberMotor.set(speed);
-    
     this.speed = speed;
+    while (this.climberMotor.getEncoder().getPosition() < Constants.CLIMBER_REVS) {}
+    this.climberMotor.set(0);
+  }
+
+  public void toggleLeftHook(boolean bool)
+  {
+    leftHook.set(bool);
+  }
+
+  public void toggleRightHook(boolean bool)
+  {
+    rightHook.set(bool);
   }
 
   private void motorReset() {

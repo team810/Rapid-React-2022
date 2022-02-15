@@ -46,6 +46,9 @@ public final class Constants {
     public static final int FEEDER_MOTOR = 7;
 
     public static final int CLIMBER_MOTOR = 8;
+    public final static int HOOKL = 1;
+    public final static int HOOKR = 2; 
+    public final static double CLIMBER_REVS = 6.28;
 
     //CAN Feeder
     public final static int FEEDER = 4;
