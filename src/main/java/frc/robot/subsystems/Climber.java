@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,6 +18,7 @@ public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   private CANSparkMax climberMotor;
   private double speed;
+  private Solenoid solenoid;
 
   ShuffleboardTab tab = Shuffleboard.getTab("Climber System");
 
@@ -34,8 +36,12 @@ public class Climber extends SubsystemBase {
 
   public void runClimber(double speed) {
     this.climberMotor.set(speed);
-    
     this.speed = speed;
+  }
+
+  public void toggleSolClimber(Boolean bool)
+  {
+    this.solenoid.set(bool);
   }
 
   private void motorReset() {

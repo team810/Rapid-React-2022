@@ -33,11 +33,11 @@ public class Shooter extends SubsystemBase {
 
   private double setPointTop, kPTop, kITop, kDTop, kFFTop;
   private double setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
-  private double kIz, kMinOutput, kMaxOutput; 
+  private double kIz, kMinOutput, kMaxOutput;
 
-  NetworkTableEntry speedTop, speedBottom; 
+  NetworkTableEntry speedTop, speedBottom;
 
-  SparkMaxPIDController top_pidcontroller, bottom_pidcontroller; 
+  SparkMaxPIDController top_pidcontroller, bottom_pidcontroller;
 
   private int goalHeight = 96; // inches
   private int limelightHeight = 48; // inches
@@ -66,12 +66,11 @@ public class Shooter extends SubsystemBase {
     shuffleInit();
   }
 
-  public void toggleLimelightLight(int value)
-  {
+  public void toggleLimelightLight(int value) {
     table.getEntry("ledMode").setNumber(value);
   }
-  public void toggleLimelightCamMode(int value)
-  {
+
+  public void toggleLimelightCamMode(int value) {
     table.getEntry("camMode").setNumber(value);
   }
 
@@ -83,9 +82,7 @@ public class Shooter extends SubsystemBase {
     this.bottomSpeed = bottomSpeed;
   }
 
-
-  public void runTop()
-  {
+  public void runTop() {
     top_pidcontroller.setP(kPTop);
     top_pidcontroller.setI(kITop);
     top_pidcontroller.setD(kDTop);
@@ -97,8 +94,7 @@ public class Shooter extends SubsystemBase {
     speedTop.setDouble(top.getEncoder().getVelocity());
   }
 
-  public void runBottom()
-  {
+  public void runBottom() {
     bottom_pidcontroller.setP(kPBottom);
     bottom_pidcontroller.setI(kIBottom);
     bottom_pidcontroller.setD(kDBottom);
@@ -140,11 +136,10 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Distance to target", this.distance);
   }
 
-  private void PIDinit()
-  {
+  private void PIDinit() {
 
     this.tab = Shuffleboard.getTab("Shooter System");
-    //top
+    // top
     this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry().getDouble(5000);
     this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
     this.kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry().getDouble(0);
@@ -152,7 +147,7 @@ public class Shooter extends SubsystemBase {
     this.kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry().getDouble(0);
     this.kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry().getDouble(0);
 
-    //bottom
+    // bottom
     this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry().getDouble(5000);
     this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
     this.kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry().getDouble(0);
