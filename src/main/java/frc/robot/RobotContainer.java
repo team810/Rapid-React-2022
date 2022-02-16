@@ -16,7 +16,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 // import frc.robot.subsystems.Feeder;
 // import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
+// import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -29,11 +29,12 @@ import frc.robot.subsystems.Shooter;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private Drivetrain m_drivetrain = new Drivetrain();
+
+  // private Drivetrain m_drivetrain = new Drivetrain();
   // private Feeder m_feeder = new Feeder();
   // private Intake m_intake = new Intake();
-  private Shooter m_shooter = new Shooter();
-  private Climber m_climber = new Climber();
+  // private Shooter m_shooter = new Shooter();
+  // private Climber m_climber = new Climber();
 
   private Joystick LEFT = new Joystick(Constants.LEFT_JOYSTICK);
   private Joystick RIGHT = new Joystick(Constants.RIGHT_JOYSTICK);
@@ -47,9 +48,9 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     
-    m_drivetrain.setDefaultCommand(
-      new RunCommand(() -> m_drivetrain.tankDrive(LEFT.getRawAxis(Constants.YAXIS), RIGHT.getRawAxis(Constants.YAXIS)), m_drivetrain)
-    );
+    // m_drivetrain.setDefaultCommand(
+    //   new RunCommand(() -> m_drivetrain.tankDrive(LEFT.getRawAxis(Constants.YAXIS), RIGHT.getRawAxis(Constants.YAXIS)), m_drivetrain)
+    // );
   }
 
   /**
@@ -62,11 +63,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    raiseClimber = new JoystickButton(RIGHT, Constants.LEFT_BUTTON);
-    raiseClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(0.5), () -> m_climber.runClimber(0), m_climber));
+    // raiseClimber = new JoystickButton(RIGHT, Constants.LEFT_BUTTON);
+    // raiseClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(0.5), () -> m_climber.runClimber(0), m_climber));
 
-    lowerClimber = new JoystickButton(RIGHT, Constants.RIGHT_BUTTON);
-    lowerClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(-0.5), () -> m_climber.runClimber(0), m_climber));
+    // lowerClimber = new JoystickButton(RIGHT, Constants.RIGHT_BUTTON);
+    // lowerClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(-0.5), () -> m_climber.runClimber(0), m_climber));
     
     // runIntake = new JoystickButton(RIGHT, Constants.TRIGGER_BUTTON);
     // runIntake.whileHeld(new StartEndCommand(() -> m_intake.runIntake(.5, true), () -> m_intake.runIntake(0, false), m_intake));
@@ -74,8 +75,8 @@ public class RobotContainer {
     // runFeeder = new JoystickButton(RIGHT, Constants.MIDDLE_BUTTON);
     // runFeeder.toggleWhenPressed(new StartEndCommand(()-> m_feeder.runFeeder(.5), ()-> m_feeder.runFeeder(0), m_feeder));
 
-    runShooter = new JoystickButton(LEFT, Constants.TRIGGER_BUTTON);
-    runShooter.toggleWhenPressed(new StartEndCommand(() -> m_shooter.runShooter(.5, .75), () -> m_shooter.runShooter(0, 0), m_shooter));
+    // runShooter = new JoystickButton(LEFT, Constants.TRIGGER_BUTTON);
+    // runShooter.toggleWhenPressed(new StartEndCommand(() -> m_shooter.runShooter(.5, .75), () -> m_shooter.runShooter(0, 0), m_shooter));
 
     // runShooterPID = new JoystickButton(LEFT, Constants.TRIGGER_BUTTON);
     // runShooterPID.toggleWhenPressed(new ParallelCommandGroup(

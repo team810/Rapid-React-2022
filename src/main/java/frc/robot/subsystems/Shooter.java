@@ -30,11 +30,6 @@ public class Shooter extends SubsystemBase {
 
   private double distance; // inches, convert to whatever you need in the run command or shuffleboard
                            // command
-
-  private double setPointTop, kPTop, kITop, kDTop, kFFTop;
-  private double setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
-  private double kIz, kMinOutput, kMaxOutput;
-
   NetworkTableEntry speedTop, speedBottom;
 
   SparkMaxPIDController top_pidcontroller, bottom_pidcontroller;
@@ -56,7 +51,6 @@ public class Shooter extends SubsystemBase {
     this.bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
 
     resetMotors();
-    PIDinit();
   }
 
   @Override
@@ -80,30 +74,6 @@ public class Shooter extends SubsystemBase {
 
     this.topSpeed = topSpeed;
     this.bottomSpeed = bottomSpeed;
-  }
-
-  public void runTop() {
-    top_pidcontroller.setP(kPTop);
-    top_pidcontroller.setI(kITop);
-    top_pidcontroller.setD(kDTop);
-    top_pidcontroller.setFF(kFFTop);
-    top_pidcontroller.setIZone(kIz);
-    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
-
-    top_pidcontroller.setReference(setPointTop, ControlType.kVelocity);
-    speedTop.setDouble(top.getEncoder().getVelocity());
-  }
-
-  public void runBottom() {
-    bottom_pidcontroller.setP(kPBottom);
-    bottom_pidcontroller.setI(kIBottom);
-    bottom_pidcontroller.setD(kDBottom);
-    bottom_pidcontroller.setFF(kFFBottom);
-    bottom_pidcontroller.setIZone(kIz);
-    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
-
-    bottom_pidcontroller.setReference(setPointBottom, ControlType.kVelocity);
-    speedBottom.setDouble(top.getEncoder().getVelocity());
   }
 
   private void resetMotors() {
@@ -134,33 +104,6 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Limelight Area", ta.getDouble(0));
 
     SmartDashboard.putNumber("Distance to target", this.distance);
-  }
-
-  private void PIDinit() {
-
-    this.tab = Shuffleboard.getTab("Shooter System");
-    // top
-    this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry().getDouble(5000);
-    this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
-    this.kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry().getDouble(0);
-    this.kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry().getDouble(0);
-    this.kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry().getDouble(0);
-    this.kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry().getDouble(0);
-
-    // bottom
-    this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry().getDouble(5000);
-    this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
-    this.kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry().getDouble(0);
-    this.kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry().getDouble(0);
-    this.kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry().getDouble(0);
-    this.kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry().getDouble(0);
-
-    this.top_pidcontroller = top.getPIDController();
-    this.bottom_pidcontroller = bottom.getPIDController();
-
-    this.kIz = 100;
-    this.kMinOutput = -1;
-    this.kMaxOutput = 1;
   }
 
   private void updateD() {

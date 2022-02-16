@@ -25,7 +25,7 @@ public class Drivetrain extends SubsystemBase {
   ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain System");
 
   private NetworkTableEntry VelocityLP =     
-  tab.add("Drivetrain Velocity Left (%)", this.leftSpeed)
+    tab.add("Drivetrain Velocity Left (%)", this.leftSpeed)
   .getEntry();
   private NetworkTableEntry VelocityRP =     
   tab.add("Drivetrain Velocity Right (%)", this.rightSpeed)
