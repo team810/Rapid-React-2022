@@ -22,13 +22,13 @@ public class Feeder extends SubsystemBase {
   ShuffleboardTab tab = Shuffleboard.getTab("Feeder System");
 
   private NetworkTableEntry FeederVRPM =     
-  tab.add("Feeder Velocity (RPM)", this.feederMotor.getEncoder().getVelocity())
+  tab.add("Feeder Velocity (RPM)", 0)
   .getEntry();
   private NetworkTableEntry FeederVP =     
   tab.add("Feeder Velocity (%)", this.speed)
   .getEntry();
   private NetworkTableEntry FeederPos =     
-  tab.add("Feeder Position", this.feederMotor.getEncoder().getPosition())
+  tab.add("Feeder Position", 0)
   .getEntry();
 
   /** Creates a new Feeder. */
@@ -41,7 +41,7 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleInit();
+    shuffleUpdate();
   }
 
   public void runFeeder(double speed) {
@@ -58,7 +58,7 @@ public class Feeder extends SubsystemBase {
     // Ultrasonic.setAutomaticMode(true);
   }
 
-  private void shuffleInit() {
+  private void shuffleUpdate() {
     this.FeederVRPM.setDouble(this.feederMotor.getEncoder().getVelocity());
     this.FeederVP.setDouble(this.speed);
     this.FeederPos.setDouble(this.feederMotor.getEncoder().getPosition());

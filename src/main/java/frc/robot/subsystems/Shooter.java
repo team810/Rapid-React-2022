@@ -5,10 +5,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -22,17 +22,20 @@ import frc.robot.Constants;
 public class Shooter extends SubsystemBase {
   private CANSparkMax top, bottom;
 
-  ShuffleboardTab tab;
+  ShuffleboardTab tab = Shuffleboard.getTab("Shooter System");
 
-  String color;
+  // private double setPointTop, kPTop, kITop, kDTop, kFFTop;
+  // private double setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
+  private double kIz, kMinOutput, kMaxOutput;
+
+  SparkMaxPIDController top_pidcontroller, bottom_pidcontroller;
 
   private double topSpeed, bottomSpeed;
 
   private double distance; // inches, convert to whatever you need in the run command or shuffleboard
                            // command
-  NetworkTableEntry speedTop, speedBottom;
-
-  SparkMaxPIDController top_pidcontroller, bottom_pidcontroller;
+  NetworkTableEntry setSpeedTop, setPTop, setITop, setDTop, setFTop,
+      setSpeedBottom, setPBottom, setIBottom, setDBottom, setFBottom;
 
   private int goalHeight = 96; // inches
   private int limelightHeight = 48; // inches
@@ -45,19 +48,30 @@ public class Shooter extends SubsystemBase {
   private NetworkTableEntry ta = table.getEntry("ta");
   private NetworkTableEntry tv = table.getEntry("tv");
 
+  private NetworkTableEntry shooterTopVRPM = tab.add("Shooter Velcocity (RPM)", 0)
+      .getEntry();
+  private NetworkTableEntry shooterTopVP = tab.add("Shooter Velcocity (%)", this.topSpeed)
+      .getEntry();
+
+  private NetworkTableEntry shooterBotVRPM = tab.add("Shooter Vel Bot (RPM)", 0)
+      .getEntry();
+  private NetworkTableEntry shooterBotVP = tab.add("Shooter Vel Bot (%)", this.bottomSpeed)
+      .getEntry();
+
   /** Creates a new Shooter. */
   public Shooter() {
     this.top = new CANSparkMax(Constants.SHOOTER_TOP, MotorType.kBrushless);
     this.bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
 
     resetMotors();
+    shuffleInit();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     updateD();
-    shuffleInit();
+    shuffleUpdate();
   }
 
   public void toggleLimelightLight(int value) {
@@ -76,6 +90,30 @@ public class Shooter extends SubsystemBase {
     this.bottomSpeed = bottomSpeed;
   }
 
+  public void runTop() {
+    top_pidcontroller.setP(setPTop.getDouble(0));
+    top_pidcontroller.setI(setITop.getDouble(0));
+    top_pidcontroller.setD(setDTop.getDouble(0));
+    top_pidcontroller.setFF(setFTop.getDouble(0));
+    top_pidcontroller.setIZone(kIz);
+    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+
+    top_pidcontroller.setReference(setSpeedTop.getDouble(0), ControlType.kVelocity);
+    shooterTopVRPM.setDouble(top.getEncoder().getVelocity());
+  }
+
+  public void runBottom() {
+    bottom_pidcontroller.setP(setPBottom.getDouble(0));
+    bottom_pidcontroller.setI(setIBottom.getDouble(0));
+    bottom_pidcontroller.setD(setDBottom.getDouble(0));
+    bottom_pidcontroller.setFF(setFBottom.getDouble(0));
+    bottom_pidcontroller.setIZone(kIz);
+    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+
+    bottom_pidcontroller.setReference(setSpeedBottom.getDouble(0), ControlType.kVelocity);
+    shooterBotVRPM.setDouble(top.getEncoder().getVelocity());
+  }
+
   private void resetMotors() {
     this.top.restoreFactoryDefaults();
     this.bottom.restoreFactoryDefaults();
@@ -88,11 +126,25 @@ public class Shooter extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    SmartDashboard.putNumber("Velocity Top(RPM)", this.top.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Velocity Top(%)", this.topSpeed);
+    Shuffleboard.selectTab("Shooter System");
+    setSpeedTop = tab.add("Set Speed", 1000).getEntry();
+    setSpeedBottom = tab.add("Set Speed", 1000).getEntry();
+    setPTop = tab.addPersistent("P", 0).getEntry();
+    setITop = tab.addPersistent("I", 0).getEntry();
+    setDTop = tab.addPersistent("D", 0).getEntry();
+    setFTop = tab.addPersistent("F", 0).getEntry();
+    setPBottom = tab.addPersistent("P", 0).getEntry();
+    setIBottom = tab.addPersistent("I", 0).getEntry();
+    setDBottom = tab.addPersistent("D", 0).getEntry();
+    setFBottom = tab.addPersistent("F", 0).getEntry();
+  }
 
-    SmartDashboard.putNumber("Velocity Bottom(RPM)", this.bottom.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Velocity Bottom(%)", this.bottomSpeed);
+  private void shuffleUpdate() {
+    shooterTopVRPM.setDouble(this.top.getEncoder().getVelocity());
+    shooterTopVP.setDouble(this.topSpeed);
+
+    shooterBotVRPM.setDouble(this.bottom.getEncoder().getVelocity());
+    shooterBotVP.setDouble(this.bottomSpeed);
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);

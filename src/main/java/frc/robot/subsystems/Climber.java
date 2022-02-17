@@ -24,13 +24,13 @@ public class Climber extends SubsystemBase {
   ShuffleboardTab tab = Shuffleboard.getTab("Climber System");
 
   private NetworkTableEntry ClimberVRPM =     
-  tab.add("Climber Velocity (RPM)", this.climberMotor.getEncoder().getVelocity())
+  tab.add("Climber Velocity (RPM)", 0)
   .getEntry();
   private NetworkTableEntry ClimberVP =     
   tab.add("Climber Velocity (%)", this.speed)
   .getEntry();
   private NetworkTableEntry ClimberPos =     
-  tab.add("Climber Position", this.climberMotor.getEncoder().getPosition())
+  tab.add("Climber Position", 0)
   .getEntry();
 
   public Climber() {
@@ -42,7 +42,7 @@ public class Climber extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleInit();
+    shuffleUpdate();
   }
 
   public void runClimber(double speed) {
@@ -61,7 +61,7 @@ public class Climber extends SubsystemBase {
     this.climberMotor.setIdleMode(IdleMode.kBrake);
   }
 
-  public void shuffleInit() {
+  public void shuffleUpdate() {
     this.ClimberVRPM.setDouble(this.climberMotor.getEncoder().getVelocity());
     this.ClimberVP.setDouble(this.speed);
     this.ClimberPos.setDouble(this.climberMotor.getEncoder().getPosition());

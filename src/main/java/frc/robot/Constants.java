@@ -31,21 +31,24 @@ public final class Constants {
     public static final int MIDDLE_BUTTON = 2;
     public static final int LEFT_BUTTON = 3;
     public static final int RIGHT_BUTTON = 4;
+    public static final int SIDE_BUTTON1 = 5;
+    public static final int SIDE_BUTTON2 = 6;
+    public static final int SIDE_BUTTON3 = 7;
 
     public final static int FRONTL = 4;
     public final static int FRONTR = 5;
     public final static int BACKL = 3;
     public final static int BACKR = 6;
 
-    public static final int INTAKE_MOTOR = 4;
-    public static final int INTAKE_SOLENOID = 0;
+    public static final int INTAKE_MOTOR = 8;
+    public static final int INTAKE_SOLENOID = 14;
 
     public static final int SHOOTER_TOP = 2;
     public static final int SHOOTER_BOTTOM = 1;
 
-    public static final int FEEDER_MOTOR = 0;
+    public static final int FEEDER_MOTOR = 9;
 
-    public static final int CLIMBER_MOTOR = 0;
+    public static final int CLIMBER_MOTOR = 7;
 
     //CAN Feeder
     public final static int FEEDER = 4;

@@ -26,13 +26,13 @@ public class Intake extends SubsystemBase {
 
   
   private NetworkTableEntry IntakeVRPM =     
-  tab.add("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity())
+  tab.add("Intake Velocity (RPM)", 0)
   .getEntry();
   private NetworkTableEntry IntakeVP =     
-  tab.add("Intake Velcocity (%)", this.speed)
+  tab.add("Intake Velocity (%)", this.speed)
   .getEntry();
   private NetworkTableEntry IntakePos =     
-  tab.add("Intake Position", this.intakeMotor.getEncoder().getPosition())
+  tab.add("Intake Position", 0)
   .getEntry();
   private NetworkTableEntry IntakeSol = 
   tab.add("Solenoid on?", (this.bool))
@@ -43,21 +43,26 @@ public class Intake extends SubsystemBase {
   public Intake() {
     this.intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
     this.intakeSol = new Solenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID);
-    
+    this.intakeSol.set(bool);
+
     resetMotors();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleInit();
+    shuffleUpdate();
   }
 
-  public void runIntake(double speed, boolean bool) {
-    this.intakeMotor.set(speed);
-    this.intakeSol.set(bool);
+  public void toggleIntakeSol()
+  {
+    this.intakeSol.set(!IntakeSol.getBoolean(false));
+    this.bool = IntakeSol.getBoolean(false);
+  }
 
-    this.bool = bool;
+  public void runIntake(double speed) {
+    this.intakeMotor.set(speed);
+
     this.speed = speed;
   }
 
@@ -67,7 +72,7 @@ public class Intake extends SubsystemBase {
     this.intakeMotor.setIdleMode(IdleMode.kCoast);
   }
 
-  private void shuffleInit() {
+  private void shuffleUpdate() {
     this.IntakeVRPM.setDouble(this.intakeMotor.getEncoder().getVelocity());
     this.IntakeVP.setDouble(this.speed);
     this.IntakePos.setDouble(this.intakeMotor.getEncoder().getPosition());

@@ -32,43 +32,43 @@ public class Drivetrain extends SubsystemBase {
   .getEntry();
 
   private NetworkTableEntry VelocityFL =     
-  tab.add("Velocity FL", frontL.getEncoder().getVelocity())
+  tab.add("Velocity FL", 0)
   .getEntry();
   private NetworkTableEntry PositionFL =     
-  tab.add("Position FL", frontL.getEncoder().getPosition())
+  tab.add("Position FL", 0)
   .getEntry();
   private NetworkTableEntry TempFL =     
-  tab.add("Temp FL", frontL.getMotorTemperature())
+  tab.add("Temp FL", 0)
   .getEntry();
 
   private NetworkTableEntry VelocityFR =     
-  tab.add("Velocity FR", frontR.getEncoder().getVelocity())
+  tab.add("Velocity FR", 0)
   .getEntry();
   private NetworkTableEntry PositionFR =     
-  tab.add("Position FR", frontR.getEncoder().getPosition())
+  tab.add("Position FR", 0)
   .getEntry();
   private NetworkTableEntry TempFR =     
-  tab.add("Temp FR", frontR.getMotorTemperature())
+  tab.add("Temp FR", 0)
   .getEntry();
 
   private NetworkTableEntry VelocityBL =     
-  tab.add("Velocity FR", backL.getEncoder().getVelocity())
+  tab.add("Velocity BL", 0)
   .getEntry();
   private NetworkTableEntry PositionBL =     
-  tab.add("Position BL", backL.getEncoder().getPosition())
+  tab.add("Position BL", 0)
   .getEntry();
   private NetworkTableEntry TempBL =     
-  tab.add("Temp BL", backL.getMotorTemperature())
+  tab.add("Temp BL", 0)
   .getEntry();
 
   private NetworkTableEntry VelocityBR =     
-  tab.add("Velocity BR", backR.getEncoder().getVelocity())
+  tab.add("Velocity BR", 0)
   .getEntry();
   private NetworkTableEntry PositionBR =     
-  tab.add("Position BR", backR.getEncoder().getPosition())
+  tab.add("Position BR", 0)
   .getEntry();
   private NetworkTableEntry TempBR =     
-  tab.add("Temp BR", backR.getMotorTemperature())
+  tab.add("Temp BR", 0)
   .getEntry();
 
   /** Creates a new Drivetrain. */
@@ -91,7 +91,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleInit();
+    shuffleUpdate();
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
@@ -115,7 +115,7 @@ public class Drivetrain extends SubsystemBase {
     this.backR.setIdleMode(IdleMode.kBrake);
   }
 
-  private void shuffleInit() {
+  private void shuffleUpdate() {
     VelocityLP.setDouble(this.leftSpeed);
     VelocityRP.setDouble(this.rightSpeed);
 
