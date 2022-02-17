@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 // import edu.wpi.first.wpilibj.Ultrasonic;
@@ -19,6 +20,8 @@ public class Feeder extends SubsystemBase {
   // Ultrasonic colorSensor;
   private double speed;
 
+  NetworkTableEntry speedRPM, speedPercent, feederPosition;
+
   ShuffleboardTab tab = Shuffleboard.getTab("Feeder System");
 
   /** Creates a new Feeder. */
@@ -27,12 +30,14 @@ public class Feeder extends SubsystemBase {
     this.feederMotor = new CANSparkMax(Constants.FEEDER_MOTOR, MotorType.kBrushless);
 
     resetMotors();
+
+    shuffleInit();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleInit();
+    shuffleUpdate();
   }
 
   public void runFeeder(double speed) {
@@ -57,8 +62,14 @@ public class Feeder extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    tab.add("Feeder Velocity (RPM)", this.feederMotor.getEncoder().getVelocity());
-    tab.add("Feeder Velocity (%)", this.speed);
-    tab.add("Feeder Position", this.feederMotor.getEncoder().getPosition());
+    speedRPM = tab.add("Feeder Velocity (RPM)", this.feederMotor.getEncoder().getVelocity()).getEntry();
+    speedPercent = tab.add("Feeder Velocity (%)", this.speed).getEntry();
+    feederPosition = tab.add("Feeder Position", this.feederMotor.getEncoder().getPosition()).getEntry();
+  }
+
+  private void shuffleUpdate() {
+    speedRPM.setDouble(this.feederMotor.getEncoder().getVelocity());
+    speedPercent.setDouble(this.speed);
+    feederPosition.setDouble(this.feederMotor.getEncoder().getPosition());
   }
 }

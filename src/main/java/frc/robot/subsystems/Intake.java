@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -21,6 +22,8 @@ public class Intake extends SubsystemBase {
   private boolean bool;
   private double speed;
 
+  NetworkTableEntry speedRPM, speedPercent, intakePosition, solenoidState;
+
   ShuffleboardTab tab = Shuffleboard.getTab("Intake System");
 
   /** Creates a new Intake. */
@@ -29,12 +32,14 @@ public class Intake extends SubsystemBase {
     this.intakeSol = new Solenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID);
     
     resetMotors();
+
+    shuffleInit();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleInit();
+    shuffleUpdate();
   }
 
   public void runIntake(double speed, boolean bool) {
@@ -52,9 +57,16 @@ public class Intake extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    tab.add("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity());
-    tab.add("Intake Velcocity (%)", this.speed);
-    tab.add("Intake Position", this.intakeMotor.getEncoder().getPosition());
-    tab.addBoolean("Solenoid on?", () -> this.bool);
+    speedRPM = tab.add("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity()).getEntry();
+    speedPercent = tab.add("Intake Velcocity (%)", this.speed).getEntry();
+    intakePosition = tab.add("Intake Position", this.intakeMotor.getEncoder().getPosition()).getEntry();
+    solenoidState = tab.add("Solenoid on?", this.bool).getEntry(); // this is odd because idk whether to do addBoolean or add
+  }
+
+  private void shuffleUpdate() {
+    speedRPM.setDouble(this.intakeMotor.getEncoder().getVelocity());
+    speedPercent.setDouble(this.speed);
+    intakePosition.setDouble(this.intakeMotor.getEncoder().getPosition());
+    solenoidState.setBoolean(this.bool);
   }
 }

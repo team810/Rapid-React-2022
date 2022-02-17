@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -21,6 +22,8 @@ public class Climber extends SubsystemBase {
   private double speed;
   private Solenoid leftHook, rightHook; 
 
+  NetworkTableEntry speedRPM, speedPercent, climberPosition;
+
   ShuffleboardTab tab = Shuffleboard.getTab("Climber System");
 
   public Climber() {
@@ -29,12 +32,14 @@ public class Climber extends SubsystemBase {
     this.rightHook = new Solenoid(PneumaticsModuleType.REVPH, Constants.HOOKR);
 
     motorReset();
+
+    shuffleInit();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleInit();
+    shuffleUpdate();
   }
 
   public void runClimber(double speed) {
@@ -61,8 +66,15 @@ public class Climber extends SubsystemBase {
   }
 
   public void shuffleInit() {
-    tab.add("Climber Velocity (RPM)", this.climberMotor.getEncoder().getVelocity());
-    tab.add("Climber Velocity (%)", this.speed);
-    tab.add("Climber Position", this.climberMotor.getEncoder().getPosition());
+    speedRPM = tab.add("Climber Velocity (RPM)", this.climberMotor.getEncoder().getVelocity()).getEntry();
+    speedPercent = tab.add("Climber Velocity (%)", this.speed).getEntry();
+    climberPosition = tab.add("Climber Position", this.climberMotor.getEncoder().getPosition()).getEntry();
+  }
+
+  public void shuffleUpdate() {
+    speedRPM.setDouble(this.climberMotor.getEncoder().getVelocity());
+    speedPercent.setDouble(this.speed);
+    climberPosition.setDouble(this.climberMotor.getEncoder().getPosition());
+
   }
 }

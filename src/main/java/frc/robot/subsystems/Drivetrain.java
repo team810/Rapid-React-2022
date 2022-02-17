@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -20,6 +21,12 @@ public class Drivetrain extends SubsystemBase {
   private MotorControllerGroup left, right;
   private DifferentialDrive drive;
   private double leftSpeed, rightSpeed; 
+
+  NetworkTableEntry LSpeed, RSpeed, 
+                    FLvel, FLpos, FLtemp,
+                    FRvel, FRpos, FRtemp,
+                    BLvel, BLpos, BLtemp,
+                    BRvel, BRpos, BRtemp; 
 
   ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain System");
 
@@ -38,12 +45,14 @@ public class Drivetrain extends SubsystemBase {
     this.left.setInverted(true);
 
     this.drive = new DifferentialDrive(left, right);
+
+    shuffleInit();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleInit();
+    shuffleUpdate();
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
@@ -69,24 +78,44 @@ public class Drivetrain extends SubsystemBase {
 
   private void shuffleInit() {
     
-    tab.add("Drivetrain Velocity Left (%)", this.leftSpeed);
-    tab.add("Drivetrain Velocity Right (%)", this.rightSpeed);
+    LSpeed = tab.add("Drivetrain Velocity Left (%)", this.leftSpeed).getEntry();
+    RSpeed = tab.add("Drivetrain Velocity Right (%)", this.rightSpeed).getEntry();
 
-    tab.add("Velocity FL", frontL.getEncoder().getVelocity());
-    tab.add("Position FL", frontL.getEncoder().getPosition());
-    tab.add("Temp FL", frontL.getMotorTemperature());
+    FLvel = tab.add("Velocity FL", frontL.getEncoder().getVelocity()).getEntry();
+    FLpos = tab.add("Position FL", frontL.getEncoder().getPosition()).getEntry();
+    FLtemp = tab.add("Temp FL", frontL.getMotorTemperature()).getEntry();
 
-    tab.add("Velocity FR", frontR.getEncoder().getVelocity());
-    tab.add("Position FR", frontR.getEncoder().getPosition());
-    tab.add("Temp FR", frontR.getMotorTemperature());
+    FRvel = tab.add("Velocity FR", frontR.getEncoder().getVelocity()).getEntry();
+    FRpos = tab.add("Position FR", frontR.getEncoder().getPosition()).getEntry();
+    FRtemp = tab.add("Temp FR", frontR.getMotorTemperature()).getEntry();
 
-    tab.add("Velocity BL", backL.getEncoder().getVelocity());
-    tab.add("Position BL", backL.getEncoder().getPosition());
-    tab.add("Temp BL", backL.getMotorTemperature());
+    BLvel = tab.add("Velocity BL", backL.getEncoder().getVelocity()).getEntry();
+    BLpos = tab.add("Position BL", backL.getEncoder().getPosition()).getEntry();
+    BLpos = tab.add("Temp BL", backL.getMotorTemperature()).getEntry();
 
-    tab.add("Velocity BR", backR.getEncoder().getVelocity());
-    tab.add("Position BR", backR.getEncoder().getPosition());
-    tab.add("Temp BR", backR.getMotorTemperature());
-    
+    BRvel = tab.add("Velocity BR", backR.getEncoder().getVelocity()).getEntry();
+    BRpos = tab.add("Position BR", backR.getEncoder().getPosition()).getEntry();
+    BRtemp = tab.add("Temp BR", backR.getMotorTemperature()).getEntry();
+  }
+
+  private void shuffleUpdate() {
+    LSpeed.setDouble(this.leftSpeed);
+    RSpeed.setDouble(this.rightSpeed);
+
+    FLvel.setDouble(frontL.getEncoder().getVelocity());
+    FLpos.setDouble(frontL.getEncoder().getPosition());
+    FLtemp.setDouble(frontL.getMotorTemperature());
+
+    FRvel.setDouble(frontR.getEncoder().getVelocity());
+    FRpos.setDouble(frontR.getEncoder().getPosition());
+    FRtemp.setDouble(frontR.getMotorTemperature());
+
+    BLvel.setDouble(backL.getEncoder().getVelocity());
+    BLpos.setDouble(backL.getEncoder().getPosition());
+    BLpos.setDouble(backL.getMotorTemperature());
+
+    BRvel.setDouble(backR.getEncoder().getVelocity());
+    BRpos.setDouble(backR.getEncoder().getPosition());
+    BRtemp.setDouble(backR.getMotorTemperature());
   }
 }
