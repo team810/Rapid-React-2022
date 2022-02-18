@@ -75,7 +75,7 @@ public class RobotContainer {
     
     runIntake = new JoystickButton(RIGHT, Constants.TRIGGER_BUTTON);
     runIntake.whileHeld(new ParallelCommandGroup(    
-      new StartEndCommand(() -> m_intake.runIntake(.5, Value.kForward, 1), () -> m_intake.runIntake(0, Value.kReverse, 2), m_intake),
+      new StartEndCommand(() -> m_intake.runIntake(.5, Value.kForward, 2), () -> m_intake.runIntake(0, Value.kReverse, 1), m_intake),
       new StartEndCommand(()-> m_feeder.runFeeder(.5), ()-> m_feeder.runFeeder(0), m_feeder)
       ));
 
@@ -85,7 +85,7 @@ public class RobotContainer {
     ejectBall = new JoystickButton(LEFT, Constants.MIDDLE_BUTTON);
     ejectBall.whileHeld(new ParallelCommandGroup(
       new StartEndCommand(() -> m_feeder.runFeeder(-0.5), () -> m_feeder.runFeeder(0), m_feeder), 
-      new StartEndCommand(() -> m_intake.runIntake(-0.5, Value.kForward, 1), () -> m_intake.runIntake(0, Value.kReverse, 2), m_intake)
+      new StartEndCommand(() -> m_intake.runIntake(-0.5, Value.kForward, 2), () -> m_intake.runIntake(0, Value.kReverse, 1), m_intake)
     ));
 
     runShooterPID = new JoystickButton(RIGHT, Constants.MIDDLE_BUTTON);
