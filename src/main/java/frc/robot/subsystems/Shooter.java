@@ -15,7 +15,6 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -24,8 +23,6 @@ public class Shooter extends SubsystemBase {
 
   ShuffleboardTab tab = Shuffleboard.getTab("Shooter System");
 
-  // private double setPointTop, kPTop, kITop, kDTop, kFFTop;
-  // private double setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
   private double kIz, kMinOutput, kMaxOutput;
 
   SparkMaxPIDController top_pidcontroller, bottom_pidcontroller;
@@ -34,8 +31,15 @@ public class Shooter extends SubsystemBase {
 
   private double distance; // inches, convert to whatever you need in the run command or shuffleboard
                            // command
-  NetworkTableEntry setSpeedTop, setPTop, setITop, setDTop, setFTop,
-      setSpeedBottom, setPBottom, setIBottom, setDBottom, setFBottom;
+
+  NetworkTableEntry setPointTop, kPTop, kITop, kDTop, kFFTop;
+  NetworkTableEntry setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
+
+  NetworkTableEntry speedTop, speedBottom; 
+
+  NetworkTableEntry topVelRPM, topVelPercent, 
+                    bottomVelRPM, bottomVelPercent,
+                    targetValidity, limelightX, limelightY, limelightArea, targetDistance; 
 
   private int goalHeight = 96; // inches
   private int limelightHeight = 48; // inches
@@ -48,22 +52,14 @@ public class Shooter extends SubsystemBase {
   private NetworkTableEntry ta = table.getEntry("ta");
   private NetworkTableEntry tv = table.getEntry("tv");
 
-  private NetworkTableEntry shooterTopVRPM = tab.add("Shooter Velcocity (RPM)", 0)
-      .getEntry();
-  private NetworkTableEntry shooterTopVP = tab.add("Shooter Velcocity (%)", this.topSpeed)
-      .getEntry();
-
-  private NetworkTableEntry shooterBotVRPM = tab.add("Shooter Vel Bot (RPM)", 0)
-      .getEntry();
-  private NetworkTableEntry shooterBotVP = tab.add("Shooter Vel Bot (%)", this.bottomSpeed)
-      .getEntry();
-
   /** Creates a new Shooter. */
   public Shooter() {
+
     this.top = new CANSparkMax(Constants.SHOOTER_TOP, MotorType.kBrushless);
     this.bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
 
     resetMotors();
+    PIDinit();
     shuffleInit();
   }
 
@@ -90,29 +86,31 @@ public class Shooter extends SubsystemBase {
     this.bottomSpeed = bottomSpeed;
   }
 
-  public void runTop() {
-    top_pidcontroller.setP(setPTop.getDouble(0));
-    top_pidcontroller.setI(setITop.getDouble(0));
-    top_pidcontroller.setD(setDTop.getDouble(0));
-    top_pidcontroller.setFF(setFTop.getDouble(0));
+
+  public void runTop()
+  {
+    top_pidcontroller.setP(kPTop.getDouble(0));
+    top_pidcontroller.setI(kITop.getDouble(0));
+    top_pidcontroller.setD(kDTop.getDouble(0));
+    top_pidcontroller.setFF(kFFTop.getDouble(0));
     top_pidcontroller.setIZone(kIz);
     top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
-    top_pidcontroller.setReference(setSpeedTop.getDouble(0), ControlType.kVelocity);
-    shooterTopVRPM.setDouble(top.getEncoder().getVelocity());
+    top_pidcontroller.setReference(setPointTop.getDouble(0), ControlType.kVelocity);
+    speedTop.setDouble(top.getEncoder().getVelocity());
   }
 
- 
-  public void runBottom() {
-    bottom_pidcontroller.setP(setPBottom.getDouble(0));
-    bottom_pidcontroller.setI(setIBottom.getDouble(0));
-    bottom_pidcontroller.setD(setDBottom.getDouble(0));
-    bottom_pidcontroller.setFF(setFBottom.getDouble(0));
+  public void runBottom()
+  {
+    bottom_pidcontroller.setP(kPBottom.getDouble(0));
+    bottom_pidcontroller.setI(kIBottom.getDouble(0));
+    bottom_pidcontroller.setD(kDBottom.getDouble(0));
+    bottom_pidcontroller.setFF(kFFBottom.getDouble(0));
     bottom_pidcontroller.setIZone(kIz);
     bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
-    bottom_pidcontroller.setReference(setSpeedBottom.getDouble(0), ControlType.kVelocity);
-    shooterBotVRPM.setDouble(top.getEncoder().getVelocity());
+    bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
+    speedBottom.setDouble(top.getEncoder().getVelocity());
   }
 
   private void resetMotors() {
@@ -127,36 +125,93 @@ public class Shooter extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    Shuffleboard.selectTab("Shooter System");
-    setSpeedTop = tab.add("Set Speed Top", 1000).getEntry();
-    setSpeedBottom = tab.add("Set Speed Bottom", 1000).getEntry();
-    setPTop = tab.addPersistent("P top", 0).getEntry();
-    setITop = tab.addPersistent("I top", 0).getEntry();
-    setDTop = tab.addPersistent("D top", 0).getEntry();
-    setFTop = tab.addPersistent("F top", 0).getEntry();
-    setPBottom = tab.addPersistent("P", 0).getEntry();
-    setIBottom = tab.addPersistent("I", 0).getEntry();
-    setDBottom = tab.addPersistent("D", 0).getEntry();
-    setFBottom = tab.addPersistent("F", 0).getEntry();
-  } 
+    topVelRPM = tab.add("Velocity Top(RPM)", this.top.getEncoder().getVelocity()).getEntry();
+    topVelPercent = tab.add("Velocity Top(%)", this.topSpeed).getEntry();
 
-  private void shuffleUpdate() {
-    shooterTopVRPM.setDouble(this.top.getEncoder().getVelocity());
-    shooterTopVP.setDouble(this.topSpeed);
-
-    shooterBotVRPM.setDouble(this.bottom.getEncoder().getVelocity());
-    shooterBotVP.setDouble(this.bottomSpeed);
+    bottomVelRPM = tab.add("Velocity Bottom(RPM)", this.bottom.getEncoder().getVelocity()).getEntry();
+    bottomVelPercent = tab.add("Velocity Bottom(%)", this.bottomSpeed).getEntry();
 
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
 
-    SmartDashboard.putBoolean("Valid Target?", tv.getBoolean(false));
-    SmartDashboard.putNumber("Limelight X", tx.getDouble(0));
-    SmartDashboard.putNumber("Limelight Y", ty.getDouble(0));
-    SmartDashboard.putNumber("Limelight Area", ta.getDouble(0));
+    targetValidity = tab.add("Valid Target?", tv.getBoolean(false)).getEntry();
+    limelightX = tab.add("Limelight X", tx.getDouble(0)).getEntry();
+    limelightY = tab.add("Limelight Y", ty.getDouble(0)).getEntry();
+    limelightArea = tab.add("Limelight Area", ta.getDouble(0)).getEntry();
 
-    SmartDashboard.putNumber("Distance to target", this.distance);
+    targetDistance = tab.add("Distance to target", this.distance).getEntry();
+  }
+
+  private void shuffleUpdate() {
+    topVelRPM.setDouble(this.top.getEncoder().getVelocity());
+    topVelPercent.setDouble(this.topSpeed);
+
+    bottomVelRPM.setDouble(this.bottom.getEncoder().getVelocity());
+    bottomVelPercent.setDouble(this.bottomSpeed);
+
+    targetValidity.setBoolean(tv.getBoolean(false));
+    limelightX.setDouble(tx.getDouble(0));
+    limelightY.setDouble(ty.getDouble(0));
+    limelightArea.setDouble(ta.getDouble(0));
+
+    targetDistance.setDouble(this.distance);
+  }
+
+  private void PIDinit()
+  {
+
+    /* 
+    For next year, I'd like to explain PID tuning so no one gets confused as much.
+    Upon pressing a motor with an external force, like a ball, or just in normal motion,
+    the motor's voltage cannot be perfect; the motor will slow or speed up slightly.
+    To fix this, we use PID tuning: this accounts for the error and makes sure that the motor
+    is always running at the same speed, no matter what happens to it. 
+
+    P: Proportional - This is the error at present in the motor.
+    I: Integral - This is the accumulate error of the motor over a certain zone.
+    D: Derivative - This is the rate of change of the error in the motor at present.
+    F or FF: Feed Forward - This is the prediction of the error of the motor, and this is 
+    fed into the motor when you run PID tuning and is usually set as 1/(RPM wanted) or 1/(max RPM).  
+
+    The actual math doesn't matter that much, as the code does it for us. You can look it up 
+    if you'd like, though it's difficult to understand and there's no real reason to do it.
+    I personally, did not go the length to fully understand the math of the PID equation, though 
+    I understood the concepts it was built upon and the calculus it used. 
+
+    With these three values (found experimentally), we can use PID tuning to make sure our motors 
+    run the way we want to, and our drivetrain always goes the straightest it possibly can.
+
+    This is only a short account of PID tuning, however, and, though next year's coders
+    will surely have to do more research and awful code parsing, I just wanted to get the basic gist
+    across so next year isn't as confused as I was.
+
+    -Anagh
+    */
+
+    this.tab = Shuffleboard.getTab("Shooter System");
+    //top
+    this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry();
+    this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
+    this.kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry();
+    this.kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry();
+    this.kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry();
+    this.kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry();
+
+    //bottom
+    this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry();
+    this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
+    this.kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry();
+    this.kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry();
+    this.kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry();
+    this.kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry();
+
+    this.top_pidcontroller = top.getPIDController();
+    this.bottom_pidcontroller = bottom.getPIDController();
+
+    this.kIz = 100;
+    this.kMinOutput = -1;
+    this.kMaxOutput = 1;
   }
 
   private void updateD() {
