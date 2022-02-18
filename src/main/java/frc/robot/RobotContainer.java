@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -76,14 +77,15 @@ public class RobotContainer {
     runClimber.whenPressed(new SequentialCommandGroup(
       new InstantCommand(() -> m_climber.runClimber(0.5)), 
       new ParallelCommandGroup(
-          new InstantCommand(() -> m_climber.toggleLeftHook(true)), 
-          new InstantCommand(() -> m_climber.toggleRightHook(true))), 
+          new InstantCommand(() -> m_climber.toggleLeftHook(Value.kForward)), 
+          new InstantCommand(() -> m_climber.toggleRightHook(Value.kForward))), 
       new InstantCommand(() -> m_climber.runClimber(-0.5))
     ));
     
     runIntake = new JoystickButton(RIGHT, Constants.TRIGGER_BUTTON);
     runIntake.whileHeld(new ParallelCommandGroup(    
       new StartEndCommand(() -> m_intake.runIntake(.5), () -> m_intake.runIntake(0), m_intake),
+      new StartEndCommand(() -> m_intake.toggleIntakeSolenoid(Value.kForward), () -> m_intake.toggleIntakeSolenoid(Value.kReverse), m_intake),
       new StartEndCommand(()-> m_feeder.runFeeder(.5), ()-> m_feeder.runFeeder(0), m_feeder)
       ));
 
