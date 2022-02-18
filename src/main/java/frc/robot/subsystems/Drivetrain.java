@@ -28,6 +28,8 @@ public class Drivetrain extends SubsystemBase {
                     BLvel, BLpos, BLtemp,
                     BRvel, BRpos, BRtemp; 
 
+                    
+
   ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain System");
 
   /** Creates a new Drivetrain. */
@@ -117,5 +119,5 @@ public class Drivetrain extends SubsystemBase {
     BRvel.setDouble(backR.getEncoder().getVelocity());
     BRpos.setDouble(backR.getEncoder().getPosition());
     BRtemp.setDouble(backR.getMotorTemperature());
-  }
+  } 
 }

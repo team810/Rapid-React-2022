@@ -31,8 +31,8 @@ public class Shooter extends SubsystemBase {
   private double distance; // inches, convert to whatever you need in the run command or shuffleboard
                            // command
 
-  private double setPointTop, kPTop, kITop, kDTop, kFFTop;
-  private double setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
+  NetworkTableEntry setPointTop, kPTop, kITop, kDTop, kFFTop;
+  NetworkTableEntry setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
   private double kIz, kMinOutput, kMaxOutput; 
 
   NetworkTableEntry speedTop, speedBottom; 
@@ -96,28 +96,28 @@ public class Shooter extends SubsystemBase {
 
   public void runTop()
   {
-    top_pidcontroller.setP(kPTop);
-    top_pidcontroller.setI(kITop);
-    top_pidcontroller.setD(kDTop);
-    top_pidcontroller.setFF(kFFTop);
+    top_pidcontroller.setP(kPTop.getDouble(0));
+    top_pidcontroller.setI(kITop.getDouble(0));
+    top_pidcontroller.setD(kDTop.getDouble(0));
+    top_pidcontroller.setFF(kFFTop.getDouble(0));
     top_pidcontroller.setIZone(kIz);
     top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
-    top_pidcontroller.setReference(setPointTop, ControlType.kVelocity);
+    top_pidcontroller.setReference(setPointTop.getDouble(0), ControlType.kVelocity);
     speedTop.setDouble(top.getEncoder().getVelocity());
   }
 
   public void runBottom()
   {
 
-    bottom_pidcontroller.setP(kPBottom);
-    bottom_pidcontroller.setI(kIBottom);
-    bottom_pidcontroller.setD(kDBottom);
-    bottom_pidcontroller.setFF(kFFBottom);
+    bottom_pidcontroller.setP(kPBottom.getDouble(0));
+    bottom_pidcontroller.setI(kIBottom.getDouble(0));
+    bottom_pidcontroller.setD(kDBottom.getDouble(0));
+    bottom_pidcontroller.setFF(kFFBottom.getDouble(0));
     bottom_pidcontroller.setIZone(kIz);
     bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
-    bottom_pidcontroller.setReference(setPointBottom, ControlType.kVelocity);
+    bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
     speedBottom.setDouble(top.getEncoder().getVelocity());
   }
 
@@ -199,20 +199,20 @@ public class Shooter extends SubsystemBase {
 
     this.tab = Shuffleboard.getTab("Shooter System");
     //top
-    this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry().getDouble(5000);
+    this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry();
     this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
-    this.kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry().getDouble(0);
-    this.kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry().getDouble(0);
-    this.kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry().getDouble(0);
-    this.kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry().getDouble(0);
+    this.kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry();
+    this.kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry();
+    this.kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry();
+    this.kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry();
 
     //bottom
-    this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry().getDouble(5000);
+    this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry();
     this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
-    this.kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry().getDouble(0);
-    this.kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry().getDouble(0);
-    this.kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry().getDouble(0);
-    this.kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry().getDouble(0);
+    this.kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry();
+    this.kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry();
+    this.kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry();
+    this.kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry();
 
     this.top_pidcontroller = top.getPIDController();
     this.bottom_pidcontroller = bottom.getPIDController();
