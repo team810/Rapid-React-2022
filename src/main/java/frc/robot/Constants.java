@@ -4,63 +4,80 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
-
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants{
+public final class Constants {
 
-    //USB
+    // JOYSTICK CONFIG
+    public static final int GP = 2;
+    public static final int LEFT_JOYSTICK = 0;
+    public static final int RIGHT_JOYSTICK = 1;
 
-    public final static int LEFT_JOYSTICK = 0;
-    public final static int RIGHT_JOYSTICK = 1;
-    
+    public static final int XAXIS = 0;
+    public static final int YAXIS = 1;
 
-    //CAN - DRIVETRAIN
-    public final static int FRONTL = 8;
-    public final static int FRONTR = 1;
-    public final static int BACKL = 2;
-    public final static int BACKR = 3;
+    // JOYSTICK BUTTONS
+    public static final int TRIGGER_BUTTON = 1;
+    public static final int MIDDLE_BUTTON = 2;
+    public static final int LEFT_BUTTON = 3;
+    public static final int RIGHT_BUTTON = 4;
+    public static final int SIDE_BUTTON1 = 5;
+    public static final int SIDE_BUTTON2 = 6;
+    public static final int SIDE_BUTTON3 = 7;
 
-    //CAN - SHOOTER
-    public final static int SHOOTER_TOP = 7;
-    public final static int SHOOTER_BOTTOM = 5;
-    public final static int HOOD = 6;
+    // GAMEPAD BUTTONS
+    public static final int X = 1;
+    public static final int B = 3;
+    public static final int LB = 5;
+    public static final int RB = 6;
 
-    //CAN - INTAKE
-    public final static int INTAKE = 4;
+    // DRIVETRAIN (CAN)
+    public final static int FRONTL = 4;
+    public final static int FRONTR = 5;
+    public final static int BACKL = 3;
+    public final static int BACKR = 6;
 
-    //CAN FEEDER
-    public final static int FEEDER = 9;
+    // INTAKE (SPARK)
+    public static final int INTAKE_MOTOR = 1;
+    public static final int INTAKE_SOLENOID_1 = 14;
+    public static final int INTAKE_SOLENOID_2 = 15;
 
-    //CAN CLIMBER
-    public final static int CLIMB = 10;
+    // SHOOTER (CAN)
+    public static final int SHOOTER_TOP = 2;
+    public static final int SHOOTER_BOTTOM = 1;
 
-    
-    
-    //LIMELIGHT
-    public static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-    
-    
-    public static final NetworkTableEntry tx = table.getEntry("tx");
-    public static final NetworkTableEntry ty = table.getEntry("ty");
-    public static final NetworkTableEntry ta = table.getEntry("ta");
-    public static final NetworkTableEntry tv = table.getEntry("tv");
-    public static final NetworkTableEntry ledMode = table.getEntry("ledMode");
-    public static final NetworkTableEntry camMode = table.getEntry("camMode");
-    public static final NetworkTableEntry pipeline = table.getEntry("pipeline");
-    public static final NetworkTableEntry stream = table.getEntry("stream");
+    // CLIMBER (CAN)
+    public static final int CLIMBER_MOTOR = 7;
 
+    public final static int HOOKL_1 = 1;
+    public final static int HOOKL_2 = 2;
+    public final static int HOOKR_1 = 3;
+    public final static int HOOKR_2 = 4; 
+    public final static double CLIMBER_REVS = 15.7079633;
 
+    // FEEDER (SPARK)
+    public static final int FEEDER_MOTOR = 0;
 
+    //SHOOTER PID VALUES
+    //top 
+    public static final double kPTop = 0;
+    public static final double kITop = 0;
+    public static final double kDTop = 0;
+    public static final double kFTop = 0; 
 
+    //bottom
+    public static final double kPBottom = 0;
+    public static final double kIBottom = 0;
+    public static final double kDBottom = 0;
+    public static final double kFBottom = 0; 
 }

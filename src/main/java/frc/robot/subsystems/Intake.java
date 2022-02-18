@@ -4,95 +4,34 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.ColorSensorV3;
-
-import edu.wpi.first.hal.simulation.DriverStationDataJNI;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-
-  private CANSparkMax intakeMotor;
-  private Solenoid intakeSolLeft, intakeSolRight;
-
-  private double speed;
-
-  Lightstrips m_lights;
-
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
-
-  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+  private Spark intakeMotor;
+  private DoubleSolenoid intakeSol;
 
   /** Creates a new Intake. */
   public Intake() {
-    intakeMotor = new CANSparkMax(Constants.INTAKE, MotorType.kBrushless);
-    intakeSolLeft = new Solenoid(PneumaticsModuleType.REVPH, 9);
-    intakeSolRight = new Solenoid(PneumaticsModuleType.REVPH, 8);
-
+    this.intakeMotor = new Spark(Constants.INTAKE_MOTOR);
+    this.intakeSol = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_1, Constants.INTAKE_SOLENOID_2);
   }
 
   @Override
   public void periodic() {
-    ejectBall();
+    // This method will be called once per scheduler run
   }
 
-
-  public void setIntake(boolean value, double speed) {
-    intakeSolLeft.set(value);
-    intakeSolRight.set(value);
-    intakeMotor.setIdleMode(IdleMode.kBrake);
-    intakeMotor.set(speed);
+  public void runIntake(double speed) {
+    this.intakeMotor.set(speed);
   }
 
-  public boolean getCorrectBall() {
-
-    Color detectedColor = m_colorSensor.getColor();
-
-    DriverStation.getAlliance();
-	if (DriverStation.getAlliance() == Alliance.Red) {
-      if (detectedColor.red > .5) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-		DriverStation.getAlliance();
-		if (DriverStation.getAlliance() == Alliance.Blue) {
-		  if (detectedColor.blue > .5) {
-		    return true;
-		  } else {
-		    return false;
-		  }
-		}
-	}
-    return false;
+  public void toggleIntakeSolenoid(Value value)
+  {
+    intakeSol.set(value);
   }
-
-  public void ejectBall(){
-    if(!getCorrectBall()){
-      m_lights.changeLEDColor("R");
-      setIntake(false, -.7);
-    }
-  }
-
- private void shuffleInit() {
-    SmartDashboard.putNumber("Intake Velcocity (RPM)", this.intakeMotor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Intake Velcocity (%)", this.speed);
-
-    //SmartDashboard.putNumber("Intake Position", this.intakeMotor.getEncoder().getPosition());
-
-    SmartDashboard.putBoolean("Solenoid State", intakeSolLeft.get());
-  }
-} 
-  
-
+}
