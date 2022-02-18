@@ -148,51 +148,22 @@ public class Shooter extends SubsystemBase {
 
   private void PIDinit()
   {
-
-    /* 
-    For next year, I'd like to explain PID tuning so no one gets confused as much.
-    Upon pressing a motor with an external force, like a ball, or just in normal motion,
-    the motor's voltage cannot be perfect; the motor will slow or speed up slightly.
-    To fix this, we use PID tuning: this accounts for the error and makes sure that the motor
-    is always running at the same speed, no matter what happens to it. 
-
-    P: Proportional - This is the error at present in the motor.
-    I: Integral - This is the accumulate error of the motor over a certain zone.
-    D: Derivative - This is the rate of change of the error in the motor at present.
-    F or FF: Feed Forward - This is the prediction of the error of the motor, and this is 
-    fed into the motor when you run PID tuning and is usually set as 1/(RPM wanted) or 1/(max RPM).  
-
-    The actual math doesn't matter that much, as the code does it for us. You can look it up 
-    if you'd like, though it's difficult to understand and there's no real reason to do it.
-    I personally, did not go the length to fully understand the math of the PID equation, though 
-    I understood the concepts it was built upon and the calculus it used. 
-
-    With these three values (found experimentally), we can use PID tuning to make sure our motors 
-    run the way we want to, and our drivetrain always goes the straightest it possibly can.
-
-    This is only a short account of PID tuning, however, and, though next year's coders
-    will surely have to do more research and awful code parsing, I just wanted to get the basic gist
-    across so next year isn't as confused as I was.
-
-    -Anagh
-    */
-
     this.tab = Shuffleboard.getTab("Shooter System");
     //top
-    this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry();
+    this.setPointTop = tab.add("Set Speed (Top)", 1000).getEntry();
     this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
     this.kPTop = tab.addPersistent("P (Top)", 0).getEntry();
     this.kITop = tab.addPersistent("I (Top)", 0).getEntry();
     this.kDTop = tab.addPersistent("D (Top)", 0).getEntry();
-    this.kFFTop = tab.addPersistent("F (Top)", 0).getEntry();
+    this.kFFTop = tab.addPersistent("FF (Top)", 0).getEntry();
 
     //bottom
-    this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry();
+    this.setPointBottom = tab.add("Set Speed (Bottom)", 1000).getEntry();
     this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
     this.kPBottom = tab.addPersistent("P (Bottom)", 0).getEntry();
     this.kIBottom = tab.addPersistent("I (Bottom)", 0).getEntry();
     this.kDBottom = tab.addPersistent("D (Bottom)", 0).getEntry();
-    this.kFFBottom = tab.addPersistent("F (Bottom)", 0).getEntry();
+    this.kFFBottom = tab.addPersistent("FF (Bottom)", 0).getEntry();
 
     this.top_pidcontroller = top.getPIDController();
     this.bottom_pidcontroller = bottom.getPIDController();
@@ -204,14 +175,14 @@ public class Shooter extends SubsystemBase {
     top_pidcontroller.setP(kPTop.getDouble(0));
     top_pidcontroller.setI(kITop.getDouble(0));
     top_pidcontroller.setD(kDTop.getDouble(0));
-    top_pidcontroller.setFF(kFFTop.getDouble(0));
+    top_pidcontroller.setFF(1/5600);
     top_pidcontroller.setIZone(kIz);
     top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
     bottom_pidcontroller.setP(kPBottom.getDouble(0));
-    bottom_pidcontroller.setI(kIBottom.getDouble(0));
+    bottom_pidcontroller.setI(kIBottom.getDouble(0));  
     bottom_pidcontroller.setD(kDBottom.getDouble(0));
-    bottom_pidcontroller.setFF(kFFBottom.getDouble(0));
+    bottom_pidcontroller.setFF(1/5600);
     bottom_pidcontroller.setIZone(kIz);
     bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
   }
