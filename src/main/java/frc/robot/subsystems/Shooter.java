@@ -89,43 +89,25 @@ public class Shooter extends SubsystemBase {
     this.bottomSpeed = bottomSpeed;
   }
 
-
-  public void runTop()
+  public void runPID()
   {
-    top_pidcontroller.setP(kPTop.getDouble(0));
-    top_pidcontroller.setI(kITop.getDouble(0));
-    top_pidcontroller.setD(kDTop.getDouble(0));
-    top_pidcontroller.setFF(kFFTop.getDouble(0));
-    top_pidcontroller.setIZone(kIz);
-    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
-
     top_pidcontroller.setReference(setPointTop.getDouble(0), ControlType.kVelocity);
-    speedTop.setDouble(top.getEncoder().getVelocity());
-  }
-
-  public void runBottom()
-  {
-
-    bottom_pidcontroller.setP(kPBottom.getDouble(0));
-    bottom_pidcontroller.setI(kIBottom.getDouble(0));
-    bottom_pidcontroller.setD(kDBottom.getDouble(0));
-    bottom_pidcontroller.setFF(kFFBottom.getDouble(0));
-    bottom_pidcontroller.setIZone(kIz);
-    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
-
     bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
+    speedTop.setDouble(top.getEncoder().getVelocity());
     speedBottom.setDouble(top.getEncoder().getVelocity());
   }
 
-  private void resetMotors() {
-    this.top.restoreFactoryDefaults();
-    this.bottom.restoreFactoryDefaults();
+  private void updateD() {
     /*
-     * this decreases the time between shots
-     * by leaving the motors at a higher speed when not in use
+     * d = (h2-h1) / tan(a1+a2)
+     * d = (hieght of the limelight from ground minus the heigth of the field goal
+     * inches) over
+     * (tan(angle of lens to goal + angle of lens from bottom of camera))
      */
-    this.top.setIdleMode(IdleMode.kCoast);
-    this.bottom.setIdleMode(IdleMode.kCoast);
+    // Collect data and run linear regression for motor power to distance linear
+    // relationship to implement to shoot command
+    this.distance = (this.goalHeight - this.limelightHeight)
+        / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
   }
 
   private void shuffleInit() {
@@ -199,18 +181,18 @@ public class Shooter extends SubsystemBase {
     //top
     this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry();
     this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
-    this.kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry();
-    this.kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry();
-    this.kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry();
-    this.kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry();
+    this.kPTop = tab.addPersistent("P (Top)", 0).getEntry();
+    this.kITop = tab.addPersistent("I (Top)", 0).getEntry();
+    this.kDTop = tab.addPersistent("D (Top)", 0).getEntry();
+    this.kFFTop = tab.addPersistent("F (Top)", 0).getEntry();
 
     //bottom
     this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry();
     this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
-    this.kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry();
-    this.kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry();
-    this.kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry();
-    this.kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry();
+    this.kPBottom = tab.addPersistent("P (Bottom)", 0).getEntry();
+    this.kIBottom = tab.addPersistent("I (Bottom)", 0).getEntry();
+    this.kDBottom = tab.addPersistent("D (Bottom)", 0).getEntry();
+    this.kFFBottom = tab.addPersistent("F (Bottom)", 0).getEntry();
 
     this.top_pidcontroller = top.getPIDController();
     this.bottom_pidcontroller = bottom.getPIDController();
@@ -218,18 +200,30 @@ public class Shooter extends SubsystemBase {
     this.kIz = 100;
     this.kMinOutput = -1;
     this.kMaxOutput = 1;
+
+    top_pidcontroller.setP(kPTop.getDouble(0));
+    top_pidcontroller.setI(kITop.getDouble(0));
+    top_pidcontroller.setD(kDTop.getDouble(0));
+    top_pidcontroller.setFF(kFFTop.getDouble(0));
+    top_pidcontroller.setIZone(kIz);
+    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+
+    bottom_pidcontroller.setP(kPBottom.getDouble(0));
+    bottom_pidcontroller.setI(kIBottom.getDouble(0));
+    bottom_pidcontroller.setD(kDBottom.getDouble(0));
+    bottom_pidcontroller.setFF(kFFBottom.getDouble(0));
+    bottom_pidcontroller.setIZone(kIz);
+    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
   }
 
-  private void updateD() {
+  private void resetMotors() {
+    this.top.restoreFactoryDefaults();
+    this.bottom.restoreFactoryDefaults();
     /*
-     * d = (h2-h1) / tan(a1+a2)
-     * d = (hieght of the limelight from ground minus the heigth of the field goal
-     * inches) over
-     * (tan(angle of lens to goal + angle of lens from bottom of camera))
+     * this decreases the time between shots
+     * by leaving the motors at a higher speed when not in use
      */
-    // Collect data and run linear regression for motor power to distance linear
-    // relationship to implement to shoot command
-    this.distance = (this.goalHeight - this.limelightHeight)
-        / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
+    this.top.setIdleMode(IdleMode.kCoast);
+    this.bottom.setIdleMode(IdleMode.kCoast);
   }
 }
