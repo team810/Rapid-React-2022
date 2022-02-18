@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -16,29 +17,34 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants 
-{
+public final class Constants{
 
     //USB
 
     public final static int LEFT_JOYSTICK = 0;
     public final static int RIGHT_JOYSTICK = 1;
+
+    public final static int GAMEPAD = 2;
     
 
     //CAN - DRIVETRAIN
-    public final static int FRONTL = 8;
-    public final static int FRONTR = 1;
-    public final static int BACKL = 2;
-    public final static int BACKR = 3;
+    public final static int FRONTL = 4;
+    public final static int FRONTR = 5;
+    public final static int BACKL = 3;
+    public final static int BACKR = 6;
 
     //CAN - SHOOTER
-    public final static int SHOOTER = 7;
-    public final static int ACTIVE = 5;
-    public final static int HOOD = 6;
+    public final static int SHOOTER_TOP = 2;
+    public final static int SHOOTER_BOTTOM = 1;
 
+    //INTAKE
+    public final static int INTAKE = 1;
 
-    //CAN - INTAKE
-    public final static int INTAKE = 4;
+    //FEEDER
+    public final static int FEEDER = 0;
+
+    //CAN CLIMBER
+    public final static int CLIMB = 7;
     
     
     //LIMELIGHT
@@ -53,6 +59,8 @@ public final class Constants
     public static final NetworkTableEntry camMode = table.getEntry("camMode");
     public static final NetworkTableEntry pipeline = table.getEntry("pipeline");
     public static final NetworkTableEntry stream = table.getEntry("stream");
+
+
 
 
 }

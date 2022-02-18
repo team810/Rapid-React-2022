@@ -15,9 +15,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Commands.Shoot;
-import frc.robot.Commands.ToggleSolenoid;
-
+import frc.robot.commands.TurnToTarget;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -28,28 +29,33 @@ import frc.robot.subsystems.Shooter;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer 
-{
+public class RobotContainer{
 
   
 
   // The robot's subsystems and commands are defined here...
   private Shooter m_shooter = new Shooter();
-  private Limelight m_limelight = new Limelight();
   private Intake m_intake = new Intake();
+  private Drivetrain m_drive = new Drivetrain();
+  private Feeder m_feeder = new Feeder();
+  private Climber m_climb = new Climber();
 
 
 
   public Joystick left = new Joystick(0);
   public Joystick right = new Joystick(1);
 
-  public JoystickButton shoot, toggleIntake;
+  public JoystickButton shoot, toggleArm, toggleIntake, runIntake, runFeeder, climbUp, climbDown, turnToTarget;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() 
-  {
+  public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    m_drive.setDefaultCommand(
+      new RunCommand(
+        ()-> m_drive.tankDrive(-left.getRawAxis(1), right.getRawAxis(1)), m_drive)
+    ); 
 
   }
 
@@ -59,19 +65,36 @@ public class RobotContainer
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() 
-  {
+  private void configureButtonBindings() {
 
     // shoot = new JoystickButton(left, 1);
     // shoot.whileHeld(new ParallelCommandGroup(new InstantCommand(()->m_limelight.ledMode.setNumber(3)), new InstantCommand(Shoot(m_shooter)), new InstantCommand(()->m_lime.pipeline.setNumber(1)));
 
+    shoot = new JoystickButton(left, 1);
+    shoot.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.5, .75),() -> m_shooter.runShooter(0, 0), m_shooter));
 
-    toggleIntake = new JoystickButton(right, 1);
-    toggleIntake.whileHeld(
-      new StartEndCommand(
-        () -> m_intake.setIntake(true, 1), 
-        () -> m_intake.setIntake(false, 0), 
-        m_intake));
+    runFeeder = new JoystickButton(left, 2);
+    runFeeder.whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(.7),() -> m_feeder.runFeeder(0), m_feeder));
+
+    runIntake = new JoystickButton(right, 1);
+    runIntake.whileHeld(new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake));
+
+    //Confused on the implementation of the startendcommand
+    climbUp = new JoystickButton(right, 2);
+    climbUp.whileHeld(new StartEndCommand(() -> m_climb.runClimber(-.4), () -> m_climb.runClimber(0), m_climb));
+    
+
+    //climbDown = new JoystickButton(right, 2);
+    //climbDown.whileHeld(new StartEndCommand(() -> m_climb.runClimber(-.3),() -> m_climb.runClimber(0), m_climb));
+
+    //turnToTarget = new JoystickButton(right, 1);
+    //turnToTarget.whileHeld(new TurnToTarget(m_drive));
+
+    toggleArm = new JoystickButton(right, 3);
+    toggleArm.whenPressed(new InstantCommand(() -> m_climb.togglePistons(), m_climb));
+
+    toggleIntake = new JoystickButton(right, 4);
+    toggleIntake.whenPressed(new InstantCommand(()->m_intake.toggleSolenoid(), m_intake));
   }
 
   /**
@@ -79,8 +102,7 @@ public class RobotContainer
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() 
-  {
+  public Command getAutonomousCommand(){
     // An ExampleCommand will run in autonomous
     return null;
   }

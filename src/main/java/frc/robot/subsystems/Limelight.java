@@ -4,7 +4,10 @@
 
 package frc.robot.subsystems;
 
+import java.time.temporal.IsoFields;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -18,15 +21,20 @@ public class Limelight extends SubsystemBase {
   public NetworkTableEntry stream = Constants.stream;
 
 
-
+  Lightstrips m_lights;
 
   /** Creates a new Limelight. */
   public Limelight() {
+
+    m_lights = new Lightstrips();
+
 
   }
 
   @Override
   public void periodic() {
+
+
     // This method will be called once per scheduler run
   }
 
@@ -104,7 +112,17 @@ public class Limelight extends SubsystemBase {
     return Constants.ty.getDouble(0.0);
   }
 
+  public void changeColorOnValidTarget(){
+    if(isValidTarget()){
+      m_lights.changeLEDColor("G");
+    }
+    else{
+      m_lights.changeLEDColor("B");
+    }
+  }
+
   
+
 
   // public double getDistance(){
   //   double a = this.angle + Constants.ty.getDouble(0.0); 

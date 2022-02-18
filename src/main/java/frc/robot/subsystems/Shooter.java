@@ -5,32 +5,92 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
 
-  public static CANSparkMax shooter, active, hood;
+  private CANSparkMax topMotor, bottomMotor;
+
+  private double topSpeed, bottomSpeed;
+
+  private double distance; // inches, convert to whatever you need in the run command or shuffleboard
+                           // command
+
+  private int goalHeight = 96; // inches
+  private int limelightHeight = 48; // inches
+  private int limelightAngle = 45; // degrees
+
+  private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
   /** Creates a new Shooter. */
   public Shooter() {
+    this.topMotor = new CANSparkMax(Constants.SHOOTER_TOP, MotorType.kBrushless);
+    this.bottomMotor = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
 
-    shooter = new CANSparkMax(Constants.SHOOTER, MotorType.kBrushless);
-    active = new CANSparkMax(Constants.ACTIVE, MotorType.kBrushless);
-    hood = new CANSparkMax(Constants.HOOD, MotorType.kBrushless);
-
-
+    resetMotors();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    updateD();
+    shuffleInit();
   }
 
-  public void runShooter(){
-     shooter.set(1);
-     active.set(.7);
+  public void runShooter(double topSpeed, double bottomSpeed) {
+    this.topMotor.set(-topSpeed);
+    this.bottomMotor.set(bottomSpeed);
+
+    this.topSpeed = topSpeed;
+    this.bottomSpeed = bottomSpeed;
+  }
+
+  private void resetMotors() {
+    this.topMotor.restoreFactoryDefaults();
+    this.bottomMotor.restoreFactoryDefaults();
+    /*
+     * this decreases the time between shots by leaving the motors at a higher speed
+     * when not in use
+     */
+    this.topMotor.setIdleMode(IdleMode.kCoast);
+    this.bottomMotor.setIdleMode(IdleMode.kCoast);
+  }
+
+  private void shuffleInit() {
+    SmartDashboard.putNumber("Velocity Top(RPM)", this.topMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Velocity Top(%)", this.topSpeed);
+
+    SmartDashboard.putNumber("Velocity Bottom(RPM)", this.bottomMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Velocity Bottom(%)", this.bottomSpeed);
+
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
+
+    SmartDashboard.putNumber("Limelight X", Constants.tx.getDouble(0));
+    SmartDashboard.putNumber("Limelight Y", Constants.ty.getDouble(0));
+    SmartDashboard.putNumber("Limelight Area", Constants.ta.getDouble(0));
+
+    SmartDashboard.putNumber("Distance to target", this.distance);
+  }
+
+  private void updateD() {
+    /*
+     * d = (h2-h1) / tan(a1+a2) d = (hieght of the limelight from ground minus the
+     * heigth of the field goal inches) over (tan(angle of lens to goal + angle of
+     * lens from bottom of camera))
+     */
+    // Collect data and run linear regression for motor power to distance linear
+    // relationship to implement to shoot command
+    this.distance = (this.goalHeight - this.limelightHeight)
+        / Math.tan(Math.toRadians(this.limelightAngle + Constants.ty.getDouble(0)));
   }
 }
