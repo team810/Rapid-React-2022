@@ -102,6 +102,7 @@ public class Shooter extends SubsystemBase {
     shooterTopVRPM.setDouble(top.getEncoder().getVelocity());
   }
 
+ 
   public void runBottom() {
     bottom_pidcontroller.setP(setPBottom.getDouble(0));
     bottom_pidcontroller.setI(setIBottom.getDouble(0));
@@ -127,17 +128,17 @@ public class Shooter extends SubsystemBase {
 
   private void shuffleInit() {
     Shuffleboard.selectTab("Shooter System");
-    setSpeedTop = tab.add("Set Speed", 1000).getEntry();
-    setSpeedBottom = tab.add("Set Speed", 1000).getEntry();
-    setPTop = tab.addPersistent("P", 0).getEntry();
-    setITop = tab.addPersistent("I", 0).getEntry();
-    setDTop = tab.addPersistent("D", 0).getEntry();
-    setFTop = tab.addPersistent("F", 0).getEntry();
+    setSpeedTop = tab.add("Set Speed Top", 1000).getEntry();
+    setSpeedBottom = tab.add("Set Speed Bottom", 1000).getEntry();
+    setPTop = tab.addPersistent("P top", 0).getEntry();
+    setITop = tab.addPersistent("I top", 0).getEntry();
+    setDTop = tab.addPersistent("D top", 0).getEntry();
+    setFTop = tab.addPersistent("F top", 0).getEntry();
     setPBottom = tab.addPersistent("P", 0).getEntry();
     setIBottom = tab.addPersistent("I", 0).getEntry();
     setDBottom = tab.addPersistent("D", 0).getEntry();
     setFBottom = tab.addPersistent("F", 0).getEntry();
-  }
+  } 
 
   private void shuffleUpdate() {
     shooterTopVRPM.setDouble(this.top.getEncoder().getVelocity());

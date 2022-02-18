@@ -29,7 +29,7 @@ import frc.robot.subsystems.Shooter;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private Drivetrain m_drivetrain = new Drivetrain();
+  // private Drivetrain m_drivetrain = new Drivetrain();
   private Feeder m_feeder = new Feeder();
   private Intake m_intake = new Intake();
   private Shooter m_shooter = new Shooter();
@@ -49,9 +49,9 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     
-    m_drivetrain.setDefaultCommand(
-      new RunCommand(() -> m_drivetrain.tankDrive(LEFT.getRawAxis(Constants.YAXIS), RIGHT.getRawAxis(Constants.YAXIS)), m_drivetrain)
-    );
+    // m_drivetrain.setDefaultCommand(
+    //   new RunCommand(() -> m_drivetrain.tankDrive(LEFT.getRawAxis(Constants.YAXIS), RIGHT.getRawAxis(Constants.YAXIS)), m_drivetrain)
+    // );
   }
 
   /**
@@ -75,7 +75,7 @@ public class RobotContainer {
     toggleIntake.toggleWhenPressed(new StartEndCommand(() -> m_intake.toggleIntakeSol(), () -> m_intake.toggleIntakeSol(), m_intake));
 
     runFeeder = new JoystickButton(LEFT, Constants.TRIGGER_BUTTON);
-    runFeeder.whileHeld(new StartEndCommand(()-> m_feeder.runFeeder(.5), ()-> m_feeder.runFeeder(.5), m_feeder));
+    runFeeder.whileHeld(new StartEndCommand(()-> m_feeder.runFeeder(.75), ()-> m_feeder.runFeeder(0), m_feeder));
   
     ejectBall = new JoystickButton(LEFT, Constants.MIDDLE_BUTTON);
     ejectBall.whileHeld(new ParallelCommandGroup(
@@ -84,7 +84,7 @@ public class RobotContainer {
     ));
 
     runShooter = new JoystickButton(RIGHT, Constants.MIDDLE_BUTTON);
-    runShooter.toggleWhenPressed(new StartEndCommand(() -> m_shooter.runShooter(.5, .75), () -> m_shooter.runShooter(0, 0), m_shooter));
+    runShooter.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.5, .75), () -> m_shooter.runShooter(0, 0), m_shooter));
 
     //secondary
     raiseClimber = new JoystickButton(GAMEPAD, Constants.X);

@@ -42,13 +42,13 @@ public final class Constants {
     public final static int BACKL = 3;
     public final static int BACKR = 6;
 
-    public static final int INTAKE_MOTOR = 8;
+    public static final int INTAKE_MOTOR = 1;
     public static final int INTAKE_SOLENOID = 14;
 
     public static final int SHOOTER_TOP = 2;
     public static final int SHOOTER_BOTTOM = 1;
 
-    public static final int FEEDER_MOTOR = 9;
+    public static final int FEEDER_MOTOR = 0;
 
     public static final int CLIMBER_MOTOR = 7;
 
