@@ -30,7 +30,8 @@ public class Intake extends SubsystemBase {
   public Intake() {
     this.intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
     this.intakeSol = new Solenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID);
-    
+    this.intakeSol.set(bool);
+
     resetMotors();
 
     shuffleInit();
@@ -42,11 +43,9 @@ public class Intake extends SubsystemBase {
     shuffleUpdate();
   }
 
-  public void runIntake(double speed, boolean bool) {
+  public void runIntake(double speed) {
     this.intakeMotor.set(speed);
-    this.intakeSol.set(bool);
 
-    this.bool = bool;
     this.speed = speed;
   }
 

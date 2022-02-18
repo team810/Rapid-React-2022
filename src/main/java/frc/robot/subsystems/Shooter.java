@@ -19,12 +19,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
-  // private Lightstrips LEDS;
   private CANSparkMax top, bottom;
 
-  ShuffleboardTab tab;
+  ShuffleboardTab tab = Shuffleboard.getTab("Shooter System");
 
-  String color;
+  // private double setPointTop, kPTop, kITop, kDTop, kFFTop;
+  // private double setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
+  private double kIz, kMinOutput, kMaxOutput;
+
+  SparkMaxPIDController top_pidcontroller, bottom_pidcontroller;
 
   private double topSpeed, bottomSpeed;
 
@@ -33,7 +36,6 @@ public class Shooter extends SubsystemBase {
 
   NetworkTableEntry setPointTop, kPTop, kITop, kDTop, kFFTop;
   NetworkTableEntry setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
-  private double kIz, kMinOutput, kMaxOutput; 
 
   NetworkTableEntry speedTop, speedBottom; 
 
@@ -41,7 +43,6 @@ public class Shooter extends SubsystemBase {
                     bottomVelRPM, bottomVelPercent,
                     targetValidity, limelightX, limelightY, limelightArea, targetDistance; 
 
-  SparkMaxPIDController top_pidcontroller, bottom_pidcontroller; 
 
   private int goalHeight = 96; // inches
   private int limelightHeight = 48; // inches
@@ -56,7 +57,6 @@ public class Shooter extends SubsystemBase {
 
   /** Creates a new Shooter. */
   public Shooter() {
-    // LEDS = new Lightstrips();
 
     this.top = new CANSparkMax(Constants.SHOOTER_TOP, MotorType.kBrushless);
     this.bottom = new CANSparkMax(Constants.SHOOTER_BOTTOM, MotorType.kBrushless);
@@ -73,19 +73,15 @@ public class Shooter extends SubsystemBase {
     shuffleUpdate();
   }
 
-  public void toggleLimelightLight(int value)
-  {
+  public void toggleLimelightLight(int value) {
     table.getEntry("ledMode").setNumber(value);
   }
-  public void toggleLimelightCamMode(int value)
-  {
+
+  public void toggleLimelightCamMode(int value) {
     table.getEntry("camMode").setNumber(value);
   }
 
   public void runShooter(double topSpeed, double bottomSpeed) {
-    // Red for not valid target, Green for valid target
-    // this.LEDS.changeLEDColor(this.color = tv.getBoolean(true) ? "Green" : "Red");
-    
     this.top.set(-topSpeed);
     this.bottom.set(bottomSpeed);
 
@@ -133,6 +129,8 @@ public class Shooter extends SubsystemBase {
   }
 
   private void shuffleInit() {
+
+
     topVelRPM = tab.add("Velocity Top(RPM)", this.top.getEncoder().getVelocity()).getEntry();
     topVelPercent = tab.add("Velocity Top(%)", this.topSpeed).getEntry();
 

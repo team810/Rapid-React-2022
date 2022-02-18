@@ -60,10 +60,10 @@ public class Drivetrain extends SubsystemBase {
   public void tankDrive(double leftSpeed, double rightSpeed) {
     // The numbers come in from the Y-axis of the controller as -, reversed them to
     // positive before passing
-    this.drive.tankDrive(-leftSpeed, -rightSpeed);
+    this.drive.tankDrive(-leftSpeed, rightSpeed);
 
     this.leftSpeed = -leftSpeed;
-    this.rightSpeed = -rightSpeed;
+    this.rightSpeed = rightSpeed;
   }
 
   private void resetMotors() {

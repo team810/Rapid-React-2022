@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -21,6 +17,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final int GP = 0;
     public static final int LEFT_JOYSTICK = 1;
     public static final int RIGHT_JOYSTICK = 2;
 
@@ -31,43 +28,32 @@ public final class Constants {
     public static final int MIDDLE_BUTTON = 2;
     public static final int LEFT_BUTTON = 3;
     public static final int RIGHT_BUTTON = 4;
+    public static final int SIDE_BUTTON1 = 5;
+    public static final int SIDE_BUTTON2 = 6;
+    public static final int SIDE_BUTTON3 = 7;
 
-    public final static int FRONTL = 0;
-    public final static int FRONTR = 1;
-    public final static int BACKL = 2;
-    public final static int BACKR = 3;
+    public static final int X = 1;
+    public static final int B = 3;
+    public static final int LB = 5;
+    public static final int RB = 6;
 
-    public static final int INTAKE_MOTOR = 4;
-    public static final int INTAKE_SOLENOID = 0;
+    public final static int FRONTL = 4;
+    public final static int FRONTR = 5;
+    public final static int BACKL = 3;
+    public final static int BACKR = 6;
 
-    public static final int SHOOTER_TOP = 5;
-    public static final int SHOOTER_BOTTOM = 6;
+    public static final int INTAKE_MOTOR = 8;
+    public static final int INTAKE_SOLENOID = 14;
 
-    public static final int FEEDER_MOTOR = 7;
+    public static final int SHOOTER_TOP = 2;
+    public static final int SHOOTER_BOTTOM = 1;
 
     public static final int CLIMBER_MOTOR = 8;
     public final static int HOOKL = 1;
     public final static int HOOKR = 2; 
     public final static double CLIMBER_REVS = 6.28;
+    public static final int FEEDER_MOTOR = 9;
 
-    //CAN Feeder
-    public final static int FEEDER = 4;
-
-
-    //LIMELIGHT
-    public static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-
-
-    public static final NetworkTableEntry tx = table.getEntry("tx");
-    public static final NetworkTableEntry ty = table.getEntry("ty");
-    public static final NetworkTableEntry ta = table.getEntry("ta");
-    public static final NetworkTableEntry tv = table.getEntry("tv");
-    public static final NetworkTableEntry ledMode = table.getEntry("ledMode");
-    public static final NetworkTableEntry camMode = table.getEntry("camMode");
-    public static final NetworkTableEntry pipeline = table.getEntry("pipeline");
-    public static final NetworkTableEntry stream = table.getEntry("stream");
-
-    
     //SHOOTER PID VALUE
     //top 
     public static final double kPTop = 0;
