@@ -4,63 +4,25 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Feeder extends SubsystemBase {
-  private CANSparkMax feederMotor;
+  private Spark feederMotor;
   // Ultrasonic colorSensor;
-  private double speed;
-
-  ShuffleboardTab tab = Shuffleboard.getTab("Feeder System");
-
-  private NetworkTableEntry FeederVRPM =     
-  tab.add("Feeder Velocity (RPM)", 0)
-  .getEntry();
-  private NetworkTableEntry FeederVP =     
-  tab.add("Feeder Velocity (%)", this.speed)
-  .getEntry();
-  private NetworkTableEntry FeederPos =     
-  tab.add("Feeder Position", 0)
-  .getEntry();
 
   /** Creates a new Feeder. */
   public Feeder() {
-    this.feederMotor = new CANSparkMax(Constants.FEEDER_MOTOR, MotorType.kBrushless);
-
-    resetMotors();
+    this.feederMotor = new Spark(Constants.FEEDER_MOTOR);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleUpdate();
   }
 
   public void runFeeder(double speed) {
     this.feederMotor.set(speed);
-    
-    this.speed = speed;
-  }
-
-  private void resetMotors() {
-    this.feederMotor.restoreFactoryDefaults();
-
-    this.feederMotor.setIdleMode(IdleMode.kCoast);
-    
-    // Ultrasonic.setAutomaticMode(true);
-  }
-
-  private void shuffleUpdate() {
-    this.FeederVRPM.setDouble(this.feederMotor.getEncoder().getVelocity());
-    this.FeederVP.setDouble(this.speed);
-    this.FeederPos.setDouble(this.feederMotor.getEncoder().getPosition());
   }
 }

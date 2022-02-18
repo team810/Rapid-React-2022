@@ -22,54 +22,15 @@ public class Drivetrain extends SubsystemBase {
   private DifferentialDrive drive;
   private double leftSpeed, rightSpeed; 
 
+  NetworkTableEntry LSpeed, RSpeed, 
+                    FLvel, FLpos, FLtemp,
+                    FRvel, FRpos, FRtemp,
+                    BLvel, BLpos, BLtemp,
+                    BRvel, BRpos, BRtemp; 
+
+                    
+
   ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain System");
-
-  private NetworkTableEntry VelocityLP =     
-    tab.add("Drivetrain Velocity Left (%)", this.leftSpeed)
-  .getEntry();
-  private NetworkTableEntry VelocityRP =     
-  tab.add("Drivetrain Velocity Right (%)", this.rightSpeed)
-  .getEntry();
-
-  private NetworkTableEntry VelocityFL =     
-  tab.add("Velocity FL", 0)
-  .getEntry();
-  private NetworkTableEntry PositionFL =     
-  tab.add("Position FL", 0)
-  .getEntry();
-  private NetworkTableEntry TempFL =     
-  tab.add("Temp FL", 0)
-  .getEntry();
-
-  private NetworkTableEntry VelocityFR =     
-  tab.add("Velocity FR", 0)
-  .getEntry();
-  private NetworkTableEntry PositionFR =     
-  tab.add("Position FR", 0)
-  .getEntry();
-  private NetworkTableEntry TempFR =     
-  tab.add("Temp FR", 0)
-  .getEntry();
-
-  private NetworkTableEntry VelocityBL =     
-  tab.add("Velocity BL", 0)
-  .getEntry();
-  private NetworkTableEntry PositionBL =     
-  tab.add("Position BL", 0)
-  .getEntry();
-  private NetworkTableEntry TempBL =     
-  tab.add("Temp BL", 0)
-  .getEntry();
-
-  private NetworkTableEntry VelocityBR =     
-  tab.add("Velocity BR", 0)
-  .getEntry();
-  private NetworkTableEntry PositionBR =     
-  tab.add("Position BR", 0)
-  .getEntry();
-  private NetworkTableEntry TempBR =     
-  tab.add("Temp BR", 0)
-  .getEntry();
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -86,6 +47,8 @@ public class Drivetrain extends SubsystemBase {
     this.left.setInverted(true);
 
     this.drive = new DifferentialDrive(left, right);
+
+    shuffleInit();
   }
 
   @Override
@@ -115,24 +78,46 @@ public class Drivetrain extends SubsystemBase {
     this.backR.setIdleMode(IdleMode.kBrake);
   }
 
-  private void shuffleUpdate() {
-    VelocityLP.setDouble(this.leftSpeed);
-    VelocityRP.setDouble(this.rightSpeed);
+  private void shuffleInit() {
+    
+    LSpeed = tab.add("Drivetrain Velocity Left (%)", this.leftSpeed).getEntry();
+    RSpeed = tab.add("Drivetrain Velocity Right (%)", this.rightSpeed).getEntry();
 
-    VelocityFL.setDouble(frontL.getEncoder().getVelocity());
-    PositionFL.setDouble(frontL.getEncoder().getPosition());
-    TempFL.setDouble(frontL.getMotorTemperature());
-    
-    VelocityFR.setDouble(frontR.getEncoder().getVelocity());
-    PositionFR.setDouble(frontR.getEncoder().getPosition());
-    TempFR.setDouble(frontR.getMotorTemperature());
-    
-    VelocityBL.setDouble(backL.getEncoder().getVelocity());
-    PositionBL.setDouble(backL.getEncoder().getPosition());
-    TempBL.setDouble(backL.getMotorTemperature());
-    
-    VelocityBR.setDouble(backR.getEncoder().getVelocity());
-    PositionBR.setDouble(backR.getEncoder().getPosition());
-    TempBR.setDouble(backR.getMotorTemperature());
+    FLvel = tab.add("Velocity FL", frontL.getEncoder().getVelocity()).getEntry();
+    FLpos = tab.add("Position FL", frontL.getEncoder().getPosition()).getEntry();
+    FLtemp = tab.add("Temp FL", frontL.getMotorTemperature()).getEntry();
+
+    FRvel = tab.add("Velocity FR", frontR.getEncoder().getVelocity()).getEntry();
+    FRpos = tab.add("Position FR", frontR.getEncoder().getPosition()).getEntry();
+    FRtemp = tab.add("Temp FR", frontR.getMotorTemperature()).getEntry();
+
+    BLvel = tab.add("Velocity BL", backL.getEncoder().getVelocity()).getEntry();
+    BLpos = tab.add("Position BL", backL.getEncoder().getPosition()).getEntry();
+    BLpos = tab.add("Temp BL", backL.getMotorTemperature()).getEntry();
+
+    BRvel = tab.add("Velocity BR", backR.getEncoder().getVelocity()).getEntry();
+    BRpos = tab.add("Position BR", backR.getEncoder().getPosition()).getEntry();
+    BRtemp = tab.add("Temp BR", backR.getMotorTemperature()).getEntry();
   }
+
+  private void shuffleUpdate() {
+    LSpeed.setDouble(this.leftSpeed);
+    RSpeed.setDouble(this.rightSpeed);
+
+    FLvel.setDouble(frontL.getEncoder().getVelocity());
+    FLpos.setDouble(frontL.getEncoder().getPosition());
+    FLtemp.setDouble(frontL.getMotorTemperature());
+
+    FRvel.setDouble(frontR.getEncoder().getVelocity());
+    FRpos.setDouble(frontR.getEncoder().getPosition());
+    FRtemp.setDouble(frontR.getMotorTemperature());
+
+    BLvel.setDouble(backL.getEncoder().getVelocity());
+    BLpos.setDouble(backL.getEncoder().getPosition());
+    BLpos.setDouble(backL.getMotorTemperature());
+
+    BRvel.setDouble(backR.getEncoder().getVelocity());
+    BRpos.setDouble(backR.getEncoder().getPosition());
+    BRtemp.setDouble(backR.getMotorTemperature());
+  } 
 }

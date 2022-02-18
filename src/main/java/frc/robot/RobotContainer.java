@@ -7,9 +7,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Climber;
@@ -40,7 +43,7 @@ public class RobotContainer {
 
   private Joystick GAMEPAD = new Joystick(Constants.GP);
 
-  private JoystickButton toggleLimelight,toggleLimelightCam, runShooter, runIntake, toggleIntake, runFeeder, raiseClimber, lowerClimber, ejectBall;
+  private JoystickButton toggleLimelight,toggleLimelightCam, runShooter, runIntake, toggleIntake, runFeeder, raiseClimber, lowerClimber, ejectBall, runShooterPID, runClimber;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -64,15 +67,28 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    //primary
+    // raiseClimber = new JoystickButton(RIGHT, Constants.LEFT_BUTTON);
+    // raiseClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(0.5), () -> m_climber.runClimber(0), m_climber));
+
+    // lowerClimber = new JoystickButton(RIGHT, Constants.RIGHT_BUTTON);
+    // lowerClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(-0.5), () -> m_climber.runClimber(0), m_climber));
+
+    runClimber = new JoystickButton(RIGHT, Constants.RIGHT_BUTTON);
+    runClimber.whenPressed(new SequentialCommandGroup(
+      new InstantCommand(() -> m_climber.runClimber(0.5)), 
+      new ParallelCommandGroup(
+          new InstantCommand(() -> m_climber.toggleLeftHook(Value.kForward)), 
+          new InstantCommand(() -> m_climber.toggleRightHook(Value.kForward))), 
+      new InstantCommand(() -> m_climber.runClimber(-0.5))
+    ));
+    
     runIntake = new JoystickButton(RIGHT, Constants.TRIGGER_BUTTON);
     runIntake.whileHeld(new ParallelCommandGroup(    
       new StartEndCommand(() -> m_intake.runIntake(.5), () -> m_intake.runIntake(0), m_intake),
+      new StartEndCommand(() -> m_intake.toggleIntakeSolenoid(Value.kForward), () -> m_intake.toggleIntakeSolenoid(Value.kReverse), m_intake),
       new StartEndCommand(()-> m_feeder.runFeeder(.5), ()-> m_feeder.runFeeder(0), m_feeder)
       ));
 
-    toggleIntake = new JoystickButton(RIGHT, Constants.LEFT_BUTTON);
-    toggleIntake.toggleWhenPressed(new StartEndCommand(() -> m_intake.toggleIntakeSol(), () -> m_intake.toggleIntakeSol(), m_intake));
 
     runFeeder = new JoystickButton(LEFT, Constants.TRIGGER_BUTTON);
     runFeeder.whileHeld(new StartEndCommand(()-> m_feeder.runFeeder(.5), ()-> m_feeder.runFeeder(.5), m_feeder));

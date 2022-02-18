@@ -17,13 +17,16 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final int GP = 0;
-    public static final int LEFT_JOYSTICK = 1;
-    public static final int RIGHT_JOYSTICK = 2;
+
+    // JOYSTICK CONFIG
+    public static final int GP = 2;
+    public static final int LEFT_JOYSTICK = 0;
+    public static final int RIGHT_JOYSTICK = 1;
 
     public static final int XAXIS = 0;
     public static final int YAXIS = 1;
 
+    // JOYSTICK BUTTONS
     public static final int TRIGGER_BUTTON = 1;
     public static final int MIDDLE_BUTTON = 2;
     public static final int LEFT_BUTTON = 3;
@@ -32,27 +35,40 @@ public final class Constants {
     public static final int SIDE_BUTTON2 = 6;
     public static final int SIDE_BUTTON3 = 7;
 
+    // GAMEPAD BUTTONS
     public static final int X = 1;
     public static final int B = 3;
     public static final int LB = 5;
     public static final int RB = 6;
 
+    // DRIVETRAIN (CAN)
     public final static int FRONTL = 4;
     public final static int FRONTR = 5;
     public final static int BACKL = 3;
     public final static int BACKR = 6;
 
-    public static final int INTAKE_MOTOR = 8;
-    public static final int INTAKE_SOLENOID = 14;
+    // INTAKE (SPARK)
+    public static final int INTAKE_MOTOR = 1;
+    public static final int INTAKE_SOLENOID_1 = 14;
+    public static final int INTAKE_SOLENOID_2 = 15;
 
+    // SHOOTER (CAN)
     public static final int SHOOTER_TOP = 2;
     public static final int SHOOTER_BOTTOM = 1;
 
-    public static final int FEEDER_MOTOR = 9;
-
+    // CLIMBER (CAN)
     public static final int CLIMBER_MOTOR = 7;
 
-    //SHOOTER PID VALUE
+    public final static int HOOKL_1 = 1;
+    public final static int HOOKL_2 = 2;
+    public final static int HOOKR_1 = 3;
+    public final static int HOOKR_2 = 4; 
+    public final static double CLIMBER_REVS = 15.7079633;
+
+    // FEEDER (SPARK)
+    public static final int FEEDER_MOTOR = 0;
+
+    //SHOOTER PID VALUES
     //top 
     public static final double kPTop = 0;
     public static final double kITop = 0;
