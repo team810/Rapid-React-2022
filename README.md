@@ -1,2 +1,1 @@
-# Rapid-React-2022
-Team 810 Rapid React 2022 robot code
+Me and Anagh made all the robot code for Jack to copy and paste
