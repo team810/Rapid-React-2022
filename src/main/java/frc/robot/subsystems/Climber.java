@@ -61,6 +61,11 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("Climber Velocity (%)", this.speed);
 
     SmartDashboard.putNumber("Climber Position", this.climberMotor.getEncoder().getPosition());
+
+
+    SmartDashboard.putNumber("Climb Voltage", this.climberMotor.getBusVoltage());
+
+
   }
 
   public void togglePistons(){

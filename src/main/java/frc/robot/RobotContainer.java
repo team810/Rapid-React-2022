@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -45,7 +46,11 @@ public class RobotContainer{
   public Joystick left = new Joystick(0);
   public Joystick right = new Joystick(1);
 
-  public JoystickButton shoot, toggleArm, toggleIntake, runIntake, runFeeder, climbUp, climbDown, turnToTarget;
+  public XboxController GP = new XboxController(2);
+
+  public JoystickButton shoot, shootPID, toggleArm, toggleIntake, runIntake, runFeeder, turnToTarget, setIntake, slow;
+
+  public POVButton climbUp, climbDown;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -70,31 +75,52 @@ public class RobotContainer{
     // shoot = new JoystickButton(left, 1);
     // shoot.whileHeld(new ParallelCommandGroup(new InstantCommand(()->m_limelight.ledMode.setNumber(3)), new InstantCommand(Shoot(m_shooter)), new InstantCommand(()->m_lime.pipeline.setNumber(1)));
 
-    shoot = new JoystickButton(left, 1);
-    shoot.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.5, .75),() -> m_shooter.runShooter(0, 0), m_shooter));
+    //shoot = new JoystickButton(left, 3);
+    //shoot.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.25, .6
+    //),() -> m_shooter.runShooter(0, 0), m_shooter));
 
-    runFeeder = new JoystickButton(left, 2);
-    runFeeder.whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(.7),() -> m_feeder.runFeeder(0), m_feeder));
+    shootPID = new JoystickButton(GP, 6); //6 = right bumper
+    shootPID.whileHeld(
+      new ParallelCommandGroup(
+        new StartEndCommand(()->m_shooter.runTop(), ()->m_shooter.runShooter(0,0)),
+        new StartEndCommand(()->m_shooter.runBottom(), ()->m_shooter.runShooter(0,0))
+      )
+    );
+    runFeeder = new JoystickButton(GP, 3); 
+    runFeeder.whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder));
 
-    runIntake = new JoystickButton(right, 1);
+    //Reverse Feeder
+    new JoystickButton(right, 5)
+      .whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(-1),() -> m_feeder.runFeeder(0), m_feeder));
+
+    runIntake = new JoystickButton(GP, 1); // 
     runIntake.whileHeld(new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake));
 
     //Confused on the implementation of the startendcommand
-    climbUp = new JoystickButton(right, 2);
-    climbUp.whileHeld(new StartEndCommand(() -> m_climb.runClimber(-.4), () -> m_climb.runClimber(0), m_climb));
+    climbUp = new POVButton(GP, 0); // DPad Up
+    climbUp.whileHeld(new StartEndCommand(() -> m_climb.runClimber(-.6), () -> m_climb.runClimber(0), m_climb));
     
 
-    //climbDown = new JoystickButton(right, 2);
-    //climbDown.whileHeld(new StartEndCommand(() -> m_climb.runClimber(-.3),() -> m_climb.runClimber(0), m_climb));
+    climbDown = new POVButton(GP, 180); // DPad Down
+    climbDown.whileHeld(new StartEndCommand(() -> m_climb.runClimber(.6),() -> m_climb.runClimber(0), m_climb));
 
-    //turnToTarget = new JoystickButton(right, 1);
+    slow = new JoystickButton(right, 2);
+    slow.whileHeld(new StartEndCommand( ()-> m_drive.slowTankDrive(left.getRawAxis(1), right.getRawAxis(1)), ()-> m_drive.slowTankDrive(left.getRawAxis(1), right.getRawAxis(1)),  m_drive));
+
+
+
+    //turnToTarget = new JoystickButton(GP, 5); // left bumper
     //turnToTarget.whileHeld(new TurnToTarget(m_drive));
 
-    toggleArm = new JoystickButton(right, 3);
+    toggleArm = new JoystickButton(GP, 270); //left DPad
     toggleArm.whenPressed(new InstantCommand(() -> m_climb.togglePistons(), m_climb));
 
-    toggleIntake = new JoystickButton(right, 4);
+    toggleIntake = new JoystickButton(GP, 4); // A Button
     toggleIntake.whenPressed(new InstantCommand(()->m_intake.toggleSolenoid(), m_intake));
+
+    setIntake = new JoystickButton(GP, 9); // left thumb
+    setIntake.whileHeld(new StartEndCommand(() -> m_intake.setIntake(true), () -> m_intake.setIntake(false), m_intake));
+
   }
 
   /**

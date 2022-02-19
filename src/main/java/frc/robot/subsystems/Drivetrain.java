@@ -4,10 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +22,8 @@ public class Drivetrain extends SubsystemBase {
   private DifferentialDrive drive;
   private double leftSpeed, rightSpeed;
 
+  AHRS ahrs;
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     this.frontL = new CANSparkMax(Constants.FRONTL, MotorType.kBrushless);
@@ -29,12 +33,17 @@ public class Drivetrain extends SubsystemBase {
 
     resetMotors();
 
-    this.left = new MotorControllerGroup(frontL, backL);
-    this.right = new MotorControllerGroup(frontR, backR);
+    //this.left = new MotorControllerGroup(frontL, backL);
+    //this.right = new MotorControllerGroup(frontR, backR);
 
-    this.left.setInverted(true);
+    backL.follow(frontL);
+    backR.follow(frontR);
 
-    this.drive = new DifferentialDrive(left, right);
+    ahrs = new AHRS(Port.kMXP);
+
+    //this.left.setInverted(true);
+
+    //this.drive = new DifferentialDrive(left, right);
   }
 
   @Override
@@ -46,13 +55,46 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
+
+    //field centric stuff
+
+
     // The numbers come in from the Y-axis of the controller as -, reversed them to
     // positive before passing
-    this.drive.tankDrive(-leftSpeed, -rightSpeed);
+    //this.drive.tankDrive(-leftSpeed, -rightSpeed);
+    if(Math.abs(leftSpeed) < .02){
+      leftSpeed = 0;
+    }
+    if(Math.abs(rightSpeed) < .02){
+      rightSpeed = 0;
+    }
+
+    frontL.set(-leftSpeed);
+    frontR.set(rightSpeed);
 
     this.leftSpeed = -leftSpeed;
-    this.rightSpeed = -rightSpeed;
+    this.rightSpeed = rightSpeed;
   }
+
+  public void slowTankDrive(double leftSpeed, double rightSpeed) {
+    // The numbers come in from the Y-axis of the controller as -, reversed them to
+    // positive before passing
+    //this.drive.tankDrive(-leftSpeed, -rightSpeed);
+    if(Math.abs(leftSpeed) < .02){
+      leftSpeed = 0;
+    }
+    if(Math.abs(rightSpeed) < .02){
+      rightSpeed = 0;
+    }
+
+    frontL.set(-leftSpeed / 2);
+    frontR.set(rightSpeed / 2);
+
+    this.leftSpeed = -leftSpeed / 2;
+    this.rightSpeed = rightSpeed / 2;
+  }
+
+
 
   public void arcadeDrive(double speed, double rot){
     this.drive.arcadeDrive(speed, rot);
@@ -93,5 +135,6 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Velocity BR", backR.getEncoder().getVelocity());
     SmartDashboard.putNumber("Position BR", backR.getEncoder().getPosition());
     SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature());
+
   }
 }

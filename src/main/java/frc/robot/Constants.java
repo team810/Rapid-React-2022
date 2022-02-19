@@ -61,6 +61,30 @@ public final class Constants{
     public static final NetworkTableEntry stream = table.getEntry("stream");
 
 
+    public static final int XAXIS = 0;
+    public static final int YAXIS = 1;
+
+    public final static int HOOKL_1 = 1;
+    public final static int HOOKL_2 = 2;
+    public final static int HOOKR_1 = 3;
+    public final static int HOOKR_2 = 4; 
+    public final static double CLIMBER_REVS = 15.7079633;
+
+    // FEEDER (SPARK)
+    public static final int FEEDER_MOTOR = 0;
+
+    //SHOOTER PID VALUES
+    //top 
+    public static final double kPTop = 0.0002;
+    public static final double kITop = 0;
+    public static final double kDTop = 0;
+    public static final double kFTop = 0; 
+
+    //bottom
+    public static final double kPBottom = 0.0002;
+    public static final double kIBottom = 0;
+    public static final double kDBottom = 0;
+    public static final double kFBottom = 0; 
 
 
 }

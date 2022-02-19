@@ -26,6 +26,8 @@ public class Intake extends SubsystemBase {
   private DoubleSolenoid sol;
   private double speed;
 
+  //private Spark feederMotor;
+
 
 
   //private final I2C.Port i2cPort = I2C.Port.kOnboard;
@@ -35,6 +37,9 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {
     intakeMotor = new Spark(Constants.INTAKE);
+
+   // feederMotor = new Spark(Constants.FEEDER);
+
     sol = new DoubleSolenoid(PneumaticsModuleType.REVPH, 12, 13);
 
   }
@@ -53,8 +58,32 @@ public class Intake extends SubsystemBase {
     }
   }
 
+  public void setIntake(boolean state){
+    if(state){
+
+      sol.set(Value.kForward);
+      intakeMotor.set(1);
+    }
+
+    else{
+      sol.set(Value.kReverse);
+      intakeMotor.set(0);
+    }
+
+  }
+
   public void run(double speed){
     intakeMotor.set(speed);
+    
+  }
+
+  public void runFeeder(double speed){
+   // feederMotor.set(speed);
+  }
+
+  public void runIntakeFeed(double speed){
+    intakeMotor.set(speed);
+    //feederMotor.set(speed);
   }
 
   /*public boolean getCorrectBall() {
