@@ -81,10 +81,10 @@ public class Intake extends SubsystemBase {
    // feederMotor.set(speed);
   }
 
-  public void runIntakeFeed(double speed){
-    intakeMotor.set(speed);
+  //public void runIntakeFeed(double speed){
+    //intakeMotor.set(speed);
     //feederMotor.set(speed);
-  }
+  //}
 
   /*public boolean getCorrectBall() {
 

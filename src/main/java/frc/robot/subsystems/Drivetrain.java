@@ -31,6 +31,7 @@ public class Drivetrain extends SubsystemBase {
     this.backL = new CANSparkMax(Constants.BACKL, MotorType.kBrushless);
     this.backR = new CANSparkMax(Constants.BACKR, MotorType.kBrushless);
 
+    this.drive = new DifferentialDrive(frontL, frontL);
     resetMotors();
 
     //this.left = new MotorControllerGroup(frontL, backL);
@@ -56,7 +57,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
 
-    //field centric stuff
+
 
 
     // The numbers come in from the Y-axis of the controller as -, reversed them to
@@ -97,7 +98,18 @@ public class Drivetrain extends SubsystemBase {
 
 
   public void arcadeDrive(double speed, double rot){
-    this.drive.arcadeDrive(speed, rot);
+    System.out.println(rot);
+    drive.arcadeDrive(speed, rot);
+    // if(rot > 0){
+    //   System.out.print();
+    //   //too far left, turn right
+    //   frontL.set(-rot);
+    //   frontR.set(rot);
+    // }else{
+    //   //too far right, turn left
+    //   frontL.set(rot);
+    //   frontR.set(-rot);
+    // }
   }
 
   private void resetMotors() {

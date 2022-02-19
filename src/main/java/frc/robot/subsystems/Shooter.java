@@ -42,7 +42,7 @@ public class Shooter extends SubsystemBase {
                     targetValidity, limelightX, limelightY, limelightArea, targetDistance; 
 
   private int goalHeight = 104; // inches
-  private int limelightHeight = 19; // inches
+  private int limelightHeight = 20; // inches
   private int limelightAngle = 35; // degrees
 
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -97,7 +97,7 @@ public class Shooter extends SubsystemBase {
     top_pidcontroller.setIZone(kIz);
     top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
-    top_pidcontroller.setReference(-5700, ControlType.kVelocity);
+    top_pidcontroller.setReference(-setPointTop.getDouble(0), ControlType.kVelocity);
     speedTop.setDouble(top.getEncoder().getVelocity());
   }
 
@@ -111,7 +111,7 @@ public class Shooter extends SubsystemBase {
     bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
     //setPointBottom.getDouble(0)
-    bottom_pidcontroller.setReference(equationBottom(this.distance), ControlType.kVelocity);
+    bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
     speedBottom.setDouble(top.getEncoder().getVelocity());
   }
 

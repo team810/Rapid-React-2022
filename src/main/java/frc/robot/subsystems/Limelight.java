@@ -44,19 +44,19 @@ public class Limelight extends SubsystemBase {
 
   @Override
   public void periodic() {
-  //   if(isValidTarget()){
-  //   if(Constants.tx.getDouble(0.0) > 0){
-  //     m_container.GP.setRumble(RumbleType.kRightRumble, .5);
-  //   }
-  //   if(Constants.tx.getDouble(0.0) < 0){
-  //     m_container.GP.setRumble(RumbleType.kRightRumble, .5);
-  //   }
-  //   if(Math.abs(Constants.tx.getDouble(0.0)) < 5){
-  //     m_container.GP.setRumble(RumbleType.kRightRumble, .1);
-  //     m_container.GP.setRumble(RumbleType.kLeftRumble, .1);
+    if(isValidTarget()){
+    if(Constants.tx.getDouble(0.0) > 0){
+      m_container.GP.setRumble(RumbleType.kRightRumble, .5);
+    }
+    if(Constants.tx.getDouble(0.0) < 0){
+      m_container.GP.setRumble(RumbleType.kRightRumble, .5);
+    }
+    if(Math.abs(Constants.tx.getDouble(0.0)) < 5){
+      m_container.GP.setRumble(RumbleType.kRightRumble, .1);
+      m_container.GP.setRumble(RumbleType.kLeftRumble, .1);
 
-  //   }
-  // }
+    }
+  }
     
 
 

@@ -35,10 +35,10 @@ public class RobotContainer{
   
 
   // The robot's subsystems and commands are defined here...
-  private Shooter m_shooter = new Shooter();
   private Intake m_intake = new Intake();
   private Drivetrain m_drive = new Drivetrain();
   private Feeder m_feeder = new Feeder();
+  private Shooter m_shooter = new Shooter();
   private Climber m_climb = new Climber();
 
 
@@ -59,7 +59,7 @@ public class RobotContainer{
 
     m_drive.setDefaultCommand(
       new RunCommand(
-        ()-> m_drive.tankDrive(-left.getRawAxis(1), right.getRawAxis(1)), m_drive)
+        ()-> m_drive.tankDrive(Math.pow(-left.getRawAxis(1), 3), Math.pow(right.getRawAxis(1), 3)), m_drive)
     ); 
 
   }
@@ -79,21 +79,28 @@ public class RobotContainer{
     //shoot.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.25, .6
     //),() -> m_shooter.runShooter(0, 0), m_shooter));
 
-    shootPID = new JoystickButton(GP, 6); //6 = right bumper
+    shootPID = new JoystickButton(left, 1); //6 = right bumper
     shootPID.whileHeld(
+      new SequentialCommandGroup(
+        new StartEndCommand(()->m_feeder.runFeeder(-.3), ()-> m_feeder.runFeeder(0), m_feeder).withTimeout(.3),
       new ParallelCommandGroup(
         new StartEndCommand(()->m_shooter.runTop(), ()->m_shooter.runShooter(0,0)),
         new StartEndCommand(()->m_shooter.runBottom(), ()->m_shooter.runShooter(0,0))
-      )
+      ))
     );
-    runFeeder = new JoystickButton(GP, 3); 
+
+    //Align Shooter
+    new JoystickButton(left, 2)
+      .whileHeld(new TurnToTarget(m_drive));
+      
+    runFeeder = new JoystickButton(right, 2); 
     runFeeder.whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder));
 
     //Reverse Feeder
     new JoystickButton(right, 5)
       .whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(-1),() -> m_feeder.runFeeder(0), m_feeder));
 
-    runIntake = new JoystickButton(GP, 1); // 
+    runIntake = new JoystickButton(right, 1); // 
     runIntake.whileHeld(new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake));
 
     //Confused on the implementation of the startendcommand

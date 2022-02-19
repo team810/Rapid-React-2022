@@ -25,7 +25,7 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   public Compressor c;
 
-  Intake i = new Intake();
+  //Intake i = new Intake();
 
   
 
@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    i.setIntake(false);
+    //i.setIntake(false);
     
     //c = new Compressor(PneumaticsModuleType.REVPH);
     //c.start();
@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    i.setIntake(false);
+    //i.setIntake(false);
   }
 
   @Override

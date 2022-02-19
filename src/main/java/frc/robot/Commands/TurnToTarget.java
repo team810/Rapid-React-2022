@@ -20,19 +20,19 @@ public class TurnToTarget extends PIDCommand {
   public TurnToTarget(Drivetrain m_drive) {
     super(
         // The controller that the command will use
-        new PIDController(0, 0, 0),
+        new PIDController(.05, 0.0002, 0),
         // This should return the measurement
         () -> Constants.tx.getDouble(0),
         // This should return the setpoint (can also be a constant)
         () -> 0,
         // This uses the output
         output -> {
-          m_drive.arcadeDrive(0, output);
+          m_drive.arcadeDrive(0, -output);
         });
 
     addRequirements(m_drive);
     // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(.05);
+    getController().setTolerance(1);
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
   }
