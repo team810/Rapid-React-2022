@@ -86,5 +86,24 @@ public final class Constants{
     public static final double kDBottom = 0;
     public static final double kFBottom = 0; 
 
+    //AUTONOMOUS
+    public static final double ksVolts = 0.33251;
+    public static final double kvVoltSecondsPerMeter = 2.5645;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.86909;
 
+    public static final double kPDriveVel = 3.7958;
+
+    // Adjust as necessary for surroundings
+    public static final double kMaxSpeedMetersPerSecond = .1;
+    public static final double kMaxAccelerationMetersPerSecondSquared = .2;
+
+    public static final double kvVoltSecondsPerRadian = 2.369;
+    public static final double kaVoltSecondsSquaredPerRadian = 0.485;
+
+    public static final double kRamseteB = 2; // dont change this and the val below
+    public static final double kRamseteZeta = 0.7;
+
+    public static final double TRACK_WIDTH_METERS = 0.57098;
+    public static final double CIRCUMFERENCE = Math.PI * 6;
+    public static final double GEAR_RATIO = 10.71;
 }

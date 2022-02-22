@@ -68,7 +68,7 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     updateD();
     shuffleUpdate();
-    System.out.println(this.distance);
+    //System.out.println(this.distance);
   }
 
   public void toggleLimelightLight(int value) {

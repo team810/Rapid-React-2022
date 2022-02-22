@@ -6,9 +6,16 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -21,8 +28,14 @@ public class Drivetrain extends SubsystemBase {
   private MotorControllerGroup left, right;
   private DifferentialDrive drive;
   private double leftSpeed, rightSpeed;
+  private double resetR, resetL;
 
-  AHRS ahrs;
+  AHRS navx  = new AHRS(Port.kMXP);
+  private DifferentialDriveOdometry m_odometry =
+  new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
+
+  public DifferentialDriveKinematics m_kinematics =
+  new DifferentialDriveKinematics(Constants.TRACK_WIDTH_METERS);
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -40,26 +53,33 @@ public class Drivetrain extends SubsystemBase {
     backL.follow(frontL);
     backR.follow(frontR);
 
-    ahrs = new AHRS(Port.kMXP);
-
+    frontL.follow(ExternalFollower.kFollowerDisabled, 0);
+    frontR.follow(ExternalFollower.kFollowerDisabled, 0);
     //this.left.setInverted(true);
 
     //this.drive = new DifferentialDrive(left, right);
+
+    //SET CONVERSION FACTORS
+    frontL.getEncoder().setPositionConversionFactor(Units.inchesToMeters(Constants.CIRCUMFERENCE) / Constants.GEAR_RATIO);
+    frontR.getEncoder().setPositionConversionFactor(Units.inchesToMeters(Constants.CIRCUMFERENCE) / Constants.GEAR_RATIO);
+    frontL.getEncoder().setVelocityConversionFactor(Units.inchesToMeters(Constants.CIRCUMFERENCE) / (60.0 * Constants.GEAR_RATIO));
+    frontR.getEncoder().setVelocityConversionFactor(Units.inchesToMeters(Constants.CIRCUMFERENCE) / (60.0 * Constants.GEAR_RATIO));
+    resetR = resetL = 0;
+    resetEncoders();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //shuffleInit();
-    
+    //
+    shuffleInit();
 
+    m_odometry.update(
+      Rotation2d.fromDegrees(getHeading()), getLeftEncoderPos(), getRightEncoderPos()
+    );
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
-
-
-
-
     // The numbers come in from the Y-axis of the controller as -, reversed them to
     // positive before passing
     //this.drive.tankDrive(-leftSpeed, -rightSpeed);
@@ -70,46 +90,18 @@ public class Drivetrain extends SubsystemBase {
       rightSpeed = 0;
     }
 
-    frontL.set(-leftSpeed);
+    frontL.set(leftSpeed);
     frontR.set(rightSpeed);
 
-    this.leftSpeed = -leftSpeed;
+    this.leftSpeed = leftSpeed;
     this.rightSpeed = rightSpeed;
-  }
-
-  public void slowTankDrive(double leftSpeed, double rightSpeed) {
-    // The numbers come in from the Y-axis of the controller as -, reversed them to
-    // positive before passing
-    //this.drive.tankDrive(-leftSpeed, -rightSpeed);
-    if(Math.abs(leftSpeed) < .02){
-      leftSpeed = 0;
-    }
-    if(Math.abs(rightSpeed) < .02){
-      rightSpeed = 0;
-    }
-
-    frontL.set(-leftSpeed / 2);
-    frontR.set(rightSpeed / 2);
-
-    this.leftSpeed = -leftSpeed / 2;
-    this.rightSpeed = rightSpeed / 2;
   }
 
 
 
   public void arcadeDrive(double speed, double rot){
-    System.out.println(rot);
+    //ystem.out.println(rot);
     drive.arcadeDrive(speed, rot);
-    // if(rot > 0){
-    //   System.out.print();
-    //   //too far left, turn right
-    //   frontL.set(-rot);
-    //   frontR.set(rot);
-    // }else{
-    //   //too far right, turn left
-    //   frontL.set(rot);
-    //   frontR.set(-rot);
-    // }
   }
 
   private void resetMotors() {
@@ -124,13 +116,43 @@ public class Drivetrain extends SubsystemBase {
     this.backR.setIdleMode(IdleMode.kBrake);
   }
 
-  private void shuffleInit() {
-    SmartDashboard.putNumber("P", frontL.getPIDController().getP());
-    SmartDashboard.putNumber("I", frontL.getPIDController().getD());
-    SmartDashboard.putNumber("D", frontL.getPIDController().getI());
+  public void resetEncoders(){
+    resetL = frontL.getEncoder().getPosition();
+    resetR = frontR.getEncoder().getPosition();
+  }
 
-    SmartDashboard.putNumber("Drivetrain Velcoity Left (%)", this.leftSpeed);
-    SmartDashboard.putNumber("Drivetrain Velocity Right (%)", this.rightSpeed);
+  public double getRightEncoderPos(){
+    return frontR.getEncoder().getPosition() - resetR;
+  }
+  public double getLeftEncoderPos(){
+    return frontL.getEncoder().getPosition() - resetL;
+  }
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+    m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+  }
+
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    frontR.setVoltage(rightVolts);
+    frontL.setVoltage(leftVolts);
+    //System.out.println(leftVolts + " : " + rightVolts);
+    drive.feed();
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(frontL.getEncoder().getVelocity(), frontR.getEncoder().getVelocity());
+  }
+
+  public Pose2d getPose(){
+    return m_odometry.getPoseMeters();
+  }
+
+  public double getHeading(){
+    return Math.IEEEremainder(navx.getAngle(), 360) * -1;
+  }
+
+  private void shuffleInit() {
+    SmartDashboard.putNumber("Heading", getHeading());
 
     SmartDashboard.putNumber("Velocity FL", frontL.getEncoder().getVelocity());
     SmartDashboard.putNumber("Position FL", frontL.getEncoder().getPosition());
@@ -139,14 +161,5 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Velocity FR", frontR.getEncoder().getVelocity());
     SmartDashboard.putNumber("Position FR", frontR.getEncoder().getPosition());
     SmartDashboard.putNumber("Temp FR", frontR.getMotorTemperature());
-
-    SmartDashboard.putNumber("Velocity BL", backL.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Position BL", backL.getEncoder().getPosition());
-    SmartDashboard.putNumber("Temp BL", backL.getMotorTemperature());
-
-    SmartDashboard.putNumber("Velocity BR", backR.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Position BR", backR.getEncoder().getPosition());
-    SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature());
-
   }
 }
