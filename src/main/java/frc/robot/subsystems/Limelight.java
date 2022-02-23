@@ -24,17 +24,16 @@ public class Limelight extends SubsystemBase {
   public NetworkTableEntry pipeline = Constants.pipeline;
   public NetworkTableEntry stream = Constants.stream;
 
-  RobotContainer m_container;
 
 
-  Lightstrips m_lights;
+
+
 
   HttpCamera feed;
 
   /** Creates a new Limelight. */
   public Limelight() {
 
-    m_lights = new Lightstrips();
 
     feed = new HttpCamera("Limelight", "http://limelight.local:5800/");
     CameraServer.getInstance().startAutomaticCapture(feed);
@@ -44,20 +43,7 @@ public class Limelight extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(isValidTarget()){
-    if(Constants.tx.getDouble(0.0) > 0){
-      m_container.GP.setRumble(RumbleType.kRightRumble, .5);
-    }
-    if(Constants.tx.getDouble(0.0) < 0){
-      m_container.GP.setRumble(RumbleType.kRightRumble, .5);
-    }
-    if(Math.abs(Constants.tx.getDouble(0.0)) < 5){
-      m_container.GP.setRumble(RumbleType.kRightRumble, .1);
-      m_container.GP.setRumble(RumbleType.kLeftRumble, .1);
 
-    }
-  }
-    
 
 
 
@@ -138,14 +124,6 @@ public class Limelight extends SubsystemBase {
     return Constants.ty.getDouble(0.0);
   }
 
-  public void changeColorOnValidTarget(){
-    if(isValidTarget()){
-      m_lights.changeLEDColor("G");
-    }
-    else{
-      m_lights.changeLEDColor("B");
-    }
-  }
 
   
 
