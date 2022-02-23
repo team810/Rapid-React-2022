@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.commands.TurnToTarget;
+import frc.robot.Commands.TurnToTarget;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Feeder;
@@ -59,7 +59,7 @@ public class RobotContainer{
 
     m_drive.setDefaultCommand(
       new RunCommand(
-        ()-> m_drive.tankDrive(Math.pow(-left.getRawAxis(1), 3), Math.pow(right.getRawAxis(1), 3)), m_drive)
+        ()-> m_drive.tankDrive(left.getRawAxis(1), right.getRawAxis(1)), m_drive)
     ); 
 
   }
@@ -79,14 +79,21 @@ public class RobotContainer{
     //shoot.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.25, .6
     //),() -> m_shooter.runShooter(0, 0), m_shooter));
 
+    // shootPID = new JoystickButton(left, 1); //6 = right bumper
+    // shootPID.whileHeld(
+    //   new SequentialCommandGroup(
+    //     new StartEndCommand(()->m_feeder.runFeeder(-.3), ()-> m_feeder.runFeeder(0), m_feeder).withTimeout(.3),
+    //   new ParallelCommandGroup(
+    //     new StartEndCommand(()->m_shooter.runTop(), ()->m_shooter.runShooter(0,0)),
+    //     new StartEndCommand(()->m_shooter.runBottom(), ()->m_shooter.runShooter(0,0))
+    //   ))
+    // );
+
     shootPID = new JoystickButton(left, 1); //6 = right bumper
     shootPID.whileHeld(
-      new SequentialCommandGroup(
-        new StartEndCommand(()->m_feeder.runFeeder(-.3), ()-> m_feeder.runFeeder(0), m_feeder).withTimeout(.3),
       new ParallelCommandGroup(
         new StartEndCommand(()->m_shooter.runTop(), ()->m_shooter.runShooter(0,0)),
-        new StartEndCommand(()->m_shooter.runBottom(), ()->m_shooter.runShooter(0,0))
-      ))
+        new StartEndCommand(()->m_shooter.runBottom(), ()->m_shooter.runShooter(0,0)))
     );
 
     //Align Shooter
@@ -94,16 +101,15 @@ public class RobotContainer{
       .whileHeld(new TurnToTarget(m_drive));
       
     runFeeder = new JoystickButton(right, 2); 
-    runFeeder.whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder));
+    runFeeder.whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(.8),() -> m_feeder.runFeeder(0), m_feeder));
 
     //Reverse Feeder
     new JoystickButton(right, 5)
       .whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(-1),() -> m_feeder.runFeeder(0), m_feeder));
 
     runIntake = new JoystickButton(right, 1); // 
-    runIntake.whileHeld(new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake));
+    runIntake.whileHeld(new StartEndCommand(() -> m_intake.run(.5),() -> m_intake.run(0), m_intake));
 
-    //Confused on the implementation of the startendcommand
     climbUp = new POVButton(GP, 0); // DPad Up
     climbUp.whileHeld(new StartEndCommand(() -> m_climb.runClimber(-.6), () -> m_climb.runClimber(0), m_climb));
     
@@ -122,7 +128,7 @@ public class RobotContainer{
     toggleArm = new JoystickButton(GP, 270); //left DPad
     toggleArm.whenPressed(new InstantCommand(() -> m_climb.togglePistons(), m_climb));
 
-    toggleIntake = new JoystickButton(GP, 4); // A Button
+    toggleIntake = new JoystickButton(right, 4); // A Button
     toggleIntake.whenPressed(new InstantCommand(()->m_intake.toggleSolenoid(), m_intake));
 
     setIntake = new JoystickButton(GP, 9); // left thumb

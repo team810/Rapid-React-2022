@@ -56,10 +56,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
-
-
-
-
     // The numbers come in from the Y-axis of the controller as -, reversed them to
     // positive before passing
     //this.drive.tankDrive(-leftSpeed, -rightSpeed);
@@ -70,10 +66,10 @@ public class Drivetrain extends SubsystemBase {
       rightSpeed = 0;
     }
 
-    frontL.set(-leftSpeed);
+    frontL.set(leftSpeed);
     frontR.set(rightSpeed);
 
-    this.leftSpeed = -leftSpeed;
+    this.leftSpeed = leftSpeed;
     this.rightSpeed = rightSpeed;
   }
 
@@ -113,10 +109,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   private void resetMotors() {
-    this.frontL.restoreFactoryDefaults();
-    this.frontR.restoreFactoryDefaults();
-    this.backL.restoreFactoryDefaults();
-    this.backR.restoreFactoryDefaults();
+    // this.frontL.restoreFactoryDefaults();
+    // this.frontR.restoreFactoryDefaults();
+    // this.backL.restoreFactoryDefaults();
+    // this.backR.restoreFactoryDefaults();
 
     this.frontL.setIdleMode(IdleMode.kBrake);
     this.frontR.setIdleMode(IdleMode.kBrake);
