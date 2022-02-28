@@ -30,12 +30,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.ShootSequence;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -66,9 +68,6 @@ public class RobotContainer{
   public Joystick left = new Joystick(0);
   public Joystick right = new Joystick(1);
   public XboxController GP = new XboxController(2);
-
-  //BUTTONS (UNNECESSARY)
-  public JoystickButton shoot, shootPID, toggleArm, toggleIntake, runIntake, runFeeder, turnToTarget, setIntake, slow, climbDown, climbUp;
 
   //AUTONOMOUS PATHS
   public HashMap<String, Trajectory> pathsTrajs = new HashMap<String, Trajectory>();
@@ -131,31 +130,43 @@ public class RobotContainer{
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    //shoot = new JoystickButton(left, 3);
-    //shoot.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.25, .6
-    //),() -> m_shooter.runShooter(0, 0), m_shooter));
+    //Shoot withOUT PID
+    //new JoystickButton(left, 1);
+    //.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.25, .6),() -> m_shooter.runShooter(0, 0), m_shooter));
 
-    shootPID = new JoystickButton(left, 1); //6 = right bumper
-    shootPID.whileHeld(
-      new ParallelCommandGroup(
-        new StartEndCommand(()->m_feeder.runFeeder(-.3), ()-> m_feeder.runFeeder(0), m_feeder).withTimeout(.5)
-        .andThen(new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder)),
-        //new TurnToTarget(m_drive),
-        new StartEndCommand(()->m_shooter.runTop(), ()->m_shooter.runShooter(0,0)),
-        new StartEndCommand(()->m_shooter.runBottom(), ()->m_shooter.runShooter(0,0))
-      )
-    );
+    //Shoot with PID
+    new JoystickButton(left, 1)
+      .whileHeld(new ShootSequence(m_drive, m_feeder, m_shooter));
 
     //Align Shooter
     new JoystickButton(left, 2)
       .whileHeld(new TurnToTarget(m_drive));
-      
-    runFeeder = new JoystickButton(right, 2); 
-    runFeeder.whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder));
+    
+    //Run Intake
+    new JoystickButton(right, 1)
+    .whileHeld(
+      new ParallelCommandGroup(
+        new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake),
+        new StartEndCommand(()-> m_lime.stream.setDouble(2), ()->m_lime.stream.setDouble(0), m_lime)
+      )
+    );
 
-    //Reverse Feeder
-    new JoystickButton(right, 5)
-      .whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(-1),() -> m_feeder.runFeeder(0), m_feeder));
+    //Run Feeder
+    new JoystickButton(right, 2) 
+      .whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder));
+
+    //Toggle intake
+    new JoystickButton(right, 3)
+      .whenPressed(new InstantCommand(()->m_intake.toggleSolenoid(), m_intake));
+
+    //Reverse Intake and Feeder
+    new JoystickButton(right, 4)
+      .whileHeld(
+        new ParallelCommandGroup(
+          new StartEndCommand(() -> m_feeder.runFeeder(-1),() -> m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_intake.run(-1), ()->m_intake.run(0), m_intake)
+        )
+      );
 
     //Reset encoders
     new JoystickButton(right, 6)
@@ -165,26 +176,26 @@ public class RobotContainer{
     new JoystickButton(right, 7)
       .whenPressed(new InstantCommand(()->m_drive.resetGyro()));
 
-    runIntake = new JoystickButton(right, 1); // 
-    runIntake.whileHeld(new ParallelCommandGroup(new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake), new StartEndCommand(()-> m_lime.stream.setDouble(2), ()->m_lime.stream.setDouble(0), m_lime)));
-
-    //climbUp = new JoystickButton(right, 7); // DPad Up
-    //climbUp.whileHeld(new ParallelCommandGroup(new StartEndCommand(() -> m_climb.climbUp(-.6), () -> m_climb.climbUp(0), m_climb), new StartEndCommand(()->m_lime.ledMode.setNumber(2), ()-> m_lime.ledMode.setNumber(0), m_lime)));
+    //Climb UP
+    new JoystickButton(right, 13)
+      .whileHeld(
+        new ParallelCommandGroup(
+          new StartEndCommand(() -> m_climb.climbUp(-.6), () -> m_climb.climbUp(0), m_climb),
+          new StartEndCommand(()->m_lime.ledMode.setNumber(2), ()-> m_lime.ledMode.setNumber(0), m_lime)
+        )
+      );
     
-    climbDown = new JoystickButton(right, 8); // DPad Down
-    climbDown.whileHeld(new StartEndCommand(() -> m_climb.climbDown(.6),() -> m_climb.climbDown(0), m_climb));
+    //Climb DOWN
+    new JoystickButton(right, 12)
+      .whileHeld(new StartEndCommand(() -> m_climb.climbDown(.6),() -> m_climb.climbDown(0), m_climb));
 
-    //turnToTarget = new JoystickButton(GP, 5); // left bumper
-    //turnToTarget.whileHeld(new TurnToTarget(m_drive));
+    //Toggle climber arms
+    new JoystickButton(right, 11)
+      .whenPressed(new InstantCommand(() -> m_climb.togglePistons(), m_climb));
 
-    toggleArm = new JoystickButton(left, 3); //left DPad
-    toggleArm.whenPressed(new InstantCommand(() -> m_climb.togglePistons(), m_climb));
-
-    toggleIntake = new JoystickButton(right, 4); // A Button
-    toggleIntake.whenPressed(new InstantCommand(()->m_intake.toggleSolenoid(), m_intake));
-
-    setIntake = new JoystickButton(GP, 9); // left thumb
-    setIntake.whileHeld(new StartEndCommand(() -> m_intake.setIntake(true), () -> m_intake.setIntake(false), m_intake));
+    //Toggle and run intake
+    //new JoystickButton(GP, 9)
+    //  .whileHeld(new StartEndCommand(() -> m_intake.setIntake(true), () -> m_intake.setIntake(false), m_intake));
   }
 
   /**
@@ -250,11 +261,13 @@ public class RobotContainer{
     m_drive.resetOdometry(exampleTrajectory.getInitialPose());*/
 
     // AUTONAV
-    return new ParallelCommandGroup(
-      new InstantCommand(()-> m_intake.setIntake(true)),
-      new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
-      new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0,0), m_shooter),
-      command
+    return new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+        command,
+        new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ),
+      new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
     ).andThen(() -> m_drive.tankDriveVolts(0, 0));
   }
 

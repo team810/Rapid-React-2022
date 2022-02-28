@@ -39,7 +39,8 @@ public class Shooter extends SubsystemBase {
 
   NetworkTableEntry topVelRPM, topVelPercent, 
                     bottomVelRPM, bottomVelPercent,
-                    targetValidity, limelightX, limelightY, limelightArea, targetDistance; 
+                    targetValidity, limelightX, limelightY,
+                     limelightArea, targetDistance, voltage; 
 
   private int goalHeight = 104; // inches
   private int limelightHeight = 20; // inches
@@ -119,7 +120,7 @@ public class Shooter extends SubsystemBase {
     runTop();
     runBottom();
   }
-  
+
   private double equationBottom(double distanceInches){
     double distanceFeet = distanceInches / 12.0;
     return 172*distanceFeet - 100; //+262
@@ -153,6 +154,8 @@ public class Shooter extends SubsystemBase {
     limelightArea = tab.add("Limelight Area", ta.getDouble(0)).getEntry();
 
     targetDistance = tab.add("Distance to target", this.distance).getEntry();
+
+    voltage = tab.add("Top Shooter Volts", top.getBusVoltage()).getEntry();
   }
 
   private void shuffleUpdate() {
@@ -168,6 +171,7 @@ public class Shooter extends SubsystemBase {
     limelightArea.setDouble(ta.getDouble(0));
 
     targetDistance.setDouble(this.distance);
+    voltage.setDouble(top.getBusVoltage());
   }
 
   private void PIDinit()
