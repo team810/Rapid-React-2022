@@ -94,7 +94,7 @@ public final class Constants{
     public static final double kPDriveVel = 3.7958;
 
     // Adjust as necessary for surroundings
-    public static final double kMaxSpeedMetersPerSecond = .1;
+    public static final double kMaxSpeedMetersPerSecond = .5;
     public static final double kMaxAccelerationMetersPerSecondSquared = .2;
 
     public static final double kvVoltSecondsPerRadian = 2.369;

@@ -115,6 +115,11 @@ public class Shooter extends SubsystemBase {
     speedBottom.setDouble(top.getEncoder().getVelocity());
   }
 
+  public void run(){
+    runTop();
+    runBottom();
+  }
+  
   private double equationBottom(double distanceInches){
     double distanceFeet = distanceInches / 12.0;
     return 172*distanceFeet - 100; //+262

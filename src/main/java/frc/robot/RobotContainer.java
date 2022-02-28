@@ -7,12 +7,19 @@ package frc.robot;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -27,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.Climber;
@@ -65,7 +73,7 @@ public class RobotContainer{
   //AUTONOMOUS PATHS
   public HashMap<String, Trajectory> pathsTrajs = new HashMap<String, Trajectory>();
   public HashMap<String, Command> paths = new HashMap<String, Command>();
-  public String[] trajNames = {"pathplanner/generatedJSON/FIRST.wpilib.json"};
+  public String[] trajNames = {"pathplanner/generatedJSON/Simple_Auto_1.wpilib.json"};
 
   //AUTONOMOUS PATH CHOOSER
   public SendableChooser<String> m_chooser = new SendableChooser<String>();
@@ -74,12 +82,13 @@ public class RobotContainer{
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-
     //SUBSYTEM INITIAL TASKS
     m_drive.setDefaultCommand(
       new RunCommand(
-        ()-> m_drive.tankDrive(Math.pow(left.getRawAxis(1), 3), Math.pow(right.getRawAxis(1), 3)), m_drive)
-    ); 
+        ()-> m_drive.tankDrive((left.getRawAxis(1)), (right.getRawAxis(1)))
+        , m_drive
+    )); 
+
     m_intake.setIntake(false);
 
     //MAKE AUTO PATHS
@@ -92,6 +101,29 @@ public class RobotContainer{
     SmartDashboard.putData("Chooser", m_chooser);
   }
 
+  public double Cubic(double value, double weight){
+    return weight * value * value * value - (1 - weight) * value;
+  }
+
+  public double deadBandCutoff(double value){
+
+    final double cutoff = .1;
+
+    final double weight = .2;
+
+    if(Math.abs(value) < cutoff){
+      return 0;
+    }
+    else{
+      return Cubic(value, weight - Math.abs(value)/value*Cubic(cutoff, weight)) / (1.0 - Cubic(cutoff, weight));
+    }
+  }
+
+  public void robotState(){
+    double robot_velocity = (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2;
+    double robot_heading = m_drive.getHeading(); 
+  }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -99,23 +131,19 @@ public class RobotContainer{
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
-    // shoot = new JoystickButton(left, 1);
-    // shoot.whileHeld(new ParallelCommandGroup(new InstantCommand(()->m_limelight.ledMode.setNumber(3)), new InstantCommand(Shoot(m_shooter)), new InstantCommand(()->m_lime.pipeline.setNumber(1)));
-
     //shoot = new JoystickButton(left, 3);
     //shoot.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.25, .6
     //),() -> m_shooter.runShooter(0, 0), m_shooter));
 
     shootPID = new JoystickButton(left, 1); //6 = right bumper
     shootPID.whileHeld(
-      
-      new SequentialCommandGroup(
-        new StartEndCommand(()->m_feeder.runFeeder(-.3), ()-> m_feeder.runFeeder(0), m_feeder).withTimeout(.3),
       new ParallelCommandGroup(
+        new StartEndCommand(()->m_feeder.runFeeder(-.3), ()-> m_feeder.runFeeder(0), m_feeder).withTimeout(.5)
+        .andThen(new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder)),
+        //new TurnToTarget(m_drive),
         new StartEndCommand(()->m_shooter.runTop(), ()->m_shooter.runShooter(0,0)),
         new StartEndCommand(()->m_shooter.runBottom(), ()->m_shooter.runShooter(0,0))
-      ))
+      )
     );
 
     //Align Shooter
@@ -129,11 +157,19 @@ public class RobotContainer{
     new JoystickButton(right, 5)
       .whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(-1),() -> m_feeder.runFeeder(0), m_feeder));
 
+    //Reset encoders
+    new JoystickButton(right, 6)
+      .whenPressed(new InstantCommand(()->m_drive.resetEncoders()));
+
+    //Reset navx
+    new JoystickButton(right, 7)
+      .whenPressed(new InstantCommand(()->m_drive.resetGyro()));
+
     runIntake = new JoystickButton(right, 1); // 
     runIntake.whileHeld(new ParallelCommandGroup(new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake), new StartEndCommand(()-> m_lime.stream.setDouble(2), ()->m_lime.stream.setDouble(0), m_lime)));
 
-    climbUp = new JoystickButton(right, 7); // DPad Up
-    climbUp.whileHeld(new ParallelCommandGroup(new StartEndCommand(() -> m_climb.climbUp(-.6), () -> m_climb.climbUp(0), m_climb), new StartEndCommand(()->m_lime.ledMode.setNumber(2), ()-> m_lime.ledMode.setNumber(0), m_lime)));
+    //climbUp = new JoystickButton(right, 7); // DPad Up
+    //climbUp.whileHeld(new ParallelCommandGroup(new StartEndCommand(() -> m_climb.climbUp(-.6), () -> m_climb.climbUp(0), m_climb), new StartEndCommand(()->m_lime.ledMode.setNumber(2), ()-> m_lime.ledMode.setNumber(0), m_lime)));
     
     climbDown = new JoystickButton(right, 8); // DPad Down
     climbDown.whileHeld(new StartEndCommand(() -> m_climb.climbDown(.6),() -> m_climb.climbDown(0), m_climb));
@@ -157,13 +193,69 @@ public class RobotContainer{
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    Command m_auto = paths.get(trajNames[0]);
+    Command command = paths.get(trajNames[0]);
     Trajectory m_traj = pathsTrajs.get(trajNames[0]);
 
     m_drive.resetOdometry(m_traj.getInitialPose());
 
+    /*
+    // Create a voltage constraint to ensure we don't accelerate too fast
+    var autoVoltageConstraint =
+        new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(
+                Constants.ksVolts,
+                Constants.kvVoltSecondsPerMeter,
+                Constants.kaVoltSecondsSquaredPerMeter),
+            m_drive.m_kinematics,
+            7);
+
+    // Create config for trajectory
+    TrajectoryConfig config =
+        new TrajectoryConfig(
+                Constants.kMaxSpeedMetersPerSecond,
+                Constants.kMaxAccelerationMetersPerSecondSquared)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(m_drive.m_kinematics)
+            // Apply the voltage constraint
+            .addConstraint(autoVoltageConstraint);
+
+    // An example trajectory to follow.  All units in meters.
+    Trajectory exampleTrajectory =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            // Pass through these two interior waypoints, making an 's' curve path
+            List.of(new Translation2d(1, 1), new Translation2d(2, 1)),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(3, 0, new Rotation2d(0)),
+            // Pass config
+            config);
+
+    RamseteCommand command = new RamseteCommand(
+      exampleTrajectory,
+        m_drive::getPose,
+        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+        new SimpleMotorFeedforward(Constants.ksVolts,
+                                  Constants.kvVoltSecondsPerMeter,
+                                  Constants.kaVoltSecondsSquaredPerMeter),
+        m_drive.m_kinematics,
+        m_drive::getWheelSpeeds,
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        // RamseteCommand passes volts to the callback
+        m_drive::tankDriveVolts,
+        m_drive
+    );
+
+    m_drive.resetOdometry(exampleTrajectory.getInitialPose());*/
+
     // AUTONAV
-    return m_auto;
+    return new ParallelCommandGroup(
+      new InstantCommand(()-> m_intake.setIntake(true)),
+      new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+      new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0,0), m_shooter),
+      command
+    ).andThen(() -> m_drive.tankDriveVolts(0, 0));
   }
 
   public void initPaths(){
