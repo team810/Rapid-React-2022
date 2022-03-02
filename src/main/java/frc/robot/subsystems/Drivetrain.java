@@ -75,7 +75,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed){
-    System.out.println("Leftspeed: " + leftSpeed + "\t" + "Rightspeed: " + rightSpeed);
+    //System.out.println("Leftspeed: " + leftSpeed + "\t" + "Rightspeed: " + rightSpeed);
     drive.tankDrive(leftSpeed, rightSpeed);
   }
 
