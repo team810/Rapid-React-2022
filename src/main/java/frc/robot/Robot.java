@@ -4,12 +4,22 @@
 
 package frc.robot;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,9 +34,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
   public Compressor c;
-
-  //Intake i = new Intake();
-
+  Drivetrain m_drive;
+  String directory = "pathplanner/generatedJSON/";
   
 
   /**
@@ -38,11 +47,46 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_drive = m_robotContainer.m_drive;
 
-    //i.setIntake(false);
+    //GEN COMMANDS
+    // for(int i = 0; i < m_robotContainer.trajNames.length; i++){
+    //   String traj = "pathplanner/generatedJSON/" + m_robotContainer.trajNames[i] + ".wpilib.json";
+    //   Trajectory t = genTraj(traj);
+    //   m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[i], t);
+    //   m_robotContainer.paths.put(m_robotContainer.trajNames[i], genCommand(t));
+    // }  
+
+    //Simple Blue Auto 1
+    Trajectory t = genTraj(directory + "Simple_Blue_Auto_1.wpilib.json");
+    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[0], t);
+    m_robotContainer.paths.put(m_robotContainer.trajNames[0], genCommand(t));
+
+    //Simple Blue Auto 2
+    t = genTraj(directory + "Simple_Blue_Auto_2.wpilib.json");
+    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[1], t);
+    m_robotContainer.paths.put(m_robotContainer.trajNames[1], genCommand(t));
+
+    //Simple Blue Auto 3
+    t = genTraj(directory + "Simple_Blue_Auto_3.wpilib.json");
+    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[2], t);
+    m_robotContainer.paths.put(m_robotContainer.trajNames[2], genCommand(t));
+
+    //Three Ball Blue
     
-    //c = new Compressor(PneumaticsModuleType.REVPH);
-    //c.start();
+    
+    //Four Ball Blue
+
+
+    //Simple Red Auto 1
+
+    //Simple Red Auto 2
+
+    //Simple Red Auto 3
+
+    //Three Red Blue
+
+    //Four Red Blue
   }
 
   /**
@@ -109,4 +153,34 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  public Trajectory genTraj(String path){
+    String trajectoryJSON = path;
+    Trajectory trajectory = new Trajectory();
+      try {
+        Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+        trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+      } catch (IOException ex) {
+        DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+      }
+    return trajectory;
+  }
+
+  public RamseteCommand genCommand(Trajectory trajectory){
+    return new RamseteCommand(
+      trajectory,
+        m_drive::getPose,
+        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+        new SimpleMotorFeedforward(Constants.ksVolts,
+                                  Constants.kvVoltSecondsPerMeter,
+                                  Constants.kaVoltSecondsSquaredPerMeter),
+        m_drive.m_kinematics,
+        m_drive::getWheelSpeeds,
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        // RamseteCommand passes volts to the callback
+        m_drive::tankDriveVolts,
+        m_drive
+    );
+  }
 }

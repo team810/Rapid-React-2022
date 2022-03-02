@@ -29,8 +29,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Commands.ShootSequence;
-import frc.robot.Commands.TurnToTarget;
+import frc.robot.commands.ShootSequence;
+import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Feeder;
@@ -47,7 +47,7 @@ import frc.robot.subsystems.Shooter;
 public class RobotContainer{
   // SUBSYSTEMS
   private Intake m_intake = new Intake();
-  private Drivetrain m_drive = new Drivetrain();
+  public Drivetrain m_drive = new Drivetrain();
   private Feeder m_feeder = new Feeder();
   private Shooter m_shooter = new Shooter();
   private Climber m_climb = new Climber();
@@ -61,7 +61,8 @@ public class RobotContainer{
   //AUTONOMOUS PATHS
   public HashMap<String, Trajectory> pathsTrajs = new HashMap<String, Trajectory>();
   public HashMap<String, Command> paths = new HashMap<String, Command>();
-  public String[] trajNames = {"pathplanner/generatedJSON/Simple_Auto_1.wpilib.json"};
+  public String[] trajNames = {"Simple Blue Auto 1", "Simple Blue Auto 2", "Simple Blue Auto 3", "Three Ball Blue", "Four Ball Blue",
+                                "Simple Red Auto 1", "Simple Red Auto 2", "Simple Red Auto 3", "Three Ball Red", "Four Ball Red"};
 
   //AUTONOMOUS PATH CHOOSER
   public SendableChooser<String> m_chooser = new SendableChooser<String>();
@@ -79,8 +80,6 @@ public class RobotContainer{
 
     m_intake.setIntake(false);
 
-    //MAKE AUTO PATHS
-    initPaths();
     // ADD PATHS TO CHOOSER
     for(String key : paths.keySet()){
       m_chooser.addOption(key, key);
@@ -106,12 +105,7 @@ public class RobotContainer{
       return Cubic(value, weight - Math.abs(value)/value*Cubic(cutoff, weight)) / (1.0 - Cubic(cutoff, weight));
     }
   }
-
-  public void robotState(){
-    double robot_velocity = (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2;
-    double robot_heading = m_drive.getHeading(); 
-  }
-
+  
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -198,57 +192,6 @@ public class RobotContainer{
 
     m_drive.resetOdometry(m_traj.getInitialPose());
 
-    /*
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    var autoVoltageConstraint =
-        new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(
-                Constants.ksVolts,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-            m_drive.m_kinematics,
-            7);
-
-    // Create config for trajectory
-    TrajectoryConfig config =
-        new TrajectoryConfig(
-                Constants.kMaxSpeedMetersPerSecond,
-                Constants.kMaxAccelerationMetersPerSecondSquared)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(m_drive.m_kinematics)
-            // Apply the voltage constraint
-            .addConstraint(autoVoltageConstraint);
-
-    // An example trajectory to follow.  All units in meters.
-    Trajectory exampleTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(new Translation2d(1, 1), new Translation2d(2, 1)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(0)),
-            // Pass config
-            config);
-
-    RamseteCommand command = new RamseteCommand(
-      exampleTrajectory,
-        m_drive::getPose,
-        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-        new SimpleMotorFeedforward(Constants.ksVolts,
-                                  Constants.kvVoltSecondsPerMeter,
-                                  Constants.kaVoltSecondsSquaredPerMeter),
-        m_drive.m_kinematics,
-        m_drive::getWheelSpeeds,
-        new PIDController(Constants.kPDriveVel, 0, 0),
-        new PIDController(Constants.kPDriveVel, 0, 0),
-        // RamseteCommand passes volts to the callback
-        m_drive::tankDriveVolts,
-        m_drive
-    );
-
-    m_drive.resetOdometry(exampleTrajectory.getInitialPose());*/
-
     // AUTONAV
     return new SequentialCommandGroup(
       new ParallelDeadlineGroup(
@@ -258,43 +201,5 @@ public class RobotContainer{
       ),
       new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
     ).andThen(() -> m_drive.tankDriveVolts(0, 0));
-  }
-
-  public void initPaths(){
-    for(int i = 0; i < trajNames.length; i++){
-      Trajectory t = genTraj(trajNames[i]);
-      pathsTrajs.put(trajNames[i], t);
-      paths.put(trajNames[i], genCommand(t));
-    }  
-  }
-
-  public Trajectory genTraj(String path){
-    String trajectoryJSON = path;
-    Trajectory trajectory = new Trajectory();
-      try {
-        Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-        trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-      } catch (IOException ex) {
-        DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-      }
-    return trajectory;
-  }
-
-  public RamseteCommand genCommand(Trajectory trajectory){
-    return new RamseteCommand(
-      trajectory,
-        m_drive::getPose,
-        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-        new SimpleMotorFeedforward(Constants.ksVolts,
-                                  Constants.kvVoltSecondsPerMeter,
-                                  Constants.kaVoltSecondsSquaredPerMeter),
-        m_drive.m_kinematics,
-        m_drive::getWheelSpeeds,
-        new PIDController(Constants.kPDriveVel, 0, 0),
-        new PIDController(Constants.kPDriveVel, 0, 0),
-        // RamseteCommand passes volts to the callback
-        m_drive::tankDriveVolts,
-        m_drive
-    );
   }
 }
