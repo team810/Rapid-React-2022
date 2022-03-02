@@ -112,7 +112,7 @@ public class Shooter extends SubsystemBase {
     bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
     //setPointBottom.getDouble(0)
-    bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
+    bottom_pidcontroller.setReference(equationBottom(this.distance), ControlType.kVelocity);
     speedBottom.setDouble(top.getEncoder().getVelocity());
   }
 
@@ -123,7 +123,7 @@ public class Shooter extends SubsystemBase {
 
   private double equationBottom(double distanceInches){
     double distanceFeet = distanceInches / 12.0;
-    return 172*distanceFeet - 100; //+262
+    return 228*distanceFeet - 1188;
   }
 
   private void resetMotors() {

@@ -17,6 +17,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -34,7 +35,10 @@ public class Drivetrain extends SubsystemBase {
 
   public DifferentialDriveKinematics m_kinematics =
   new DifferentialDriveKinematics(Constants.TRACK_WIDTH_METERS);
-  
+
+  //FIELD
+  public final Field2d m_field = new Field2d();
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     frontL = new CANSparkMax(Constants.FRONTL, MotorType.kBrushless);
@@ -56,6 +60,8 @@ public class Drivetrain extends SubsystemBase {
     resetR = resetL = 0;
 
     resetEncoders();
+
+    SmartDashboard.putData("Field", m_field);
   }
 
   @Override
@@ -72,6 +78,8 @@ public class Drivetrain extends SubsystemBase {
     m_odometry.update(
       navx.getRotation2d(), getLeftEncoderPos(), getRightEncoderPos()
     );
+
+    m_field.setRobotPose(m_odometry.getPoseMeters());
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed){

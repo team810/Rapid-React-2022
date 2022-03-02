@@ -20,7 +20,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public final class Constants{
 
     //USB
-
     public final static int LEFT_JOYSTICK = 0;
     public final static int RIGHT_JOYSTICK = 1;
 
