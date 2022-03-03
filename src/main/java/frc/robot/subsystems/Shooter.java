@@ -82,7 +82,69 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Distance to target", this.distance);
   }
 
+<<<<<<< HEAD
   private void updateD() {
+=======
+  private void shuffleUpdate() {
+    topVelRPM.setDouble(this.top.getEncoder().getVelocity());
+    topVelPercent.setDouble(this.topSpeed);
+
+    bottomVelRPM.setDouble(this.bottom.getEncoder().getVelocity());
+    bottomVelPercent.setDouble(this.bottomSpeed);
+
+    targetValidity.setBoolean(tv.getBoolean(false));
+    limelightX.setDouble(tx.getDouble(0));
+    limelightY.setDouble(ty.getDouble(0));
+    limelightArea.setDouble(ta.getDouble(0));
+
+    targetDistance.setDouble(this.distance);
+  }
+
+  private void PIDinit()
+  {
+    this.tab = Shuffleboard.getTab("Shooter System");
+    //top
+    this.setPointTop = tab.add("Set Speed (Top)", 1000).getEntry();
+    this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
+    this.kPTop = tab.addPersistent("P (Top)", 0).getEntry();
+    this.kITop = tab.addPersistent("I (Top)", 0).getEntry();
+    this.kDTop = tab.addPersistent("D (Top)", 0).getEntry();
+    this.kFFTop = tab.addPersistent("FF (Top)", 0).getEntry();
+
+    //bottom
+    this.setPointBottom = tab.add("Set Speed (Bottom)", 1000).getEntry();
+    this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
+    this.kPBottom = tab.addPersistent("P (Bottom)", 0).getEntry();
+    this.kIBottom = tab.addPersistent("I (Bottom)", 0).getEntry();
+    this.kDBottom = tab.addPersistent("D (Bottom)", 0).getEntry();
+    this.kFFBottom = tab.addPersistent("FF (Bottom)", 0).getEntry();
+
+    this.top_pidcontroller = top.getPIDController();
+    this.bottom_pidcontroller = bottom.getPIDController();
+
+    this.kIz = 100;
+    this.kMinOutput = -1;
+    this.kMaxOutput = 1;
+
+    top_pidcontroller.setP(kPTop.getDouble(0));
+    top_pidcontroller.setI(kITop.getDouble(0));
+    top_pidcontroller.setD(kDTop.getDouble(0));
+    top_pidcontroller.setFF(1/5600);
+    top_pidcontroller.setIZone(kIz);
+    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+
+    bottom_pidcontroller.setP(kPBottom.getDouble(0));
+    bottom_pidcontroller.setI(kIBottom.getDouble(0));  
+    bottom_pidcontroller.setD(kDBottom.getDouble(0));
+    bottom_pidcontroller.setFF(1/5600);
+    bottom_pidcontroller.setIZone(kIz);
+    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+  }
+
+  private void resetMotors() {
+    this.top.restoreFactoryDefaults();
+    this.bottom.restoreFactoryDefaults();
+>>>>>>> 6a78b70ad61903f26fbb8eff7f6774c09cf20599
     /*
      * d = (h2-h1) / tan(a1+a2) d = (hieght of the limelight from ground minus the
      * heigth of the field goal inches) over (tan(angle of lens to goal + angle of
