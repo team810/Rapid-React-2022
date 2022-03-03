@@ -8,11 +8,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -20,17 +18,7 @@ public class Drivetrain extends SubsystemBase {
   private CANSparkMax frontL, frontR, backL, backR;
   private MotorControllerGroup left, right;
   private DifferentialDrive drive;
-  private double leftSpeed, rightSpeed; 
-
-  NetworkTableEntry LSpeed, RSpeed, 
-                    FLvel, FLpos, FLtemp,
-                    FRvel, FRpos, FRtemp,
-                    BLvel, BLpos, BLtemp,
-                    BRvel, BRpos, BRtemp; 
-
-                    
-
-  ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain System");
+  private double leftSpeed, rightSpeed;
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -47,23 +35,27 @@ public class Drivetrain extends SubsystemBase {
     this.left.setInverted(true);
 
     this.drive = new DifferentialDrive(left, right);
-
-    shuffleInit();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    shuffleUpdate();
+    //shuffleInit();
+    
+
   }
 
   public void tankDrive(double leftSpeed, double rightSpeed) {
     // The numbers come in from the Y-axis of the controller as -, reversed them to
     // positive before passing
-    this.drive.tankDrive(-leftSpeed, rightSpeed);
+    this.drive.tankDrive(-leftSpeed, -rightSpeed);
 
     this.leftSpeed = -leftSpeed;
-    this.rightSpeed = rightSpeed;
+    this.rightSpeed = -rightSpeed;
+  }
+
+  public void arcadeDrive(double speed, double rot){
+    this.drive.arcadeDrive(speed, rot);
   }
 
   private void resetMotors() {
@@ -79,45 +71,27 @@ public class Drivetrain extends SubsystemBase {
   }
 
   private void shuffleInit() {
-    
-    LSpeed = tab.add("Drivetrain Velocity Left (%)", this.leftSpeed).getEntry();
-    RSpeed = tab.add("Drivetrain Velocity Right (%)", this.rightSpeed).getEntry();
+    SmartDashboard.putNumber("P", frontL.getPIDController().getP());
+    SmartDashboard.putNumber("I", frontL.getPIDController().getD());
+    SmartDashboard.putNumber("D", frontL.getPIDController().getI());
 
-    FLvel = tab.add("Velocity FL", frontL.getEncoder().getVelocity()).getEntry();
-    FLpos = tab.add("Position FL", frontL.getEncoder().getPosition()).getEntry();
-    FLtemp = tab.add("Temp FL", frontL.getMotorTemperature()).getEntry();
+    SmartDashboard.putNumber("Drivetrain Velcoity Left (%)", this.leftSpeed);
+    SmartDashboard.putNumber("Drivetrain Velocity Right (%)", this.rightSpeed);
 
-    FRvel = tab.add("Velocity FR", frontR.getEncoder().getVelocity()).getEntry();
-    FRpos = tab.add("Position FR", frontR.getEncoder().getPosition()).getEntry();
-    FRtemp = tab.add("Temp FR", frontR.getMotorTemperature()).getEntry();
+    SmartDashboard.putNumber("Velocity FL", frontL.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position FL", frontL.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp FL", frontL.getMotorTemperature());
 
-    BLvel = tab.add("Velocity BL", backL.getEncoder().getVelocity()).getEntry();
-    BLpos = tab.add("Position BL", backL.getEncoder().getPosition()).getEntry();
-    BLpos = tab.add("Temp BL", backL.getMotorTemperature()).getEntry();
+    SmartDashboard.putNumber("Velocity FR", frontR.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position FR", frontR.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp FR", frontR.getMotorTemperature());
 
-    BRvel = tab.add("Velocity BR", backR.getEncoder().getVelocity()).getEntry();
-    BRpos = tab.add("Position BR", backR.getEncoder().getPosition()).getEntry();
-    BRtemp = tab.add("Temp BR", backR.getMotorTemperature()).getEntry();
+    SmartDashboard.putNumber("Velocity BL", backL.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position BL", backL.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp BL", backL.getMotorTemperature());
+
+    SmartDashboard.putNumber("Velocity BR", backR.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Position BR", backR.getEncoder().getPosition());
+    SmartDashboard.putNumber("Temp BR", backR.getMotorTemperature());
   }
-
-  private void shuffleUpdate() {
-    LSpeed.setDouble(this.leftSpeed);
-    RSpeed.setDouble(this.rightSpeed);
-
-    FLvel.setDouble(frontL.getEncoder().getVelocity());
-    FLpos.setDouble(frontL.getEncoder().getPosition());
-    FLtemp.setDouble(frontL.getMotorTemperature());
-
-    FRvel.setDouble(frontR.getEncoder().getVelocity());
-    FRpos.setDouble(frontR.getEncoder().getPosition());
-    FRtemp.setDouble(frontR.getMotorTemperature());
-
-    BLvel.setDouble(backL.getEncoder().getVelocity());
-    BLpos.setDouble(backL.getEncoder().getPosition());
-    BLpos.setDouble(backL.getMotorTemperature());
-
-    BRvel.setDouble(backR.getEncoder().getVelocity());
-    BRpos.setDouble(backR.getEncoder().getPosition());
-    BRtemp.setDouble(backR.getMotorTemperature());
-  } 
 }

@@ -4,17 +4,22 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Feeder extends SubsystemBase {
-  private Spark feederMotor;
-  // Ultrasonic colorSensor;
 
-  /** Creates a new Feeder. */
+  Spark feederMotor;
+
+  /** Creates a new Indexer. */
   public Feeder() {
-    this.feederMotor = new Spark(Constants.FEEDER_MOTOR);
+
+    feederMotor = new Spark(Constants.FEEDER);
+
   }
 
   @Override
@@ -22,7 +27,7 @@ public class Feeder extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void runFeeder(double speed) {
-    this.feederMotor.set(speed);
+  public void runFeeder(double speed){
+    feederMotor.set(speed);
   }
 }
