@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -26,8 +27,9 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void runIntake(double speed) {
+  public void runIntake(double speed, int state) {
     this.intakeMotor.set(speed);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(state);
   }
 
   public void toggleIntakeSolenoid(Value value)

@@ -78,6 +78,12 @@ public class Shooter extends SubsystemBase {
     table.getEntry("camMode").setNumber(value);
   }
 
+  public void runPID()
+  {
+    bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
+    top_pidcontroller.setReference(setPointTop.getDouble(0), ControlType.kVelocity);
+  }
+
   public void runShooter(double topSpeed, double bottomSpeed) {
     this.top.set(-topSpeed);
     this.bottom.set(bottomSpeed);
@@ -86,31 +92,32 @@ public class Shooter extends SubsystemBase {
     this.bottomSpeed = bottomSpeed;
   }
 
-
-  public void runTop()
-  {
-    top_pidcontroller.setP(kPTop.getDouble(0));
-    top_pidcontroller.setI(kITop.getDouble(0));
-    top_pidcontroller.setD(kDTop.getDouble(0));
-    top_pidcontroller.setFF(kFFTop.getDouble(0));
-    top_pidcontroller.setIZone(kIz);
-    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
-
-    top_pidcontroller.setReference(setPointTop.getDouble(0), ControlType.kVelocity);
-    speedTop.setDouble(top.getEncoder().getVelocity());
+  private void updateD() {
+    /*
+     * d = (h2-h1) / tan(a1+a2)
+     * d = (hieght of the limelight from ground minus the heigth of the field goal
+     * inches) over
+     * (tan(angle of lens to goal + angle of lens from bottom of camera))
+     */
+    // Collect data and run linear regression for motor power to distance linear
+    // relationship to implement to shoot command
+    this.distance = (this.goalHeight - this.limelightHeight)
+        / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
   }
 
-  public void runBottom()
-  {
-    bottom_pidcontroller.setP(kPBottom.getDouble(0));
-    bottom_pidcontroller.setI(kIBottom.getDouble(0));
-    bottom_pidcontroller.setD(kDBottom.getDouble(0));
-    bottom_pidcontroller.setFF(kFFBottom.getDouble(0));
-    bottom_pidcontroller.setIZone(kIz);
-    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+  private void shuffleUpdate() {
+    topVelRPM.setDouble(this.top.getEncoder().getVelocity());
+    topVelPercent.setDouble(this.topSpeed);
 
-    bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
-    speedBottom.setDouble(top.getEncoder().getVelocity());
+    bottomVelRPM.setDouble(this.bottom.getEncoder().getVelocity());
+    bottomVelPercent.setDouble(this.bottomSpeed);
+
+    targetValidity.setBoolean(tv.getBoolean(false));
+    limelightX.setDouble(tx.getDouble(0));
+    limelightY.setDouble(ty.getDouble(0));
+    limelightArea.setDouble(ta.getDouble(0));
+
+    targetDistance.setDouble(this.distance);
   }
 
   private void resetMotors() {
@@ -143,87 +150,49 @@ public class Shooter extends SubsystemBase {
     targetDistance = tab.add("Distance to target", this.distance).getEntry();
   }
 
-  private void shuffleUpdate() {
-    topVelRPM.setDouble(this.top.getEncoder().getVelocity());
-    topVelPercent.setDouble(this.topSpeed);
-
-    bottomVelRPM.setDouble(this.bottom.getEncoder().getVelocity());
-    bottomVelPercent.setDouble(this.bottomSpeed);
-
-    targetValidity.setBoolean(tv.getBoolean(false));
-    limelightX.setDouble(tx.getDouble(0));
-    limelightY.setDouble(ty.getDouble(0));
-    limelightArea.setDouble(ta.getDouble(0));
-
-    targetDistance.setDouble(this.distance);
-  }
-
   private void PIDinit()
   {
-
-    /* 
-    For next year, I'd like to explain PID tuning so no one gets confused as much.
-    Upon pressing a motor with an external force, like a ball, or just in normal motion,
-    the motor's voltage cannot be perfect; the motor will slow or speed up slightly.
-    To fix this, we use PID tuning: this accounts for the error and makes sure that the motor
-    is always running at the same speed, no matter what happens to it. 
-
-    P: Proportional - This is the error at present in the motor.
-    I: Integral - This is the accumulate error of the motor over a certain zone.
-    D: Derivative - This is the rate of change of the error in the motor at present.
-    F or FF: Feed Forward - This is the prediction of the error of the motor, and this is 
-    fed into the motor when you run PID tuning and is usually set as 1/(RPM wanted) or 1/(max RPM).  
-
-    The actual math doesn't matter that much, as the code does it for us. You can look it up 
-    if you'd like, though it's difficult to understand and there's no real reason to do it.
-    I personally, did not go the length to fully understand the math of the PID equation, though 
-    I understood the concepts it was built upon and the calculus it used. 
-
-    With these three values (found experimentally), we can use PID tuning to make sure our motors 
-    run the way we want to, and our drivetrain always goes the straightest it possibly can.
-
-    This is only a short account of PID tuning, however, and, though next year's coders
-    will surely have to do more research and awful code parsing, I just wanted to get the basic gist
-    across so next year isn't as confused as I was.
-
-    -Anagh
-    */
-
     this.tab = Shuffleboard.getTab("Shooter System");
-    //top
-    this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry();
-    this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
-    this.kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry();
-    this.kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry();
-    this.kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry();
-    this.kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry();
-
-    //bottom
-    this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry();
-    this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
-    this.kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry();
-    this.kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry();
-    this.kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry();
-    this.kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry();
 
     this.top_pidcontroller = top.getPIDController();
     this.bottom_pidcontroller = bottom.getPIDController();
 
+    //top
+    this.setPointTop = tab.add("Set Speed (Top)", 4000).getEntry();
+    this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
+    this.kPTop = tab.addPersistent("P (Top)", 0).getEntry();
+    this.kITop = tab.addPersistent("I (Top)", 0).getEntry();
+    this.kDTop = tab.addPersistent("D (Top)", 0).getEntry();
+    this.kFFTop = tab.addPersistent("F (Top)", 0).getEntry();
+
+    top_pidcontroller.setP(kPTop.getDouble(0));
+    top_pidcontroller.setI(kITop.getDouble(0));
+    top_pidcontroller.setD(kDTop.getDouble(0));
+    top_pidcontroller.setFF(kFFTop.getDouble(0));
+    top_pidcontroller.setIZone(kIz);
+    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+
+    speedTop.setDouble(top.getEncoder().getVelocity());
+
+    //bottom
+    this.setPointBottom = tab.add("Set Speed (Bottom)", 4000).getEntry();
+    this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
+    this.kPBottom = tab.addPersistent("P (Bottom)", 0).getEntry();
+    this.kIBottom = tab.addPersistent("I (Bottom)", 0).getEntry();
+    this.kDBottom = tab.addPersistent("D (Bottom)", 0).getEntry();
+    this.kFFBottom = tab.addPersistent("F (Bottom)", 0).getEntry();
+
+    bottom_pidcontroller.setP(kPBottom.getDouble(0));
+    bottom_pidcontroller.setI(kIBottom.getDouble(0));
+    bottom_pidcontroller.setD(kDBottom.getDouble(0));
+    bottom_pidcontroller.setFF(kFFBottom.getDouble(0));
+    bottom_pidcontroller.setIZone(kIz);
+    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
+
+    speedBottom.setDouble(top.getEncoder().getVelocity());
+
     this.kIz = 100;
     this.kMinOutput = -1;
     this.kMaxOutput = 1;
-  }
-
-  private void updateD() {
-    /*
-     * d = (h2-h1) / tan(a1+a2)
-     * d = (hieght of the limelight from ground minus the heigth of the field goal
-     * inches) over
-     * (tan(angle of lens to goal + angle of lens from bottom of camera))
-     */
-    // Collect data and run linear regression for motor power to distance linear
-    // relationship to implement to shoot command
-    this.distance = (this.goalHeight - this.limelightHeight)
-        / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
   }
 }

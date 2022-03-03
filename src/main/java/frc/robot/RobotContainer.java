@@ -43,7 +43,7 @@ public class RobotContainer {
 
   private Joystick GAMEPAD = new Joystick(Constants.GP);
 
-  private JoystickButton toggleLimelight,toggleLimelightCam, runShooter, runIntake, runFeeder, raiseClimber, lowerClimber, ejectBall, runClimber;
+  private JoystickButton toggleLimelightCam, runShooter, runIntake, runFeeder, raiseClimber, lowerClimber, ejectBall, runClimber;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -69,10 +69,13 @@ public class RobotContainer {
     
     runIntake = new JoystickButton(RIGHT, Constants.TRIGGER_BUTTON);
     runIntake.whileHeld(new ParallelCommandGroup(    
-      new StartEndCommand(() -> m_intake.runIntake(.5), () -> m_intake.runIntake(0), m_intake),
+      new StartEndCommand(() -> m_intake.runIntake(.5, 2), () -> m_intake.runIntake(0, 1), m_intake),
       new StartEndCommand(() -> m_intake.toggleIntakeSolenoid(Value.kForward), () -> m_intake.toggleIntakeSolenoid(Value.kReverse), m_intake),
       new StartEndCommand(()-> m_feeder.runFeeder(.5), ()-> m_feeder.runFeeder(0), m_feeder)
       ));
+
+    runShooter = new JoystickButton(RIGHT, Constants.MIDDLE_BUTTON);
+    runShooter.whileHeld(new StartEndCommand(() -> m_shooter.runPID(), () -> m_shooter.runShooter(0, 0), m_shooter));
 
     runFeeder = new JoystickButton(LEFT, Constants.TRIGGER_BUTTON);
     runFeeder.whileHeld(new StartEndCommand(()-> m_feeder.runFeeder(.75), ()-> m_feeder.runFeeder(0), m_feeder));
@@ -80,14 +83,11 @@ public class RobotContainer {
     ejectBall = new JoystickButton(LEFT, Constants.MIDDLE_BUTTON);
     ejectBall.whileHeld(new ParallelCommandGroup(
       new StartEndCommand(() -> m_feeder.runFeeder(-0.5), () -> m_feeder.runFeeder(0), m_feeder), 
-      new StartEndCommand(() -> m_intake.runIntake(-0.5), () -> m_intake.runIntake(0), m_intake)
+      new StartEndCommand(() -> m_intake.runIntake(-0.5, 2), () -> m_intake.runIntake(0, 1), m_intake)
     ));
 
-    runShooter = new JoystickButton(RIGHT, Constants.MIDDLE_BUTTON);
-    runShooter.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.5, .75), () -> m_shooter.runShooter(0, 0), m_shooter));
-
     //secondary
-    runClimber = new JoystickButton(RIGHT, Constants.A);
+    runClimber = new JoystickButton(GAMEPAD, Constants.A);
     runClimber.whenPressed(new SequentialCommandGroup(
       new InstantCommand(() -> m_climber.runClimber(0.5)), 
       new ParallelCommandGroup(
@@ -102,10 +102,7 @@ public class RobotContainer {
     lowerClimber = new JoystickButton(GAMEPAD, Constants.B);
     lowerClimber.whileHeld(new StartEndCommand(() -> m_climber.runClimber(-0.5), () -> m_climber.runClimber(0), m_climber));
   
-    toggleLimelight = new JoystickButton(GAMEPAD, Constants.LB);
-    toggleLimelight.toggleWhenPressed(new StartEndCommand(()-> m_shooter.toggleLimelightLight(3), ()-> m_shooter.toggleLimelightLight(1), m_shooter));
-
-    toggleLimelightCam = new JoystickButton(GAMEPAD, Constants.RB);
+    toggleLimelightCam = new JoystickButton(GAMEPAD, Constants.RT);
     toggleLimelightCam.toggleWhenPressed(new StartEndCommand(()-> m_shooter.toggleLimelightCamMode(0), ()-> m_shooter.toggleLimelightLight(1), m_shooter));
   }
 
