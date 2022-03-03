@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.awt.Color;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -17,22 +19,22 @@ import frc.robot.Constants;
 public class Feeder extends SubsystemBase {
 
   Spark feederMotor;
-  ColorSensorV3 colorSensor;
+  ColorSensorV3 colorSensorV3;
 
   /** Creates a new Indexer. */
   public Feeder() {
 
     feederMotor = new Spark(Constants.FEEDER);
-    colorSensor = new ColorSensorV3(Port.kOnboard);
+    colorSensorV3 = new ColorSensorV3(Port.kOnboard);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Red", colorSensor.getRed());
-    SmartDashboard.putNumber("Green", colorSensor.getGreen());
-    SmartDashboard.putNumber("Blue", colorSensor.getBlue());
-    SmartDashboard.putNumber("Promity", colorSensor.getProximity());
+    SmartDashboard.putNumber("Red", colorSensorV3.getRed());
+    SmartDashboard.putNumber("Green", colorSensorV3.getGreen());
+    SmartDashboard.putNumber("Blue", colorSensorV3.getBlue());
+    SmartDashboard.putNumber("Proximity", colorSensorV3.getProximity());
   }
 
   public void runFeeder(double speed){
