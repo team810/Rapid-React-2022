@@ -39,11 +39,12 @@ public class Shooter extends SubsystemBase {
 
   NetworkTableEntry topVelRPM, topVelPercent, 
                     bottomVelRPM, bottomVelPercent,
-                    targetValidity, limelightX, limelightY, limelightArea, targetDistance; 
+                    targetValidity, limelightX, limelightY,
+                     limelightArea, targetDistance, voltage; 
 
-  private int goalHeight = 96; // inches
-  private int limelightHeight = 48; // inches
-  private int limelightAngle = 45; // degrees
+  private int goalHeight = 104; // inches
+  private int limelightHeight = 20; // inches
+  private int limelightAngle = 35; // degrees
 
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -68,6 +69,7 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     updateD();
     shuffleUpdate();
+    //System.out.println(this.distance);
   }
 
   public void toggleLimelightLight(int value) {
@@ -78,12 +80,6 @@ public class Shooter extends SubsystemBase {
     table.getEntry("camMode").setNumber(value);
   }
 
-  public void runPID()
-  {
-    bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
-    top_pidcontroller.setReference(setPointTop.getDouble(0), ControlType.kVelocity);
-  }
-
   public void runShooter(double topSpeed, double bottomSpeed) {
     this.top.set(-topSpeed);
     this.bottom.set(bottomSpeed);
@@ -92,32 +88,47 @@ public class Shooter extends SubsystemBase {
     this.bottomSpeed = bottomSpeed;
   }
 
-  private void updateD() {
-    /*
-     * d = (h2-h1) / tan(a1+a2)
-     * d = (hieght of the limelight from ground minus the heigth of the field goal
-     * inches) over
-     * (tan(angle of lens to goal + angle of lens from bottom of camera))
-     */
-    // Collect data and run linear regression for motor power to distance linear
-    // relationship to implement to shoot command
-    this.distance = (this.goalHeight - this.limelightHeight)
-        / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
+  public void runPID()
+  {
+    runTop();
+    runBottom();
   }
 
-  private void shuffleUpdate() {
-    topVelRPM.setDouble(this.top.getEncoder().getVelocity());
-    topVelPercent.setDouble(this.topSpeed);
+  public void runTop()
+  {
+    top_pidcontroller.setP(kPTop.getDouble(0));
+    top_pidcontroller.setI(kITop.getDouble(0));
+    top_pidcontroller.setD(kDTop.getDouble(0));
+    top_pidcontroller.setFF(kFFTop.getDouble(0));
+    top_pidcontroller.setIZone(kIz);
+    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
-    bottomVelRPM.setDouble(this.bottom.getEncoder().getVelocity());
-    bottomVelPercent.setDouble(this.bottomSpeed);
+    top_pidcontroller.setReference(-setPointTop.getDouble(0), ControlType.kVelocity);
+    speedTop.setDouble(top.getEncoder().getVelocity());
+  }
 
-    targetValidity.setBoolean(tv.getBoolean(false));
-    limelightX.setDouble(tx.getDouble(0));
-    limelightY.setDouble(ty.getDouble(0));
-    limelightArea.setDouble(ta.getDouble(0));
+  public void runBottom()
+  {
+    bottom_pidcontroller.setP(kPBottom.getDouble(0));
+    bottom_pidcontroller.setI(kIBottom.getDouble(0));
+    bottom_pidcontroller.setD(kDBottom.getDouble(0));
+    bottom_pidcontroller.setFF(kFFBottom.getDouble(0));
+    bottom_pidcontroller.setIZone(kIz);
+    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
-    targetDistance.setDouble(this.distance);
+    //setPointBottom.getDouble(0)
+    bottom_pidcontroller.setReference(equationBottom(this.distance), ControlType.kVelocity);
+    speedBottom.setDouble(top.getEncoder().getVelocity());
+  }
+
+  public void run(){
+    runTop();
+    runBottom();
+  }
+
+  private double equationBottom(double distanceInches){
+    double distanceFeet = distanceInches / 12.0;
+    return 228*distanceFeet - 1188;
   }
 
   private void resetMotors() {
@@ -148,51 +159,65 @@ public class Shooter extends SubsystemBase {
     limelightArea = tab.add("Limelight Area", ta.getDouble(0)).getEntry();
 
     targetDistance = tab.add("Distance to target", this.distance).getEntry();
+
+    voltage = tab.add("Top Shooter Volts", top.getBusVoltage()).getEntry();
+  }
+
+  private void shuffleUpdate() {
+    topVelRPM.setDouble(this.top.getEncoder().getVelocity());
+    topVelPercent.setDouble(this.topSpeed);
+
+    bottomVelRPM.setDouble(this.bottom.getEncoder().getVelocity());
+    bottomVelPercent.setDouble(this.bottomSpeed);
+
+    targetValidity.setBoolean(tv.getBoolean(false));
+    limelightX.setDouble(tx.getDouble(0));
+    limelightY.setDouble(ty.getDouble(0));
+    limelightArea.setDouble(ta.getDouble(0));
+
+    targetDistance.setDouble(this.distance);
+    voltage.setDouble(top.getBusVoltage());
   }
 
   private void PIDinit()
   {
+    //name that tab
     this.tab = Shuffleboard.getTab("Shooter System");
+
+    //top
+    this.setPointTop = tab.add("Set Speed (Top)", 5000).getEntry();
+    this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
+    this.kPTop = tab.addPersistent("P (Top)", Constants.kPTop).getEntry();
+    this.kITop = tab.addPersistent("I (Top)", Constants.kITop).getEntry();
+    this.kDTop = tab.addPersistent("D (Top)", Constants.kDTop).getEntry();
+    this.kFFTop = tab.addPersistent("F (Top)", Constants.kFTop).getEntry();
+
+    //bottom
+    this.setPointBottom = tab.add("Set Speed (Bottom)", 5000).getEntry();
+    this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
+    this.kPBottom = tab.addPersistent("P (Bottom)", Constants.kPBottom).getEntry();
+    this.kIBottom = tab.addPersistent("I (Bottom)", Constants.kIBottom).getEntry();
+    this.kDBottom = tab.addPersistent("D (Bottom)", Constants.kDBottom).getEntry();
+    this.kFFBottom = tab.addPersistent("F (Bottom)", Constants.kFBottom).getEntry();
 
     this.top_pidcontroller = top.getPIDController();
     this.bottom_pidcontroller = bottom.getPIDController();
 
-    //top
-    this.setPointTop = tab.add("Set Speed (Top)", 4000).getEntry();
-    this.speedTop = tab.add("Actual Speed (Top)", 0).getEntry();
-    this.kPTop = tab.addPersistent("P (Top)", 0).getEntry();
-    this.kITop = tab.addPersistent("I (Top)", 0).getEntry();
-    this.kDTop = tab.addPersistent("D (Top)", 0).getEntry();
-    this.kFFTop = tab.addPersistent("F (Top)", 0).getEntry();
-
-    top_pidcontroller.setP(kPTop.getDouble(0));
-    top_pidcontroller.setI(kITop.getDouble(0));
-    top_pidcontroller.setD(kDTop.getDouble(0));
-    top_pidcontroller.setFF(kFFTop.getDouble(0));
-    top_pidcontroller.setIZone(kIz);
-    top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
-
-    speedTop.setDouble(top.getEncoder().getVelocity());
-
-    //bottom
-    this.setPointBottom = tab.add("Set Speed (Bottom)", 4000).getEntry();
-    this.speedBottom = tab.add("Actual Speed (Bottom)", 0).getEntry();
-    this.kPBottom = tab.addPersistent("P (Bottom)", 0).getEntry();
-    this.kIBottom = tab.addPersistent("I (Bottom)", 0).getEntry();
-    this.kDBottom = tab.addPersistent("D (Bottom)", 0).getEntry();
-    this.kFFBottom = tab.addPersistent("F (Bottom)", 0).getEntry();
-
-    bottom_pidcontroller.setP(kPBottom.getDouble(0));
-    bottom_pidcontroller.setI(kIBottom.getDouble(0));
-    bottom_pidcontroller.setD(kDBottom.getDouble(0));
-    bottom_pidcontroller.setFF(kFFBottom.getDouble(0));
-    bottom_pidcontroller.setIZone(kIz);
-    bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
-
-    speedBottom.setDouble(top.getEncoder().getVelocity());
-
     this.kIz = 100;
     this.kMinOutput = -1;
     this.kMaxOutput = 1;
+  }
+
+  private void updateD() {
+    /*
+     * d = (h2-h1) / tan(a1+a2)
+     * d = (hieght of the limelight from ground minus the heigth of the field goal
+     * inches) over
+     * (tan(angle of lens to goal + angle of lens from bottom of camera))
+     */
+    // Collect data and run linear regression for motor power to distance linear
+    // relationship to implement to shoot command
+    this.distance = (this.goalHeight - this.limelightHeight)
+        / Math.tan(Math.toRadians(this.limelightAngle + ty.getDouble(0)));
   }
 }
