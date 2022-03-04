@@ -1,7 +1,0 @@
-Ordered by when I thought of it:
-    1. Climber subsystem
-    2. Testing vision, linear regression for motor power @ whatever distance
-    3. Add an LEDStrip subsystem to interact with our shooter, purly aesthetic
-    4. Getting rid of this because we have Monday.com or something
-    5. I have to configure the layout for shuffleboard, takes like 5 minutes i just need to deploy then enable for 
-    about 2 seconds

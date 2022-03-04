@@ -20,7 +20,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public final class Constants{
 
     //USB
-
     public final static int LEFT_JOYSTICK = 0;
     public final static int RIGHT_JOYSTICK = 1;
 
@@ -61,6 +60,49 @@ public final class Constants{
     public static final NetworkTableEntry stream = table.getEntry("stream");
 
 
+    public static final int XAXIS = 0;
+    public static final int YAXIS = 1;
 
+    public final static int HOOKL_1 = 1;
+    public final static int HOOKL_2 = 2;
+    public final static int HOOKR_1 = 3;
+    public final static int HOOKR_2 = 4; 
+    public final static double CLIMBER_REVS = 15.7079633;
 
+    // FEEDER (SPARK)
+    public static final int FEEDER_MOTOR = 0;
+
+    //SHOOTER PID VALUES
+    //top 
+    public static final double kPTop = 0.0002;
+    public static final double kITop = 0;
+    public static final double kDTop = 0;
+    public static final double kFTop = 0; 
+
+    //bottom
+    public static final double kPBottom = 0.0002;
+    public static final double kIBottom = 0;
+    public static final double kDBottom = 0;
+    public static final double kFBottom = 0; 
+
+    //AUTONOMOUS
+    public static final double ksVolts = 0.33251;
+    public static final double kvVoltSecondsPerMeter = 2.5645;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.86909;
+
+    public static final double kPDriveVel = 3.7958;
+
+    // Adjust as necessary for surroundings
+    public static final double kMaxSpeedMetersPerSecond = .5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = .2;
+
+    public static final double kvVoltSecondsPerRadian = 2.369;
+    public static final double kaVoltSecondsSquaredPerRadian = 0.485;
+
+    public static final double kRamseteB = 2; // dont change this and the val below
+    public static final double kRamseteZeta = 0.7;
+
+    public static final double TRACK_WIDTH_METERS = 0.57098;
+    public static final double CIRCUMFERENCE = Math.PI * 6;
+    public static final double GEAR_RATIO = 10.71;
 }

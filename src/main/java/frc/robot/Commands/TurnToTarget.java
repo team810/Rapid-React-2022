@@ -20,7 +20,7 @@ public class TurnToTarget extends PIDCommand {
   public TurnToTarget(Drivetrain m_drive) {
     super(
         // The controller that the command will use
-        new PIDController(0, 0, 0),
+        new PIDController(.035, 0.00025, 0.0035),
         // This should return the measurement
         () -> Constants.tx.getDouble(0),
         // This should return the setpoint (can also be a constant)
@@ -32,7 +32,7 @@ public class TurnToTarget extends PIDCommand {
 
     addRequirements(m_drive);
     // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(.05);
+    getController().setTolerance(.5);
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
   }
@@ -40,6 +40,6 @@ public class TurnToTarget extends PIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return getController().atSetpoint();
   }
 }

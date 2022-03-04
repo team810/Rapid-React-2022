@@ -6,11 +6,15 @@ package frc.robot.subsystems;
 
 import java.time.temporal.IsoFields;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class Limelight extends SubsystemBase {
 
@@ -21,18 +25,26 @@ public class Limelight extends SubsystemBase {
   public NetworkTableEntry stream = Constants.stream;
 
 
-  Lightstrips m_lights;
+
+
+
+
+  HttpCamera feed;
 
   /** Creates a new Limelight. */
   public Limelight() {
 
-    m_lights = new Lightstrips();
+
+    feed = new HttpCamera("Limelight", "http://limelight.local:5800/");
+    CameraServer.getInstance().startAutomaticCapture(feed);
 
 
   }
 
   @Override
   public void periodic() {
+
+
 
 
     // This method will be called once per scheduler run
@@ -112,14 +124,6 @@ public class Limelight extends SubsystemBase {
     return Constants.ty.getDouble(0.0);
   }
 
-  public void changeColorOnValidTarget(){
-    if(isValidTarget()){
-      m_lights.changeLEDColor("G");
-    }
-    else{
-      m_lights.changeLEDColor("B");
-    }
-  }
 
   
 

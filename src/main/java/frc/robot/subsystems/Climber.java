@@ -6,20 +6,23 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
-  private CANSparkMax climberMotor;
+  public CANSparkMax climberMotor;
   private double speed;
 
   private DoubleSolenoid sol;
@@ -28,6 +31,7 @@ public class Climber extends SubsystemBase {
     this.climberMotor = new CANSparkMax(Constants.CLIMB, MotorType.kBrushless);
 
     motorReset();
+    climberMotor.setIdleMode(IdleMode.kCoast);
 
     sol = new DoubleSolenoid(PneumaticsModuleType.REVPH, 14, 15);
   }
@@ -36,19 +40,52 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     shuffleInit();
+
+    //System.out.println(climberMotor.getEncoder().getPosition());
+
+
+
   }
 
-  public void runClimber(double speed) {
-   // if(DriverStation.getMatchTime() < 45){
 
-    
-    this.climberMotor.set(speed);
-    
-    this.speed = speed;
 
-    System.out.println(speed);
+  public void climbUp(double speed){
+    if(climberMotor.getEncoder().getPosition() < -85){
+
+      this.climberMotor.set(0);
+
   
-    //}
+      this.speed = speed;
+  
+        }
+        else{
+          this.climberMotor.set((speed));
+  
+        }
+
+    if(climberMotor.getEncoder().getPosition() < 10){
+      setPistons(false);
+
+    }
+  }
+
+  public void climbDown(double speed){
+    if(climberMotor.getEncoder().getPosition() > 50){
+
+      this.climberMotor.set(0);
+  
+      this.speed = speed;
+  
+        }
+        else{
+          this.climberMotor.set((speed));
+  
+        }
+
+        if(climberMotor.getEncoder().getPosition() < 10){
+          setPistons(false);
+    
+        }
   }
 
   private void motorReset() {
@@ -57,18 +94,31 @@ public class Climber extends SubsystemBase {
   }
 
   public void shuffleInit() {
-    SmartDashboard.putNumber("Climber Velocity (RPM)", this.climberMotor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Climber Velocity (%)", this.speed);
 
-    SmartDashboard.putNumber("Climber Position", this.climberMotor.getEncoder().getPosition());
+
+
+    SmartDashboard.putNumber("Climber Position", -climberMotor.getEncoder().getPosition());
+
+    SmartDashboard.putBoolean("Climber At Top", climberMotor.getEncoder().getPosition() < -85 ? true : false);    
+    SmartDashboard.putBoolean("Hook Position", sol.get() == Value.kForward ? false : true);
   }
 
-  public void togglePistons(){
-    if(sol.get() == Value.kForward){
+  public void togglePistons() {
+    if (sol.get() == Value.kForward) {
       sol.set(Value.kReverse);
-    }else{
+    } else {
       sol.set(Value.kForward);
     }
   }
+
+  public void setPistons(boolean value) {
+    if (value) {
+      sol.set(Value.kReverse);
+    } else {
+      sol.set(Value.kForward);
+    }
+  }
+
+  
 
 }
