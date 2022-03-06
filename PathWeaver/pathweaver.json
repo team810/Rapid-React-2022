@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "lengthUnit": "Foot",
   "exportUnit": "Always Meters",
   "maxVelocity": 10.0,
@@ -6,4 +7,19 @@
   "trackWidth": 0.5,
   "gameName": "Rapid React",
   "outputDir": ""
+=======
+  "lengthUnit": "Meter",
+  "exportUnit": "Always Meters",
+  "maxVelocity": 0.5,
+<<<<<<< HEAD
+  "maxAcceleration": 0.5,
+  "trackWidth": 0.57098,
+  "gameName": "Rapid React",
+  "outputDir": ".."
+=======
+  "maxAcceleration": 0.2,
+  "trackWidth": 0.57098,
+  "gameName": "Rapid React"
+>>>>>>> 60dd3312e87e3b4d94a17ab2787422945308cb8f
+>>>>>>> 217a4f0e72de65d4eeb3c17ad44a7bd46b57666f
 }
