@@ -5,7 +5,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Shooter;
@@ -25,5 +28,6 @@ public class ShootSequence extends ParallelCommandGroup {
       new StartEndCommand(()->m_shooter.runTop(), ()->m_shooter.runShooter(0,0)),
       new StartEndCommand(()->m_shooter.runBottom(), ()->m_shooter.runShooter(0,0))
     );
+
   }
 }

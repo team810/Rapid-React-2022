@@ -31,6 +31,8 @@ public class Shooter extends SubsystemBase {
 
   private double distance; // inches, convert to whatever you need in the run command or shuffleboard
                            // command
+  double slope_ = 228;
+  double yint_ = -1188;
 
   NetworkTableEntry setPointTop, kPTop, kITop, kDTop, kFFTop;
   NetworkTableEntry setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
@@ -40,7 +42,7 @@ public class Shooter extends SubsystemBase {
   NetworkTableEntry topVelRPM, topVelPercent, 
                     bottomVelRPM, bottomVelPercent,
                     targetValidity, limelightX, limelightY,
-                     limelightArea, targetDistance, voltage; 
+                     limelightArea, targetDistance, voltage, slope, yint; 
 
   private int goalHeight = 104; // inches
   private int limelightHeight = 20; // inches
@@ -111,9 +113,9 @@ public class Shooter extends SubsystemBase {
     bottom_pidcontroller.setIZone(kIz);
     bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
-    //setPointBottom.getDouble(0)
-    bottom_pidcontroller.setReference(equationBottom(this.distance), ControlType.kVelocity);
-    speedBottom.setDouble(top.getEncoder().getVelocity());
+    //equationBottom(this.distance)
+    bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
+    speedBottom.setDouble(bottom.getEncoder().getVelocity());
   }
 
   public void run(){
@@ -123,7 +125,7 @@ public class Shooter extends SubsystemBase {
 
   private double equationBottom(double distanceInches){
     double distanceFeet = distanceInches / 12.0;
-    return 228*distanceFeet - 1188;
+    return slope_*distanceFeet - yint_;
   }
 
   private void resetMotors() {
@@ -156,6 +158,8 @@ public class Shooter extends SubsystemBase {
     targetDistance = tab.add("Distance to target", this.distance).getEntry();
 
     voltage = tab.add("Top Shooter Volts", top.getBusVoltage()).getEntry();
+    slope = tab.add("Reg. Slope", top.getBusVoltage()).getEntry();
+    yint = tab.add("Reg Y-int", top.getBusVoltage()).getEntry();
   }
 
   private void shuffleUpdate() {
@@ -172,6 +176,8 @@ public class Shooter extends SubsystemBase {
 
     targetDistance.setDouble(this.distance);
     voltage.setDouble(top.getBusVoltage());
+    slope_ = slope.getDouble(228);
+    yint_ = yint.getDouble(-1188);
   }
 
   private void PIDinit()

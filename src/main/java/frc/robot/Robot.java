@@ -165,6 +165,7 @@ public class Robot extends TimedRobot {
       }
     return trajectory;
   }
+  
 
   public RamseteCommand genCommand(Trajectory trajectory){
     return new RamseteCommand(

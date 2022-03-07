@@ -56,7 +56,7 @@ public class RobotContainer{
   //CONTROLLERS
   public Joystick left = new Joystick(0);
   public Joystick right = new Joystick(1);
-  public XboxController GP = new XboxController(2);
+  public Joystick gamepad = new Joystick(2);
 
   //AUTONOMOUS PATHS
   public HashMap<String, Trajectory> pathsTrajs = new HashMap<String, Trajectory>();
@@ -74,7 +74,7 @@ public class RobotContainer{
     //SUBSYTEM INITIAL TASKS
     m_drive.setDefaultCommand(
       new RunCommand(
-        ()-> m_drive.tankDrive((left.getRawAxis(1)), (right.getRawAxis(1)))
+        ()-> m_drive.tankDrive(Math.pow(left.getRawAxis(1), 1), Math.pow(right.getRawAxis(1), 1))
         , m_drive
     )); 
 
@@ -114,8 +114,8 @@ public class RobotContainer{
    */
   private void configureButtonBindings() {
     //Shoot withOUT PID
-    //new JoystickButton(left, 1);
-    //.whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.25, .6),() -> m_shooter.runShooter(0, 0), m_shooter));
+    new JoystickButton(gamepad, 8)
+    .whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.3, .3),() -> m_shooter.runShooter(0, 0), m_shooter));
 
     //Shoot with PID
     new JoystickButton(left, 1)
@@ -126,15 +126,27 @@ public class RobotContainer{
       .whileHeld(new TurnToTarget(m_drive));
     
     //Run Intake
+    new JoystickButton(gamepad, 7)
+    .whileHeld(
+      new ParallelCommandGroup(
+        new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake),
+        new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder)
+      )
+    );
+
+    //Run Intake
     new JoystickButton(right, 1)
     .whileHeld(
       new ParallelCommandGroup(
         new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake),
-        new StartEndCommand(()-> m_lime.stream.setDouble(2), ()->m_lime.stream.setDouble(0), m_lime)
+        new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder)
       )
     );
 
     //Run Feeder
+    new JoystickButton(gamepad, 5) 
+      .whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder));
+    
     new JoystickButton(right, 2) 
       .whileHeld(new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder));
 
@@ -160,7 +172,7 @@ public class RobotContainer{
       .whenPressed(new InstantCommand(()->m_drive.resetGyro()));
 
     //Climb UP
-    new JoystickButton(right, 13)
+    new JoystickButton(gamepad, 4)
       .whileHeld(
         new ParallelCommandGroup(
           new StartEndCommand(() -> m_climb.climbUp(-.6), () -> m_climb.climbUp(0), m_climb),
@@ -169,11 +181,11 @@ public class RobotContainer{
       );
     
     //Climb DOWN
-    new JoystickButton(right, 12)
+    new JoystickButton(gamepad, 2)
       .whileHeld(new StartEndCommand(() -> m_climb.climbDown(.6),() -> m_climb.climbDown(0), m_climb));
 
     //Toggle climber arms
-    new JoystickButton(right, 11)
+    new JoystickButton(gamepad, 3)
       .whenPressed(new InstantCommand(() -> m_climb.togglePistons(), m_climb));
 
     //Toggle and run intake

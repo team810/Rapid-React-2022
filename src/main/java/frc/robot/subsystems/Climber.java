@@ -50,42 +50,11 @@ public class Climber extends SubsystemBase {
 
 
   public void climbUp(double speed){
-    if(climberMotor.getEncoder().getPosition() < -85){
-
-      this.climberMotor.set(0);
-
-  
-      this.speed = speed;
-  
-        }
-        else{
-          this.climberMotor.set((speed));
-  
-        }
-
-    if(climberMotor.getEncoder().getPosition() < 10){
-      setPistons(false);
-
-    }
+    this.climberMotor.set((speed));
   }
 
   public void climbDown(double speed){
-    if(climberMotor.getEncoder().getPosition() > 50){
-
-      this.climberMotor.set(0);
-  
-      this.speed = speed;
-  
-        }
-        else{
-          this.climberMotor.set((speed));
-  
-        }
-
-        if(climberMotor.getEncoder().getPosition() < 10){
-          setPistons(false);
-    
-        }
+    this.climberMotor.set((speed));
   }
 
   private void motorReset() {
