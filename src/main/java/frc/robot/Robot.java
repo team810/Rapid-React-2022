@@ -18,8 +18,15 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import frc.robot.commands.ShootSequence;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -35,6 +42,10 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   public Compressor c;
   Drivetrain m_drive;
+  Feeder m_feeder;
+  Intake m_intake;
+  Shooter m_shooter;
+
   String directory = "pathplanner/generatedJSON/";
   
 
@@ -48,6 +59,9 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_drive = m_robotContainer.m_drive;
+    m_feeder = m_robotContainer.m_feeder;
+    m_intake = m_robotContainer.m_intake;
+    m_shooter = m_robotContainer.m_shooter;
 
     //GEN COMMANDS
     // for(int i = 0; i < m_robotContainer.trajNames.length; i++){
@@ -60,33 +74,137 @@ public class Robot extends TimedRobot {
     //Simple Blue Auto 1
     Trajectory t = genTraj(directory + "Simple_Blue_Auto_1.wpilib.json");
     m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[0], t);
-    m_robotContainer.paths.put(m_robotContainer.trajNames[0], genCommand(t));
+    SequentialCommandGroup command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+          genCommand(t),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+
+    m_robotContainer.paths.put(m_robotContainer.trajNames[0], command);
 
     //Simple Blue Auto 2
     t = genTraj(directory + "Simple_Blue_Auto_2.wpilib.json");
     m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[1], t);
-    m_robotContainer.paths.put(m_robotContainer.trajNames[1], genCommand(t));
+    command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+          genCommand(t),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put(m_robotContainer.trajNames[1], command);
 
     //Simple Blue Auto 3
     t = genTraj(directory + "Simple_Blue_Auto_3.wpilib.json");
     m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[2], t);
-    m_robotContainer.paths.put(m_robotContainer.trajNames[2], genCommand(t));
+    command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+          genCommand(t),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put(m_robotContainer.trajNames[2], command);
 
     //Three Ball Blue
     
-    
-    //Four Ball Blue
+      //First do simple blue auto 2, then three ball blue p1
+      t = genTraj(directory + "Simple_Blue_Auto_2.wpilib.json");
+      m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[3], t);
+      RamseteCommand com1 = genCommand(t);
+      t = genTraj(directory + "Three_Ball_Blue_P1.wpilib.json");
+      RamseteCommand com2 = genCommand(t);
+      command = new SequentialCommandGroup(
+        new ParallelDeadlineGroup(
+          com1,
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5),
+        new ParallelDeadlineGroup(
+          com2,
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+      ).andThen(()->m_drive.tankDriveVolts(0, 0));
+      m_robotContainer.paths.put(m_robotContainer.trajNames[3], command);
+
+    //TODO: Four Ball Blue
+
+
 
 
     //Simple Red Auto 1
+    t = genTraj(directory + "Simple_Red_Auto_1.wpilib.json");
+    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[4], t);
+    command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+          genCommand(t),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+
+    m_robotContainer.paths.put(m_robotContainer.trajNames[4], command);
 
     //Simple Red Auto 2
+    t = genTraj(directory + "Simple_Red_Auto_2.wpilib.json");
+    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[5], t);
+    command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+          genCommand(t),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put(m_robotContainer.trajNames[5], command);
 
     //Simple Red Auto 3
+    t = genTraj(directory + "Simple_Red_Auto_3.wpilib.json");
+    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[6], t);
+    command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+          genCommand(t),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put(m_robotContainer.trajNames[6], command);
 
-    //Three Red Blue
+    //Three Ball Blue
+    
+      //First do simple blue auto 2, then three ball blue p1
+      t = genTraj(directory + "Simple_Red_Auto_2.wpilib.json");
+      m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[7], t);
+      com1 = genCommand(t);
+      t = genTraj(directory + "Three_Ball_Red_P1.wpilib.json");
+      com2 = genCommand(t);
+      command = new SequentialCommandGroup(
+        new ParallelDeadlineGroup(
+          com1,
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5),
+        new ParallelDeadlineGroup(
+          com2,
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+        ),
+        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+      ).andThen(()->m_drive.tankDriveVolts(0, 0));
+      m_robotContainer.paths.put(m_robotContainer.trajNames[7], command);
 
-    //Four Red Blue
+    //TODO: Four Ball Red
   }
 
   /**

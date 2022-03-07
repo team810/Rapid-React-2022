@@ -46,10 +46,10 @@ import frc.robot.subsystems.Shooter;
  */
 public class RobotContainer{
   // SUBSYSTEMS
-  private Intake m_intake = new Intake();
+  public Intake m_intake = new Intake();
   public Drivetrain m_drive = new Drivetrain();
-  private Feeder m_feeder = new Feeder();
-  private Shooter m_shooter = new Shooter();
+  public Feeder m_feeder = new Feeder();
+  public Shooter m_shooter = new Shooter();
   private Climber m_climb = new Climber();
   private Limelight m_lime = new Limelight();
 
@@ -61,8 +61,8 @@ public class RobotContainer{
   //AUTONOMOUS PATHS
   public HashMap<String, Trajectory> pathsTrajs = new HashMap<String, Trajectory>();
   public HashMap<String, Command> paths = new HashMap<String, Command>();
-  public String[] trajNames = {"Simple Blue Auto 1", "Simple Blue Auto 2", "Simple Blue Auto 3", "Three Ball Blue", "Four Ball Blue",
-                                "Simple Red Auto 1", "Simple Red Auto 2", "Simple Red Auto 3", "Three Ball Red", "Four Ball Red"};
+  public String[] trajNames = {"Simple Blue Auto 1", "Simple Blue Auto 2", "Simple Blue Auto 3", "Three Ball Blue",
+                                "Simple Red Auto 1", "Simple Red Auto 2", "Simple Red Auto 3", "Three Ball Red"};
 
   //AUTONOMOUS PATH CHOOSER
   public SendableChooser<String> m_chooser = new SendableChooser<String>();
