@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -100,8 +102,9 @@ public class Shooter extends SubsystemBase {
     top_pidcontroller.setIZone(kIz);
     top_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
-    top_pidcontroller.setReference(-setPointTop.getDouble(0), ControlType.kVelocity);
+    top_pidcontroller.setReference(-equationTop(this.distance), ControlType.kVelocity);
     speedTop.setDouble(top.getEncoder().getVelocity());
+    System.out.println(this.distance);
   }
 
   public void runBottom()
@@ -114,7 +117,7 @@ public class Shooter extends SubsystemBase {
     bottom_pidcontroller.setOutputRange(kMinOutput, kMaxOutput);
 
     //equationBottom(this.distance)
-    bottom_pidcontroller.setReference(setPointBottom.getDouble(0), ControlType.kVelocity);
+    bottom_pidcontroller.setReference(3000, ControlType.kVelocity);
     speedBottom.setDouble(bottom.getEncoder().getVelocity());
   }
 
@@ -123,9 +126,16 @@ public class Shooter extends SubsystemBase {
     runBottom();
   }
 
-  private double equationBottom(double distanceInches){
+  public BooleanSupplier atSetpoint(){
+    return ()-> Math.abs(top.getEncoder().getVelocity() + equationTop(this.distance)) < 50;
+  }
+
+  public BooleanSupplier outsideSetpoint(){
+    return ()-> Math.abs(top.getEncoder().getVelocity() + equationTop(this.distance)) > 50;
+  }
+  private double equationTop(double distanceInches){
     double distanceFeet = distanceInches / 12.0;
-    return slope_*distanceFeet - yint_;
+    return 132*distanceFeet + 600; //638
   }
 
   private void resetMotors() {
@@ -155,7 +165,7 @@ public class Shooter extends SubsystemBase {
     limelightY = tab.add("Limelight Y", ty.getDouble(0)).getEntry();
     limelightArea = tab.add("Limelight Area", ta.getDouble(0)).getEntry();
 
-    targetDistance = tab.add("Distance to target", this.distance).getEntry();
+    targetDistance = tab.add("Distance to target (ft)", this.distance / 12.0).getEntry();
 
     voltage = tab.add("Top Shooter Volts", top.getBusVoltage()).getEntry();
     slope = tab.add("Reg. Slope", top.getBusVoltage()).getEntry();

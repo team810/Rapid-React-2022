@@ -22,7 +22,8 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import frc.robot.commands.ShootSequence;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Commands.ShootSequence;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -63,148 +64,309 @@ public class Robot extends TimedRobot {
     m_intake = m_robotContainer.m_intake;
     m_shooter = m_robotContainer.m_shooter;
 
-    //GEN COMMANDS
-    // for(int i = 0; i < m_robotContainer.trajNames.length; i++){
-    //   String traj = "pathplanner/generatedJSON/" + m_robotContainer.trajNames[i] + ".wpilib.json";
-    //   Trajectory t = genTraj(traj);
-    //   m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[i], t);
-    //   m_robotContainer.paths.put(m_robotContainer.trajNames[i], genCommand(t));
-    // }  
 
-    //Simple Blue Auto 1
+
+    //Simple Blue Auto 1, shoot low goal and then shoot high
     Trajectory t = genTraj(directory + "Simple_Blue_Auto_1.wpilib.json");
-    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[0], t);
+    m_robotContainer.pathsTrajs.put("Simple Blue Auto 1 Low/High", t);
     SequentialCommandGroup command = new SequentialCommandGroup(
+      //Shoot low goal for 2 seconds
       new ParallelDeadlineGroup(
+        new StartEndCommand(()->m_shooter.runShooter(.3, .3), ()->m_shooter.runShooter(0, 0), m_shooter).withTimeout(2),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ),
+      //Run trajectory, and then shoot high
+      new ParallelDeadlineGroup(
+        //Run traj and wait for 2 seconds
+        new SequentialCommandGroup(
           genCommand(t),
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+          new WaitCommand(2)
         ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+        //Run intake and feeder
+        new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+        new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+      )
     ).andThen(()->m_drive.tankDriveVolts(0, 0));
 
-    m_robotContainer.paths.put(m_robotContainer.trajNames[0], command);
-
-    //Simple Blue Auto 2
-    t = genTraj(directory + "Simple_Blue_Auto_2.wpilib.json");
-    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[1], t);
-    command = new SequentialCommandGroup(
-      new ParallelDeadlineGroup(
-          genCommand(t),
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
-        ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
-    ).andThen(()->m_drive.tankDriveVolts(0, 0));
-    m_robotContainer.paths.put(m_robotContainer.trajNames[1], command);
-
-    //Simple Blue Auto 3
-    t = genTraj(directory + "Simple_Blue_Auto_3.wpilib.json");
-    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[2], t);
-    command = new SequentialCommandGroup(
-      new ParallelDeadlineGroup(
-          genCommand(t),
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
-        ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
-    ).andThen(()->m_drive.tankDriveVolts(0, 0));
-    m_robotContainer.paths.put(m_robotContainer.trajNames[2], command);
-
-    //Three Ball Blue
+    m_robotContainer.paths.put("Simple Blue Auto 1 Low/High", command);
     
-      //First do simple blue auto 2, then three ball blue p1
-      t = genTraj(directory + "Simple_Blue_Auto_2.wpilib.json");
-      m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[3], t);
-      RamseteCommand com1 = genCommand(t);
-      t = genTraj(directory + "Three_Ball_Blue_P1.wpilib.json");
-      RamseteCommand com2 = genCommand(t);
-      command = new SequentialCommandGroup(
-        new ParallelDeadlineGroup(
-          com1,
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
-        ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5),
-        new ParallelDeadlineGroup(
-          com2,
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
-        ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
-      ).andThen(()->m_drive.tankDriveVolts(0, 0));
-      m_robotContainer.paths.put(m_robotContainer.trajNames[3], command);
-
-    //TODO: Four Ball Blue
-
-
-
-
-    //Simple Red Auto 1
-    t = genTraj(directory + "Simple_Red_Auto_1.wpilib.json");
-    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[4], t);
+    // OR Shoot 2 high
+    m_robotContainer.pathsTrajs.put("Simple Blue Auto 1 High/High", t);
     command = new SequentialCommandGroup(
       new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
           genCommand(t),
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+          new WaitCommand(2)
         ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+      )
     ).andThen(()->m_drive.tankDriveVolts(0, 0));
 
-    m_robotContainer.paths.put(m_robotContainer.trajNames[4], command);
+    m_robotContainer.paths.put("Simple Blue Auto 1 High/High", command);
+
+
+
+    //Simple Blue Auto 2 Shoot Low then High
+    t = genTraj(directory + "Simple_Blue_Auto_2.wpilib.json");
+    m_robotContainer.pathsTrajs.put("Simple Blue Auto 2 Low/High", t);
+    command = new SequentialCommandGroup(
+      //Shoot low goal for 2 seconds
+      new ParallelDeadlineGroup(
+        new StartEndCommand(()->m_shooter.runShooter(.2, .2), ()->m_shooter.runShooter(0, 0), m_shooter).withTimeout(2),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ),
+      new WaitCommand(0),
+      //Run trajectory, and then shoot high
+      new ParallelDeadlineGroup(
+        //Run traj and wait for 2 seconds
+        new SequentialCommandGroup(
+          genCommand(t),
+          new WaitCommand(2)
+        ),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        )
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+
+    m_robotContainer.paths.put("Simple Blue Auto 2 Low/High", command);
+
+    //OR shoot 2 high
+    t = genTraj(directory + "Simple_Blue_Auto_2.wpilib.json");
+    m_robotContainer.pathsTrajs.put("Simple Blue Auto 2 High/High", t);
+    command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          genCommand(t),
+          new WaitCommand(2)
+        ),
+        new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ).andThen(new ShootSequence(m_drive, m_feeder, m_shooter))
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put("Simple Blue Auto 2 High/High", command);
+
+    //OR do 3 auto by getting adjacent ball <-- PICK UP FROM HERE
+    
+    t = genTraj(directory + "Simple_Blue_Auto_2.wpilib.json");
+    m_robotContainer.pathsTrajs.put("Three Blue Ball Adjacent", t);
+    RamseteCommand com1 = genCommand(t);
+    t = genTraj(directory + "Three_Ball_Blue_P1.wpilib.json");
+    RamseteCommand com2 = genCommand(t);
+    command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          com1,
+          new WaitCommand(1)
+        ),
+        new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ).andThen(new ShootSequence(m_drive, m_feeder, m_shooter)),
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          com2,
+          new WaitCommand(1)
+        ),
+        new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ).andThen(new ShootSequence(m_drive, m_feeder, m_shooter))
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put("Three Blue Ball Adjacent", command);
+
+    //OR do 3 auto by getting back ball
+
+
+    //Simple Blue Auto 3 shoot low and then shoot high
+    t = genTraj(directory + "Simple_Blue_Auto_3.wpilib.json");
+    m_robotContainer.pathsTrajs.put("Simple Blue Auto 3 Low/High", t);
+    command = new SequentialCommandGroup(
+      //Shoot low goal for 2 seconds
+      new ParallelDeadlineGroup(
+        new StartEndCommand(()->m_shooter.runShooter(.3, .3), ()->m_shooter.runShooter(0, 0), m_shooter).withTimeout(2),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ),
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          genCommand(t),
+          new WaitCommand(1)
+        ),
+        new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+        new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+      )
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put("Simple Blue Auto 3 Low/High", command);
+
+    //OR shoot 2 high
+    m_robotContainer.pathsTrajs.put("Simple Blue Auto 3 High/High", t);
+    command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          genCommand(t),
+          new WaitCommand(1)
+        ),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        )
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put("Simple Blue Auto 3 High/High", command);
+
+
+
+
+
+    //Simple Red Auto 1 shoot low and then high
+    t = genTraj(directory + "Simple_Red_Auto_1.wpilib.json");
+    m_robotContainer.pathsTrajs.put("Simple Red Auto 1 Low/High", t);
+    command = new SequentialCommandGroup(
+      //Shoot low goal for 2 seconds
+      new ParallelDeadlineGroup(
+        new StartEndCommand(()->m_shooter.runShooter(.3, .3), ()->m_shooter.runShooter(0, 0), m_shooter).withTimeout(2),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ),
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          genCommand(t),
+          new WaitCommand(1)
+        ),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        )
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+
+    m_robotContainer.paths.put("Simple Red Auto 1 Low/High", command);
+
+    //OR 2 high
+    t = genTraj(directory + "Simple_Red_Auto_1.wpilib.json");
+    m_robotContainer.pathsTrajs.put("Simple Red Auto 1 High/High", t);
+    command = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          genCommand(t),
+          new WaitCommand(1)
+        ),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        )
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+
+    m_robotContainer.paths.put("Simple Red Auto 1 High/High", command);
+
+
 
     //Simple Red Auto 2
     t = genTraj(directory + "Simple_Red_Auto_2.wpilib.json");
-    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[5], t);
+    m_robotContainer.pathsTrajs.put("Simple Red Auto 2 Low/High", t);
+    command = new SequentialCommandGroup(
+      //Shoot low goal for 2 seconds
+      new ParallelDeadlineGroup(
+        new StartEndCommand(()->m_shooter.runShooter(.3, .3), ()->m_shooter.runShooter(0, 0), m_shooter).withTimeout(2),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ),
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          genCommand(t),
+          new WaitCommand(1)
+        ),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        )
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put("Simple Red Auto 2 Low/High", command);
+
+    //OR 2 high
+    t = genTraj(directory + "Simple_Red_Auto_2.wpilib.json");
+    m_robotContainer.pathsTrajs.put("Simple Red Auto 2 High/High", t);
     command = new SequentialCommandGroup(
       new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
           genCommand(t),
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+          new WaitCommand(1)
         ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        )
     ).andThen(()->m_drive.tankDriveVolts(0, 0));
-    m_robotContainer.paths.put(m_robotContainer.trajNames[5], command);
+    m_robotContainer.paths.put("Simple Red Auto 2 High/High", command);
 
-    //Simple Red Auto 3
+
+
+    //Simple Red Auto 3 shoot low then high
     t = genTraj(directory + "Simple_Red_Auto_3.wpilib.json");
-    m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[6], t);
+    m_robotContainer.pathsTrajs.put("Simple Red Auto 3 Low/High", t);
+    command = new SequentialCommandGroup(
+      //Shoot low goal for 2 seconds
+      new ParallelDeadlineGroup(
+        new StartEndCommand(()->m_shooter.runShooter(.3, .3), ()->m_shooter.runShooter(0, 0), m_shooter).withTimeout(2),
+        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+      ),
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          genCommand(t),
+          new WaitCommand(1)
+        ),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        )
+    ).andThen(()->m_drive.tankDriveVolts(0, 0));
+    m_robotContainer.paths.put("Simple Red Auto 3 Low/High", command);
+
+    //OR 2 high
+    t = genTraj(directory + "Simple_Red_Auto_3.wpilib.json");
+    m_robotContainer.pathsTrajs.put("Simple Red Auto 3 High/High", t);
     command = new SequentialCommandGroup(
       new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
           genCommand(t),
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+          new WaitCommand(1)
         ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        )
     ).andThen(()->m_drive.tankDriveVolts(0, 0));
-    m_robotContainer.paths.put(m_robotContainer.trajNames[6], command);
+    m_robotContainer.paths.put("Simple Red Auto 3 High/High", command);
 
-    //Three Ball Blue
+
+
+    //Three Ball Red
     
       //First do simple blue auto 2, then three ball blue p1
       t = genTraj(directory + "Simple_Red_Auto_2.wpilib.json");
-      m_robotContainer.pathsTrajs.put(m_robotContainer.trajNames[7], t);
+      m_robotContainer.pathsTrajs.put("Three Ball Red Adjacent", t);
       com1 = genCommand(t);
       t = genTraj(directory + "Three_Ball_Red_P1.wpilib.json");
       com2 = genCommand(t);
       command = new SequentialCommandGroup(
         new ParallelDeadlineGroup(
+          new SequentialCommandGroup(
           com1,
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+          new WaitCommand(1)
         ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5),
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        ),
         new ParallelDeadlineGroup(
+          new SequentialCommandGroup(
           com2,
-          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
+          new WaitCommand(1)
         ),
-        new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
+          new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
+          new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder),
+          new StartEndCommand(()->m_shooter.run(), ()->m_shooter.runShooter(0, 0), m_shooter)
+        )
       ).andThen(()->m_drive.tankDriveVolts(0, 0));
-      m_robotContainer.paths.put(m_robotContainer.trajNames[7], command);
-
-    //TODO: Four Ball Red
+      m_robotContainer.paths.put("Three Ball Red Adjacent", command);
   }
 
   /**

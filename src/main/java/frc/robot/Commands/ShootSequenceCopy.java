@@ -14,9 +14,9 @@ import frc.robot.subsystems.Shooter;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ShootSequence extends ParallelCommandGroup {
+public class ShootSequenceCopy extends ParallelCommandGroup {
   /** Creates a new ShootSequence. */
-  public ShootSequence(Drivetrain m_drive, Feeder m_feeder, Shooter m_shooter) {
+  public ShootSequenceCopy(Drivetrain m_drive, Feeder m_feeder, Shooter m_shooter) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(

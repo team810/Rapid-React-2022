@@ -26,11 +26,10 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.ShootSequence;
-import frc.robot.commands.TurnToTarget;
+import frc.robot.Commands.ShootSequence;
+import frc.robot.Commands.TurnToTarget;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Feeder;
@@ -61,9 +60,7 @@ public class RobotContainer{
   //AUTONOMOUS PATHS
   public HashMap<String, Trajectory> pathsTrajs = new HashMap<String, Trajectory>();
   public HashMap<String, Command> paths = new HashMap<String, Command>();
-  public String[] trajNames = {"Simple Blue Auto 1", "Simple Blue Auto 2", "Simple Blue Auto 3", "Three Ball Blue",
-                                "Simple Red Auto 1", "Simple Red Auto 2", "Simple Red Auto 3", "Three Ball Red"};
-
+  
   //AUTONOMOUS PATH CHOOSER
   public SendableChooser<String> m_chooser = new SendableChooser<String>();
   
@@ -118,7 +115,7 @@ public class RobotContainer{
     .whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.3, .3),() -> m_shooter.runShooter(0, 0), m_shooter));
 
     //Shoot with PID
-    new JoystickButton(left, 1)
+    new JoystickButton(gamepad, 6)
       .whileHeld(new ShootSequence(m_drive, m_feeder, m_shooter));
 
     //Align Shooter
@@ -153,6 +150,11 @@ public class RobotContainer{
     //Toggle intake
     new JoystickButton(right, 3)
       .whenPressed(new InstantCommand(()->m_intake.toggleSolenoid(), m_intake));
+      
+      // new JoystickButton(right, 3)
+      // .whileHeld(new StartEndCommand(()->m_intake.setIntake(true), ()-> m_intake.setIntake(false), m_intake));
+
+    
 
     //Reverse Intake and Feeder
     new JoystickButton(right, 4)
@@ -199,19 +201,13 @@ public class RobotContainer{
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    Command command = paths.get(trajNames[0]);
-    Trajectory m_traj = pathsTrajs.get(trajNames[0]);
+    String auto = "Simple Blue Auto 2 Low/High";
+    Command command = paths.get(auto);
+    Trajectory m_traj = pathsTrajs.get(auto);
 
     m_drive.resetOdometry(m_traj.getInitialPose());
 
     // AUTONAV
-    return new SequentialCommandGroup(
-      new ParallelDeadlineGroup(
-        command,
-        new StartEndCommand(()-> m_intake.setIntake(true), ()->m_intake.run(0)),
-        new StartEndCommand(()->m_feeder.runFeeder(1), ()->m_feeder.runFeeder(0), m_feeder)
-      ),
-      new ShootSequence(m_drive, m_feeder, m_shooter).withTimeout(5)
-    ).andThen(() -> m_drive.tankDriveVolts(0, 0));
+    return command;
   }
 }
