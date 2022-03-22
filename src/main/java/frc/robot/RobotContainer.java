@@ -56,6 +56,7 @@ public class RobotContainer{
   public Joystick left = new Joystick(0);
   public Joystick right = new Joystick(1);
   public Joystick gamepad = new Joystick(2);
+  // public Joystick ps5 = new Joystick(2);
 
   //AUTONOMOUS PATHS
   public HashMap<String, Trajectory> pathsTrajs = new HashMap<String, Trajectory>();
@@ -111,6 +112,7 @@ public class RobotContainer{
    */
   private void configureButtonBindings() {
     //Shoot withOUT PID
+    //left bumper
     new JoystickButton(gamepad, 8)
     .whileHeld(new StartEndCommand(() -> m_shooter.runShooter(.3, .3),() -> m_shooter.runShooter(0, 0), m_shooter));
 
@@ -132,13 +134,14 @@ public class RobotContainer{
     );
 
     //Run Intake
+    /*
     new JoystickButton(right, 1)
     .whileHeld(
       new ParallelCommandGroup(
         new StartEndCommand(() -> m_intake.run(1),() -> m_intake.run(0), m_intake),
         new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder)
       )
-    );
+    );*/
 
     //Run Feeder
     new JoystickButton(gamepad, 5) 
@@ -164,6 +167,15 @@ public class RobotContainer{
           new StartEndCommand(()->m_intake.run(-1), ()->m_intake.run(0), m_intake)
         )
       );
+
+    //Reverse Intake and Feeder
+    new JoystickButton(gamepad, 1)
+    .whileHeld(
+      new ParallelCommandGroup(
+        new StartEndCommand(() -> m_feeder.runFeeder(-1),() -> m_feeder.runFeeder(0), m_feeder),
+        new StartEndCommand(()->m_intake.run(-1), ()->m_intake.run(0), m_intake)
+      )
+    );
 
     //Reset encoders
     new JoystickButton(right, 6)
@@ -191,9 +203,14 @@ public class RobotContainer{
       .whenPressed(new InstantCommand(() -> m_climb.togglePistons(), m_climb));
 
     //Toggle and run intake
-    //new JoystickButton(GP, 9)
-    //  .whileHeld(new StartEndCommand(() -> m_intake.setIntake(true), () -> m_intake.setIntake(false), m_intake));
-  }
+    new JoystickButton(right, 1)
+    .whileHeld(new ParallelCommandGroup(
+        new StartEndCommand(() -> m_intake.setIntake(true), () -> m_intake.setIntake(false), m_intake),
+        new StartEndCommand(() -> m_feeder.runFeeder(1),() -> m_feeder.runFeeder(0), m_feeder)
+      ));
+      
+
+   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -201,7 +218,7 @@ public class RobotContainer{
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    String auto = "Simple Blue Auto 2 Low/High";
+    String auto = "Simple Blue Auto 2 High/High";//Simple Blue Auto 2 High/High
     Command command = paths.get(auto);
     Trajectory m_traj = pathsTrajs.get(auto);
 

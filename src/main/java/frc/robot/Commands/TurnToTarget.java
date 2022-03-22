@@ -12,7 +12,7 @@ public class TurnToTarget extends PIDCommand {
   public TurnToTarget(Drivetrain m_drive) {
     super(
         // PID Values
-        new PIDController(.035, 0.00025, 0.0035),
+        new PIDController(.05, 0.001, 0.0035),
         // Measurement is the tx that the limelight returns
         () -> Constants.tx.getDouble(0),
         // Setpoint is always 0, as the delta x must be 0 for a line up
@@ -23,8 +23,8 @@ public class TurnToTarget extends PIDCommand {
         });
 
     addRequirements(m_drive);
-    // Set tolerance to +/- .5, as that is "good enough"
-    getController().setTolerance(.5);
+    // Set tolerance to +/- .2, as that is "good enough"
+    getController().setTolerance(.2);
   }
 
   // Returns true when the robot is at setpoint
