@@ -9,13 +9,16 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,19 +28,22 @@ import frc.robot.Constants;
 public class Drivetrain extends SubsystemBase {
   private CANSparkMax frontL, frontR, backL, backR;
   private MotorControllerGroup left, right;
+  private MotorController Left, Right;
+
   private DifferentialDrive drive;
   private double resetR, resetL;
 
   AHRS navx  = new AHRS(Port.kMXP);
 
-  private DifferentialDriveOdometry m_odometry =
-  new DifferentialDriveOdometry(navx.getRotation2d());
+  private DifferentialDriveOdometry m_odometry;
 
   public DifferentialDriveKinematics m_kinematics =
   new DifferentialDriveKinematics(Constants.TRACK_WIDTH_METERS);
 
   //FIELD
   public final Field2d m_field = new Field2d();
+
+
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -50,6 +56,7 @@ public class Drivetrain extends SubsystemBase {
     right = new MotorControllerGroup(frontR, backR);
 
     drive = new DifferentialDrive(left, right);
+
     setIdleMode(IdleMode.kBrake);
     
     //SET CONVERSION FACTORS
@@ -62,6 +69,7 @@ public class Drivetrain extends SubsystemBase {
     resetEncoders();
 
     SmartDashboard.putData("Field", m_field);
+//    m_odometry = new DifferentialDriveOdometry(navx.getRotation2d());
   }
 
   @Override
@@ -142,6 +150,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    m_odometry.resetPosition(pose, navx.getRotation2d());
+    m_odometry.resetPosition(navx.getRotation2d(), getLeftEncoderPos(), getRightEncoderPos(), pose);
+//    m_odometry.resetPosition(pose, navx.getRotation2d());
   }
 }

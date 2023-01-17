@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -36,15 +37,32 @@ public class Shooter extends SubsystemBase {
   double slope_ = 228;
   double yint_ = -1188;
 
-  NetworkTableEntry setPointTop, kPTop, kITop, kDTop, kFFTop;
-  NetworkTableEntry setPointBottom, kPBottom, kIBottom, kDBottom, kFFBottom;
+  GenericEntry setPointTop;
+  GenericEntry kPTop;
+  GenericEntry kITop;
+  GenericEntry kDTop;
+  GenericEntry kFFTop;
+  GenericEntry setPointBottom;
+  GenericEntry kPBottom;
+  GenericEntry kIBottom;
+  GenericEntry kDBottom;
+  GenericEntry kFFBottom;
 
-  NetworkTableEntry speedTop, speedBottom; 
+  GenericEntry speedTop;
+  GenericEntry speedBottom;
 
-  NetworkTableEntry topVelRPM, topVelPercent, 
-                    bottomVelRPM, bottomVelPercent,
-                    targetValidity, limelightX, limelightY,
-                     limelightArea, targetDistance, voltage, slope, yint; 
+  GenericEntry topVelRPM;
+  GenericEntry topVelPercent;
+  GenericEntry bottomVelRPM;
+  GenericEntry bottomVelPercent;
+  GenericEntry targetValidity;
+  GenericEntry limelightX;
+  GenericEntry limelightY;
+  GenericEntry limelightArea;
+  GenericEntry targetDistance;
+  GenericEntry voltage;
+  GenericEntry slope;
+  GenericEntry yint;
 
   private int goalHeight = 104; // inches
   private int limelightHeight = 20; // inches

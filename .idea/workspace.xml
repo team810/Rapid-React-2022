@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="07c60a27-bd5c-432f-8388-2bca1bcbcc69" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/Rapid-React-2022.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/Rapid-React-2022.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/Drivetrain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/Drivetrain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/Limelight.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/Limelight.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/Shooter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/subsystems/Shooter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendordeps/REVLib.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendordeps/REVLib.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendordeps/WPILibNewCommands.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendordeps/WPILibNewCommands.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendordeps/navx_frc.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendordeps/navx_frc.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/simgui-ds.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/simgui-ds.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/simgui.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/simgui.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/deploy/pathplanner/Stright_Foword.path" beforeDir="false" afterPath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/deploy/pathplanner/Stright_Foword.path" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/Robot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/RobotContainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/RobotContainer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/commands/Drivetrain/DriveAuto.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/commands/Drivetrain/DriveAuto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/subsystems/Drivetrain/Drivetrain.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023/src/main/java/frc/robot/subsystems/Drivetrain/Drivetrain.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/../Swerve_Custom_WPILIB_2023">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Rapid-React-2022" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="InvalidFacetManager">
+    <ignored-facets>
+      <facet id="Rapid-React-2022.main/invalid/FRC" />
+      <facet id="Rapid-React-2022/invalid/FRC" />
+    </ignored-facets>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
+  <component name="ProjectId" id="2KSVZKEsyei74fu5lchytqgBZhy" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/mloma/FRC/Swerve_Custom_WPILIB_2023/build.gradle",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Facets",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="gradle --update-locks" />
+      <command value="gradle --project-prop" />
+      <command value="gradle outgoingVariants" />
+      <command value="gradle simulateJava" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Gradle.Build Robot">
+    <configuration name="Rapid-React-2022 [simulateJava]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="simulateJava" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="Rapid-React-2022" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--update-locks" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Gradle.Build &amp; Deploy Robot" />
+      <item itemvalue="Gradle.Build &amp; Deploy Robot for Debugging" />
+      <item itemvalue="Gradle.Build Robot" />
+      <item itemvalue="Gradle.Clean" />
+      <item itemvalue="Gradle.Clean Build &amp; Deploy Robot" />
+      <item itemvalue="Gradle.Clean Build &amp; Deploy Robot for Debugging" />
+      <item itemvalue="Gradle.Clean Build Robot" />
+      <item itemvalue="Gradle.Rapid-React-2022 [simulateJava]" />
+      <item itemvalue="Gradle.Rapid-React-2022" />
+      <item itemvalue="Remote JVM Debug.Debug Robot via IP" />
+      <item itemvalue="Remote JVM Debug.Debug Robot via USB" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.Rapid-React-2022 [simulateJava]" />
+        <item itemvalue="Gradle.Rapid-React-2022" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="07c60a27-bd5c-432f-8388-2bca1bcbcc69" name="Changes" comment="" />
+      <created>1673968025878</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1673968025878</updated>
+      <workItem from="1673968027100" duration="1204000" />
+      <workItem from="1673972040512" duration="1514000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WpiLibVersionService">
+    <option name="lastChecked" value="20230117112242" />
+  </component>
+</project>

@@ -23,7 +23,7 @@ public class Limelight extends SubsystemBase {
   /** Creates a new Limelight. */
   public Limelight() {
     feed = new HttpCamera("Limelight", "http://limelight.local:5800/");
-    CameraServer.getInstance().startAutomaticCapture(feed);
+    CameraServer.getServer().setSource(feed);
   }
 
   @Override
